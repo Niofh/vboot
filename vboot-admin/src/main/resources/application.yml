@@ -69,3 +69,14 @@ spring:
       client:
         url: http://127.0.0.1:${server.port}/vboot/admin
 
+
+
+# Swagger界面内容配置
+swagger:
+  title: VBoot API接口文档
+  description: VBoot Api Documentation
+  version: 1.0.0
+  termsOfServiceUrl: https://www.kancloud.cn/exrick/xboot/1009234
+  name: Carson
+  url: https://www.kancloud.cn/exrick/xboot/1009234
+  email: 598220654@qq.com

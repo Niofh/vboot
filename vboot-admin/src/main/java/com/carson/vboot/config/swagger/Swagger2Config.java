@@ -1,11 +1,11 @@
 package com.carson.vboot.config.swagger;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiDescriptionBuilder;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -21,9 +21,13 @@ import java.util.List;
 /**
  * created by Nicofh on 2020-03-05
  * swagger文档初始化
+ * 访问地址：localhost:${port}/swagger-ui.html
  */
 @Slf4j
+@Configuration
 @EnableSwagger2
+@ConfigurationProperties(prefix = "swagger")
+@Data
 public class Swagger2Config {
     private String title;
     private String description;
@@ -66,7 +70,7 @@ public class Swagger2Config {
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build()
-                // https://www.jianshu.com/p/07a6d2ac9fed swagger设置全局token,解决接口需要token验证的问题
+                //https://www.jianshu.com/p/07a6d2ac9fed swagger设置全局token,解决接口需要token验证的问题
                 .securitySchemes(securitySchemes())
                 .securityContexts(securityContexts());
 
