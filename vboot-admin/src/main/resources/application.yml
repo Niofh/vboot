@@ -1,0 +1,71 @@
+server:
+  servlet:
+    context-path: /
+  port: 8081
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://39.108.113.143:3306/xboot?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    logSlowSql: true
+    # Druid StatViewServlet配置
+    druid:
+      stat-view-servlet:
+        # 默认true 内置监控页面首页/druid/index.html
+        enabled: true
+        url-pattern: /druid/*
+        # 允许清空统计数据
+        reset-enable: true
+        login-username: root
+        login-password: root
+        # IP白名单 多个逗号分隔
+        allow:
+        # IP黑名单
+        deny:
+      filter:
+        stat:
+          # 开启监控sql
+          enabled: true
+          # 显示并标注慢sql 默认当超过3秒显示
+          log-slow-sql: true
+          slow-sql-millis: 3000
+          merge-sql: true
+        # 防SQL注入过滤
+        wall:
+          config:
+            # 允许多条sql同时执行
+            multi-statement-allow: true
+  # Redis
+  redis:
+    host: 39.108.113.143
+    password:
+    # 数据库索引 默认0
+    database: 1
+    port: 6379
+    # 超时时间 Duration类型 3秒
+    timeout: 3S
+  # 文件大小上传配置
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  # 时间处理
+  jackson:
+    time-zone: GMT+8
+    serialization:
+      fail-on-empty-beans: false
+  # admin监控 https://blog.csdn.net/forezp/article/details/86105850
+  boot:
+    admin:
+      # 修改上下文路径
+      context-path: /vboot/admin
+      client:
+        url: http://127.0.0.1:${server.port}/vboot/admin
+
