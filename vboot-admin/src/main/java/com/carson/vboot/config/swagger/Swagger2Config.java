@@ -65,9 +65,11 @@ public class Swagger2Config {
                 // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
-                .build();
-//                .securitySchemes(securitySchemes())
-//                .securityContexts(securityContexts());
+                .build()
+                // https://www.jianshu.com/p/07a6d2ac9fed swagger设置全局token,解决接口需要token验证的问题
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts());
+
     }
 
     private ApiInfo apiInfo() {
