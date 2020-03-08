@@ -27,8 +27,8 @@ public class PageBo implements Serializable {
     private String order;
 
     @ApiModelProperty(value = "起始日期")
-    private String createTime;
+    private String createDate;
 
     @ApiModelProperty(value = "结束日期")
-    private String updateTime;
+    private String endDate;
 }
