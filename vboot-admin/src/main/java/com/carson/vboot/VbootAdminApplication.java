@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 public class VbootAdminApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(VbootAdminApplication.class, args);
     }
 

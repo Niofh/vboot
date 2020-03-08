@@ -3,6 +3,9 @@ package com.carson.vboot.core.base;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.carson.vboot.core.common.enums.CommonEnums;
+import com.carson.vboot.core.common.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,10 +19,9 @@ public class VbootBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "唯一标识")
+    @ApiModelProperty(value = "唯一标识,默认雪花id")
     @TableId
-    private String id;
-
+    private String id = String.valueOf(SnowFlakeUtil.getFlowIdInstance().nextId());;
 
 
     @ApiModelProperty(value = "创建人")
@@ -44,6 +46,7 @@ public class VbootBaseEntity implements Serializable {
     private Date updateTime;
 
 
-    @ApiModelProperty(value = "删除标志 默认0")
-    private Integer delFlag = 0;
+    @ApiModelProperty(value = "逻辑删除标志 默认0正常状态")
+    @TableLogic
+    private Integer delFlag = CommonEnums.STATUS_NORMAL.getId();
 }
