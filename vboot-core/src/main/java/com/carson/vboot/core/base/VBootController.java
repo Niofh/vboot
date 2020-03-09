@@ -1,13 +1,12 @@
 package com.carson.vboot.core.base;
 
-import cn.hutool.core.util.PageUtil;
 import com.carson.vboot.core.common.utils.ResultUtil;
 import com.carson.vboot.core.vo.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,28 +34,62 @@ public abstract class VBootController<T> {
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "获取全部数据")
-    public Result<List<T>> getAll(){
+    public Result<List<T>> getAll() {
 
         List<T> list = getService().getAll();
         return new ResultUtil<List<T>>().setData(list);
     }
 
 
-
     @PostMapping(value = "/save")
     @ResponseBody
     @ApiOperation(value = "保存数据")
     public Result<Object> save(T entity) {
-        getService().save(entity);
-        return ResultUtil.success("添加成功");
+        Integer save = getService().save(entity);
+        if (save > 0) {
+            return ResultUtil.success("添加成功");
+        } else {
+            return ResultUtil.error("添加失败");
+        }
     }
 
+
+    @PostMapping(value = "/update")
+    @ResponseBody
+    @ApiOperation(value = "更新数据")
+    public Result<T> update(T entity) {
+        Integer integer = getService().update(entity);
+        if (integer > 0) {
+            return ResultUtil.success("更新成功");
+        } else {
+            return ResultUtil.error("更新失败");
+        }
+    }
 
 
     @PostMapping(value = "/del")
     @ResponseBody
     @ApiOperation(value = "根据id删除数据")
-    public void del(String id) {
-        getService().delete(id);
+    public Result<T>  del(String id) {
+        Integer count = getService().delete(id);
+        if (count > 0) {
+            return ResultUtil.success("删除成功");
+        } else {
+            return ResultUtil.error("删除失败");
+        }
     }
+
+    @PostMapping(value = "/delByIds")
+    @ResponseBody
+    @ApiOperation(value = "批量通过id删除")
+    public Result<Object> delAllByIds(String[] ids){
+        Integer count = getService().delete(Arrays.asList(ids));
+        if (count > 0) {
+            return ResultUtil.success("删除成功");
+        } else {
+            return ResultUtil.error("删除失败");
+        }
+    }
+
+
 }

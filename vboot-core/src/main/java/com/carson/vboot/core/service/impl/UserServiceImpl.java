@@ -22,4 +22,5 @@ public class UserServiceImpl implements UserService {
     public VbootBaseDao<User> getBaseDao() {
         return userDao;
     }
+
 }

@@ -2,9 +2,6 @@ package com.carson.vboot.core.base;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.sun.xml.internal.bind.v2.model.core.ID;
-import io.swagger.models.auth.In;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -87,6 +84,7 @@ public interface VbootService<T> {
 
     /**
      * 根据查询条件分页获取
+     *
      * @param page
      * @param queryWrapper
      * @return
@@ -94,7 +92,6 @@ public interface VbootService<T> {
     public default IPage<T> selectPage(IPage<T> page, Wrapper<T> queryWrapper) {
         return getBaseDao().selectPage(page, queryWrapper);
     }
-
 
 
 }
