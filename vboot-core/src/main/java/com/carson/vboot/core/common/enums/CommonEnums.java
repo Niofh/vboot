@@ -8,12 +8,17 @@ import lombok.Getter;
  */
 @Getter
 public enum CommonEnums {
+
+
     USER_STATUS_LOCK(-1, "用户禁用状态"),
     USER_STATUS_NORMAL(0, "用户正常状态"),
 
     USER_TYPE_NORMAL(0, "普通用户"),
     USER_TYPE_ADMIN(1, "管理员"),
 
+    /**
+     * 权限数据
+     */
     DATA_TYPE_ALL(0, "全部数据权限"),
     DATA_TYPE_CUSTOM(1, "自定义数据权限"),
     DATA_TYPE_UNDER(2, "本部门及以下"),
