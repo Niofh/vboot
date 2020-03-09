@@ -15,10 +15,7 @@ import com.carson.vboot.core.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -94,4 +91,11 @@ public class UserController extends VBootController<User> {
     }
 
 
+    @PostMapping(value = "/save")
+    @ResponseBody
+    @ApiOperation(value = "添加用户")
+    @Override
+    public Result<Object> save(User user) {
+        return userService.saveUser(user);
+    }
 }
