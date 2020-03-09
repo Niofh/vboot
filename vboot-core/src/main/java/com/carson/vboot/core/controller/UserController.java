@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Date;
 
 /**
@@ -40,7 +41,7 @@ public class UserController extends VBootController<User> {
     @RequestMapping(value = "/getUserByPage", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "分页获取")
-    public Result<IPage<User>> getUserByPage(PageBo pageBo, User user) {
+    public Result<IPage<User>> getUserByPage(@Valid PageBo pageBo, User user) {
 
         Page<User> users = new Page<>(pageBo.getPageIndex(), pageBo.getPageSize());
 
@@ -90,12 +91,17 @@ public class UserController extends VBootController<User> {
         return ResultUtil.data(userIPage);
     }
 
-
     @PostMapping(value = "/save")
     @ResponseBody
-    @ApiOperation(value = "添加用户")
+    @ApiOperation(value = "保存数据")
     @Override
-    public Result<Object> save(User user) {
-        return userService.saveUser(user);
+    public Result<Object> save(@Valid User user) {
+        Integer save = userService.save(user);
+        if (save > 0) {
+            return ResultUtil.success("添加成功");
+        } else {
+            return ResultUtil.error("添加失败");
+        }
     }
+
 }

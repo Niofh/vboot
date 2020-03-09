@@ -9,11 +9,5 @@ import com.carson.vboot.core.vo.Result;
  */
 public interface UserService extends VbootService<User> {
 
-    /**
-     * 添加用户
-     *
-     * @param user
-     * @return
-     */
-    Result<Object> saveUser(User user);
+
 }
