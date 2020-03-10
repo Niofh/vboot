@@ -3,13 +3,10 @@ package com.carson.vboot.core.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.carson.vboot.core.base.VbootBaseEntity;
-import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.enums.CommonEnums;
-import com.sun.org.apache.xpath.internal.objects.XBoolean;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -32,11 +29,8 @@ public class Department extends VbootBaseEntity {
     @ApiModelProperty(value = "父id，parentId=0为第一级")
     private String parentId;
 
-    @ApiModelProperty(value = "是否为父节点(含子节点) 默认false")
-    private Boolean isParent = false;
-
     @ApiModelProperty(value = "排序值")
-    private BigDecimal sortOrder;
+    private BigDecimal sort;
 
     @ApiModelProperty(value = "是否启用 0启用 -1禁用")
     private Integer status = CommonEnums.STATUS_NORMAL.getId();

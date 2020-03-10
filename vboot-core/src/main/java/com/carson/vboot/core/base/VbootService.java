@@ -3,7 +3,6 @@ package com.carson.vboot.core.base;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -77,7 +76,7 @@ public interface VbootService<T> {
      *
      * @param idList
      */
-    public default Integer delete(Collection<? extends Serializable> idList) {
+    public default Integer delete(Collection<String> idList) {
         return getBaseDao().deleteBatchIds(idList);
     }
 

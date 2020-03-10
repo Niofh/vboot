@@ -8,9 +8,15 @@ import lombok.Getter;
  */
 @Getter
 public enum ExceptionEnums {
-    USER_NAME_EXIST(10000,"用户名已存在"),
-    USER_MOBILE_EXIST(10001,"手机号已存在"),
-    USER_EMAIL_EXIST(10002,"邮箱已存在"),
+
+    ADD_ERROR(1000, "添加失败"),
+    UPDATE_ERROR(1001, "更新失败"),
+    DEL_ERROR(1002, "删除失败"),
+
+
+    USER_NAME_EXIST(10000, "用户名已存在"),
+    USER_MOBILE_EXIST(10001, "手机号已存在"),
+    USER_EMAIL_EXIST(10002, "邮箱已存在"),
     ;
     private Integer id;
     private String message;

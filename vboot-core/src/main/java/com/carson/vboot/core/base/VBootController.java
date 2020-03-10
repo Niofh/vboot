@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/save")
     @ResponseBody
     @ApiOperation(value = "保存数据")
-    public Result<Object> save(T entity) {
+    public Result<Object> save(@Valid T entity) {
         Integer save = getService().save(entity);
         if (save > 0) {
             return ResultUtil.success("添加成功");
@@ -57,7 +58,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/update")
     @ResponseBody
     @ApiOperation(value = "更新数据")
-    public Result<T> update(T entity) {
+    public Result<T> update(@Valid T entity) {
         Integer integer = getService().update(entity);
         if (integer > 0) {
             return ResultUtil.success("更新成功");

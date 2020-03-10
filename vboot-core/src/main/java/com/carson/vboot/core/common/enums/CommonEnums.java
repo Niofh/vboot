@@ -5,6 +5,7 @@ import lombok.Getter;
 /**
  * created by Nicofh on 2020-03-08
  * 用户权限的枚举
+ * @author oufuhua
  */
 @Getter
 public enum CommonEnums {
