@@ -9,9 +9,12 @@ import com.carson.vboot.core.common.enums.ExceptionEnums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.beans.Transient;
+import java.util.List;
 
 /**
  * created by Nicofh on 2020-03-08
@@ -24,7 +27,7 @@ public class User extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "用户名")
-    @NotNull(message="用户名不能为空")
+    @NotNull(message = "用户名不能为空")
     private String username;
 
     @ApiModelProperty(value = "密码")
@@ -37,6 +40,7 @@ public class User extends VbootBaseEntity {
     private String mobile;
 
     @ApiModelProperty(value = "邮件")
+    @Email(message = "不是正确邮箱格式")
     private String email;
 
     @ApiModelProperty(value = "省市县地址")
@@ -66,5 +70,9 @@ public class User extends VbootBaseEntity {
     @ApiModelProperty(value = "所属部门id")
     private String departmentId;
 
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "关联角色id")
+    private List<Role> roleList;
 
 }

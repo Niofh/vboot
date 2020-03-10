@@ -59,4 +59,13 @@ public class UserController extends VBootController<User> {
         }
     }
 
+    @Override
+    public Result<User> update(@Valid User user) {
+        Integer save = userService.save(user);
+        if (save > 0) {
+            return ResultUtil.success("更新成功");
+        } else {
+            return ResultUtil.error("更新失败");
+        }
+    }
 }

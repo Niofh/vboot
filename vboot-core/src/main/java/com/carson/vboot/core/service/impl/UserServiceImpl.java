@@ -1,22 +1,32 @@
 package com.carson.vboot.core.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
+import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.dao.mapper.UserDao;
+import com.carson.vboot.core.dao.mapper.UserRoleDao;
+import com.carson.vboot.core.entity.Role;
 import com.carson.vboot.core.entity.User;
+import com.carson.vboot.core.entity.UserRole;
 import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * created by Nicofh on 2020-03-08
@@ -28,17 +38,41 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserRoleDao userRoleDao;
+
     @Override
     public VbootBaseDao<User> getBaseDao() {
         return userDao;
     }
 
+    @Override
+    public User getId(String userId) {
+
+        // todo
+        User user = userDao.selectById(userId);
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+
+        ArrayList<String> roleIds = new ArrayList<>();
+        // 获取授权列表
+        List<UserRole> userRoleList = userRoleDao.selectList(queryWrapper);
+
+        for (UserRole userRole : userRoleList) {
+            roleIds.add(userRole.getRoleId());
+        }
+        // user.setRoleList(roleIds);
+
+        return user;
+    }
+
     /**
-     * 添加用户
+     * 添加用户/ 修改用户
      *
      * @param user
      * @return
      */
+    @Transactional
     @Override
     public Integer save(User user) {
         String username = user.getUsername();
@@ -70,9 +104,37 @@ public class UserServiceImpl implements UserService {
                 throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
             }
         }
+        String userId = user.getId();
 
+        if (null != userId) {
+            // ussrId存在代表是修改，先清空对应角色id
+            QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
+            wrapper.eq("user_id", userId);
+            userRoleDao.delete(wrapper);
+        }
 
-        return userDao.insert(user);
+//        // 插入关联角色id
+//        List<Role> roleList = user.getRoleList();
+//        if (CollUtil.isNotEmpty(roleList)) {
+//            for (String roleId : roleList) {
+//                UserRole userRole = new UserRole();
+//                userRole.setRoleId(roleId);
+//                userRole.setUserId(user.getId());
+//                userRoleDao.insert(userRole);
+//            }
+//        }
+//
+//        int count;
+//
+//        if (null != userId) {
+//            count = userDao.updateById(user);
+//        } else {
+//            // 密码加密 BCryptPasswordEncoder spring security 加密
+//            // user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+//            count = userDao.insert(user);
+//        }
+//        return count;
+        return null;
     }
 
     @Override
@@ -123,4 +185,56 @@ public class UserServiceImpl implements UserService {
         IPage<User> userIPage = userDao.selectPage(usersPage, userQueryWrapper);
         return userIPage;
     }
+
+    @Transactional
+    @Override
+    public Integer delete(String id) {
+        try {
+            userDao.deleteById(id);
+            QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
+
+            // 删除该用户的关联角色
+            userRoleQueryWrapper.eq("user_id", id);
+            userRoleDao.delete(userRoleQueryWrapper);
+            return 1;
+        } catch (Exception e) {
+            throw new VbootException(ExceptionEnums.DEL_ERROR);
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public Integer delete(Collection<String> idList) {
+
+        try {
+            if (CollUtil.isNotEmpty(idList)) {
+                for (String userId : idList) {
+                    userDao.deleteById(userId);
+                    // 删除该用户的关联角色
+                    QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
+                    userRoleQueryWrapper.eq("user_id", userId);
+                    userRoleDao.delete(userRoleQueryWrapper);
+                }
+            }
+            return 1;
+        } catch (Exception e) {
+            throw new VbootException(ExceptionEnums.DEL_ERROR);
+        }
+    }
+
+    /**
+     * 根据用户名查找用户
+     *
+     * @param username
+     * @return
+     */
+    @Override
+    public User findByUsername(String username) {
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("username", username);
+        return userDao.selectOne(userQueryWrapper);
+    }
+
+
 }

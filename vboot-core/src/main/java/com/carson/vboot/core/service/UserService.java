@@ -12,4 +12,11 @@ import com.carson.vboot.core.vo.Result;
 public interface UserService extends VbootService<User> {
 
     IPage<User> getUserByPage(PageBo pageBo, User user);
+
+    /**
+     * 根据用户名查找用户
+     * @param username
+     * @return
+     */
+    User findByUsername(String username);
 }
