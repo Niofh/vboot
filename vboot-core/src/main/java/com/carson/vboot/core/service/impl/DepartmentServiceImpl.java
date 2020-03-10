@@ -235,4 +235,14 @@ public class DepartmentServiceImpl implements DepartmentService {
             throw new VbootException(ExceptionEnums.DEL_ERROR);
         }
     }
+
+    /**
+     * 根据Id删除
+     *
+     * @param id
+     */
+    @Override
+    public Integer delete(String id) {
+        return 0;
+    }
 }
