@@ -1,34 +1,21 @@
-package com.carson.vboot.core.entity;
+package com.carson.vboot.core.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.carson.vboot.core.base.VbootBaseEntity;
 import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.enums.CommonEnums;
-import io.swagger.annotations.ApiModel;
+import com.carson.vboot.core.entity.Role;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * created by Nicofh on 2020-03-08
- */
 @Data
-@TableName("t_user")
-@ApiModel(value = "用户")
-public class User extends VbootBaseEntity {
+public class UserVO extends VbootBaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "用户名")
-    @NotNull(message = "用户名不能为空")
     private String username;
-
-    @ApiModelProperty(value = "密码")
-    private String password;
 
     @ApiModelProperty(value = "昵称")
     private String nickName;
@@ -37,7 +24,6 @@ public class User extends VbootBaseEntity {
     private String mobile;
 
     @ApiModelProperty(value = "邮件")
-    @Email(message = "不是正确邮箱格式")
     private String email;
 
     @ApiModelProperty(value = "省市县地址")
@@ -67,9 +53,6 @@ public class User extends VbootBaseEntity {
     @ApiModelProperty(value = "所属部门id")
     private String departmentId;
 
-
-    @TableField(exist = false)
-    @ApiModelProperty(value = "关联角色id")
-    private List<String> roleIds;
-
+    @ApiModelProperty(value = "关联角色")
+    private List<Role> roleList;
 }

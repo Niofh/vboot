@@ -21,7 +21,7 @@ public class VbootBaseEntity implements Serializable {
 
     @ApiModelProperty(value = "唯一标识,默认雪花id")
     @TableId
-    private String id = String.valueOf(SnowFlakeUtil.getFlowIdInstance().nextId());;
+    private String id = String.valueOf(SnowFlakeUtil.getFlowIdInstance().nextId());
 
 
     @ApiModelProperty(value = "创建人")

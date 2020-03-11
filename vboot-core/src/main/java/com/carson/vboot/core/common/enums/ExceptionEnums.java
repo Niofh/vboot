@@ -12,6 +12,7 @@ public enum ExceptionEnums {
     ADD_ERROR(1000, "添加失败"),
     UPDATE_ERROR(1001, "更新失败"),
     DEL_ERROR(1002, "删除失败"),
+    NO_SEARCH(1003, "该数据不存在"),
 
 
     USER_NAME_EXIST(10000, "用户名已存在"),

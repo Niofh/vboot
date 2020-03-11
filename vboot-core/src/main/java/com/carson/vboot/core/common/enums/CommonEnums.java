@@ -17,6 +17,10 @@ public enum CommonEnums {
     USER_TYPE_NORMAL(0, "普通用户"),
     USER_TYPE_ADMIN(1, "管理员"),
 
+
+    ROLE_DEFAULT(1, "是默认角色"),
+    ROLE_NO_DEFAULT(0, "不是默认角色"),
+
     /**
      * 权限数据
      */

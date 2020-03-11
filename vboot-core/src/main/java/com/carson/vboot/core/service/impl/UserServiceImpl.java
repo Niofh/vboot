@@ -3,7 +3,6 @@ package com.carson.vboot.core.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,6 +10,7 @@ import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
+import com.carson.vboot.core.dao.mapper.RoleDao;
 import com.carson.vboot.core.dao.mapper.UserDao;
 import com.carson.vboot.core.dao.mapper.UserRoleDao;
 import com.carson.vboot.core.entity.Role;
@@ -18,7 +18,9 @@ import com.carson.vboot.core.entity.User;
 import com.carson.vboot.core.entity.UserRole;
 import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.UserService;
+import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,33 +43,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRoleDao userRoleDao;
 
+    @Autowired
+    private RoleDao roleDao;
+
     @Override
     public VbootBaseDao<User> getBaseDao() {
         return userDao;
     }
 
-    @Override
-    public User getId(String userId) {
-
-        // todo
-        User user = userDao.selectById(userId);
-        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
-
-        ArrayList<String> roleIds = new ArrayList<>();
-        // 获取授权列表
-        List<UserRole> userRoleList = userRoleDao.selectList(queryWrapper);
-
-        for (UserRole userRole : userRoleList) {
-            roleIds.add(userRole.getRoleId());
-        }
-        // user.setRoleList(roleIds);
-
-        return user;
-    }
 
     /**
-     * 添加用户/ 修改用户
+     * 添加用户
      *
      * @param user
      * @return
@@ -75,66 +61,43 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Integer save(User user) {
-        String username = user.getUsername();
+        try {
+            String username = user.getUsername();
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("username", username);
+            User userObj = userDao.selectOne(queryWrapper);
 
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
-        User userObj = userDao.selectOne(queryWrapper);
-
-        if (userObj != null) {
-            throw new VbootException(ExceptionEnums.USER_NAME_EXIST);
-        }
-
-        // 验证手机号
-        if (StrUtil.isNotBlank(user.getMobile())) {
-            queryWrapper.clear(); // 清空sql判断语句
-            queryWrapper.eq("mobile", user.getMobile());
-            User mUser = userDao.selectOne(queryWrapper);
-            if (null != mUser) {
-                throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
+            if (userObj != null) {
+                throw new VbootException(ExceptionEnums.USER_NAME_EXIST);
             }
+            User u = this.commonUser(user);
+            return userDao.insert(u);
+        } catch (VbootException e) {
+            throw new VbootException(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            throw new VbootException(ExceptionEnums.ADD_ERROR);
         }
 
-        // 验证邮箱
-        if (StrUtil.isNotBlank(user.getEmail())) {
-            queryWrapper.clear(); // 清空sql判断语句
-            queryWrapper.eq("email", user.getEmail());
-            User mUser = userDao.selectOne(queryWrapper);
-            if (null != mUser) {
-                throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
-            }
-        }
-        String userId = user.getId();
+    }
 
-        if (null != userId) {
-            // ussrId存在代表是修改，先清空对应角色id
-            QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
-            wrapper.eq("user_id", userId);
-            userRoleDao.delete(wrapper);
+    /**
+     * / 修改用户
+     *
+     * @param user
+     * @return
+     */
+    @Override
+    public Integer update(User user) {
+        try {
+            user.setUsername(null);
+            User u = this.commonUser(user);
+            return userDao.updateById(u);
+        } catch (VbootException e) {
+            throw new VbootException(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            throw new VbootException(ExceptionEnums.UPDATE_ERROR);
         }
 
-//        // 插入关联角色id
-//        List<Role> roleList = user.getRoleList();
-//        if (CollUtil.isNotEmpty(roleList)) {
-//            for (String roleId : roleList) {
-//                UserRole userRole = new UserRole();
-//                userRole.setRoleId(roleId);
-//                userRole.setUserId(user.getId());
-//                userRoleDao.insert(userRole);
-//            }
-//        }
-//
-//        int count;
-//
-//        if (null != userId) {
-//            count = userDao.updateById(user);
-//        } else {
-//            // 密码加密 BCryptPasswordEncoder spring security 加密
-//            // user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-//            count = userDao.insert(user);
-//        }
-//        return count;
-        return null;
     }
 
     @Override
@@ -186,6 +149,7 @@ public class UserServiceImpl implements UserService {
         return userIPage;
     }
 
+
     @Transactional
     @Override
     public Integer delete(String id) {
@@ -223,6 +187,41 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    /**
+     * 根据id查询用户信息
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public UserVO getUserById(String userId) {
+        User user = userDao.selectById(userId);
+
+        if (null == user) {
+            throw new VbootException(ExceptionEnums.NO_SEARCH);
+        }
+
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+
+        ArrayList<Role> roleArrayList = new ArrayList<>();
+        // 获取用户角色列表
+        List<UserRole> userRoleList = userRoleDao.selectList(queryWrapper);
+
+        for (UserRole userRole : userRoleList) {
+            String roleId = userRole.getRoleId();
+            // 获取角色
+            Role role = roleDao.selectById(roleId);
+            // 放入集合里
+            roleArrayList.add(role);
+        }
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        userVO.setRoleList(roleArrayList);
+        return userVO;
+    }
+
     /**
      * 根据用户名查找用户
      *
@@ -234,6 +233,78 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.eq("username", username);
         return userDao.selectOne(userQueryWrapper);
+    }
+
+    /**
+     * 新增和修改公共方法
+     *
+     * @param user
+     * @return
+     */
+    @Transactional
+    public User commonUser(User user) {
+        // 获取用户id
+        String userId = user.getId();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+
+        // 验证手机号
+        if (StrUtil.isNotBlank(user.getMobile())) {
+            queryWrapper.clear(); // 清空sql判断语句
+            queryWrapper.eq("mobile", user.getMobile());
+            User mUser = userDao.selectOne(queryWrapper);
+            if (null != mUser) {
+                throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
+            }
+        }
+
+        // 验证邮箱
+        if (StrUtil.isNotBlank(user.getEmail())) {
+            queryWrapper.clear(); // 清空sql判断语句
+            queryWrapper.eq("email", user.getEmail());
+            User mUser = userDao.selectOne(queryWrapper);
+            if (null != mUser) {
+                throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
+            }
+        }
+
+        if (null != userId) {
+            // ussrId存在代表是修改，先清空对应角色id
+            QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
+            wrapper.eq("user_id", userId);
+            userRoleDao.delete(wrapper);
+        }
+
+        // 创建一个空数组
+        List<String> roleList = new ArrayList<>();
+
+        // 获取默认角色
+        QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
+        roleQueryWrapper.eq("default_role", CommonEnums.ROLE_DEFAULT.getId());
+        List<Role> defaultRoleList = roleDao.selectList(roleQueryWrapper);
+
+        // 获取手动添加角色
+        List<String> roleIds = user.getRoleIds();
+
+        // 如果添加或者注册时候没有添加角色，那么添加默认角色
+        if (CollUtil.isEmpty(roleIds)) {
+            for (Role role : defaultRoleList) {
+                roleList.add(role.getId());
+            }
+        } else {
+            // 否则添加自己选的角色
+            roleList = roleIds;
+        }
+
+        // 如果角色为空，就不添加在用户角色关联表
+        if (CollUtil.isNotEmpty(roleList)) {
+            for (String roleId : roleList) {
+                UserRole userRole = new UserRole();
+                userRole.setRoleId(roleId);
+                userRole.setUserId(user.getId());
+                userRoleDao.insert(userRole);
+            }
+        }
+        return user;
     }
 
 

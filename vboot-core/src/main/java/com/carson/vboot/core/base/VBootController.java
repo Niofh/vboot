@@ -26,19 +26,19 @@ public abstract class VBootController<T> {
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "通过id获取")
-    public Result<T> get(@PathVariable String id) {
+    public Result<Object> get(@PathVariable String id) {
         T entity = getService().getId(id);
-        return new ResultUtil<T>().setData(entity);
+        return new ResultUtil<Object>().setData(entity);
     }
 
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "获取全部数据")
-    public Result<List<T>> getAll() {
+    public Result<Object> getAll() {
 
         List<T> list = getService().getAll();
-        return new ResultUtil<List<T>>().setData(list);
+        return new ResultUtil<Object>().setData(list);
     }
 
 
@@ -58,7 +58,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/update")
     @ResponseBody
     @ApiOperation(value = "更新数据")
-    public Result<T> update(@Valid T entity) {
+    public Result<Object> update(@Valid T entity) {
         Integer integer = getService().update(entity);
         if (integer > 0) {
             return ResultUtil.success("更新成功");
@@ -71,7 +71,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/del")
     @ResponseBody
     @ApiOperation(value = "根据id删除数据")
-    public Result<T>  del(String id) {
+    public Result<Object>  del(String id) {
         Integer count = getService().delete(id);
         if (count > 0) {
             return ResultUtil.success("删除成功");
