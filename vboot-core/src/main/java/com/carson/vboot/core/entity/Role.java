@@ -1,12 +1,15 @@
 package com.carson.vboot.core.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.carson.vboot.core.base.VbootBaseEntity;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 
 /**
@@ -30,6 +33,13 @@ public class Role extends VbootBaseEntity {
 
     @ApiModelProperty(value = "备注")
     private String description;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "权限id")
+    private List<Role> permissionids;
+
+
+
 
 
 }

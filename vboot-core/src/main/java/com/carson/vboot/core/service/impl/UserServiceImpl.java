@@ -22,6 +22,7 @@ import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -194,8 +195,11 @@ public class UserServiceImpl implements UserService {
      * @param userId
      * @return
      */
+    @Cacheable(cacheNames = "user", key = "#userId")
     @Override
     public UserVO getUserById(String userId) {
+        // todo
+        log.info("进来了--------------------------");
         User user = userDao.selectById(userId);
 
         if (null == user) {
