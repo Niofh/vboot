@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.carson.vboot.core.base.VbootBaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @ApiModel("角色部门")
 @TableName("t_role_department")
+@Data
 public class RoleDepartment extends VbootBaseEntity {
 
     private static final long serialVersionUID = 1L;

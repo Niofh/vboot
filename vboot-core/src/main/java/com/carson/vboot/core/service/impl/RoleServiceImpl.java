@@ -15,11 +15,17 @@ import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @Service
 @Slf4j
+@CacheConfig(cacheNames = "vboot::role")
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
@@ -35,6 +41,52 @@ public class RoleServiceImpl implements RoleService {
     public VbootBaseDao<Role> getBaseDao() {
         return roleDao;
     }
+
+
+    /**
+     * 批量id删除
+     *
+     * @param idList
+     */
+    @Transactional
+    @Override
+    public Integer delete(Collection<String> idList) {
+        int i = roleDao.deleteBatchIds(idList);
+
+        for (String roleId : idList) {
+            // 删除角色部门表
+            QueryWrapper<RoleDepartment> roleDepartmentQueryWrapper = new QueryWrapper<>();
+            roleDepartmentQueryWrapper.eq("role_id", roleId);
+            roleDepartmentDao.delete(roleDepartmentQueryWrapper);
+
+            // 删除角色权限表
+            QueryWrapper<RolePermission> rolePermissionQueryWrapper = new QueryWrapper<>();
+            rolePermissionQueryWrapper.eq("role_id", roleId);
+            rolePermissionDao.delete(rolePermissionQueryWrapper);
+        }
+        return i;
+    }
+
+    /**
+     * 根据角色id获取菜单权限id
+     *
+     * @param roleId
+     * @return
+     */
+    @Override
+    public List<String> getPermissionByRoleId(String roleId) {
+        QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+
+        List<RolePermission> rolePermissions = rolePermissionDao.selectList(queryWrapper);
+        List<String> perIds = new ArrayList<>();
+        for (RolePermission rolePermission : rolePermissions) {
+            perIds.add(rolePermission.getPermissionId());
+        }
+
+        return perIds;
+    }
+
 
     /**
      * 通过角色id赋值权限
@@ -64,15 +116,37 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+
+    /**
+     * 根据角色id获取部门id
+     */
+    @Override
+    public List<String> getDepartmentByRoleId(String roleId) {
+        Role role = roleDao.selectById(roleId);
+        if (role == null) {
+            throw new VbootException(ExceptionEnums.ROLE_NO_EXIST);
+        }
+        QueryWrapper<RoleDepartment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+
+        List<RoleDepartment> roleDepartments = roleDepartmentDao.selectList(queryWrapper);
+        List<String> departmentIds = new ArrayList<>();
+        for (RoleDepartment roleDepartment : roleDepartments) {
+            departmentIds.add(roleDepartment.getDepartmentId());
+        }
+
+        return departmentIds;
+    }
+
     /**
      * 通过角色id赋值部门数据权限
      *
      * @param roleId
-     * @param dataType 权限类型
+     * @param dataType 权限类型 CommonEnums.DATA_TYPE_CUSTOM
      * @param depIds
      */
     @Override
-    public void departmentByRoleId(String roleId, Integer dataType, String[] depIds) {
+    public void setDepartmentByRoleId(String roleId, Integer dataType, String[] depIds) {
 
         Role role = roleDao.selectById(roleId);
         if (role == null) {
@@ -91,7 +165,12 @@ public class RoleServiceImpl implements RoleService {
 
         // 如果是自定义数据,插入角色部门关联表
         if (dataType.equals(CommonEnums.DATA_TYPE_CUSTOM.getId()) && ArrayUtil.isNotEmpty(depIds)) {
-
+            for (String depId : depIds) {
+                queryWrapper.clear();
+                RoleDepartment roleDepartment = new RoleDepartment();
+                roleDepartment.setDepartmentId(depId);
+                roleDepartment.setRoleId(roleId);
+            }
         }
     }
 }

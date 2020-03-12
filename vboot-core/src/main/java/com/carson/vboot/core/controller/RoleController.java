@@ -9,9 +9,12 @@ import com.carson.vboot.core.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 @Api(description = "角色接口")
 @RestController
@@ -28,10 +31,32 @@ public class RoleController extends VBootController<Role> {
         return roleService;
     }
 
+
+
+    @PostMapping("/setDepartmentByRoleId")
+    @ApiOperation(value = "通过roleId设置部门")
+    public Result<Object> setDepartmentByRoleId(String roleId, Integer dataType, String[] depIds) {
+        roleService.setDepartmentByRoleId(roleId, dataType, depIds);
+        return ResultUtil.data(null);
+    }
+
+
     @PostMapping("/setPermission")
     @ApiOperation(value = "通过roleId设置权限")
     public Result<Object> setPermission(String roleId, String[] permissionIds) {
         roleService.setPermissionByRoleId(roleId, permissionIds);
         return ResultUtil.data(null);
+    }
+
+    @GetMapping("/getPermission")
+    @ApiOperation(value = "通过roleId获取权限")
+    public Result<Object> setPermission(String roleId) {
+        return ResultUtil.data(roleService.getPermissionByRoleId(roleId));
+    }
+
+    @GetMapping("/getDepartmentByRoleId")
+    @ApiOperation(value = "通过roleId获取部门")
+    public Result<Object> getDepartmentByRoleId(String roleId) {
+        return ResultUtil.data(roleService.getDepartmentByRoleId(roleId));
     }
 }

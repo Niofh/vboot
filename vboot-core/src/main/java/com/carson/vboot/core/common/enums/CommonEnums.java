@@ -28,6 +28,7 @@ public enum CommonEnums {
     DATA_TYPE_CUSTOM(1, "自定义数据权限"),
     DATA_TYPE_UNDER(2, "本部门及以下"),
     DATA_TYPE_SAME(3, "本部门"),
+    DATA_TYPE_ME(4, "仅本人"),
 
     HEADER_TYPE_MAIN(0, "部门负责人类型 主负责人"),
     HEADER_TYPE_VICE(1, "部门负责人类型 主负责人"),

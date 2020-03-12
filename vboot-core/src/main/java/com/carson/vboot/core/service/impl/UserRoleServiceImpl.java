@@ -27,6 +27,8 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Autowired
     private UserDao userDao;
 
+
+
     /**
      * 根据角色查询数据
      *
@@ -80,8 +82,6 @@ public class UserRoleServiceImpl implements UserRoleService {
     public VbootBaseDao<UserRole> getBaseDao() {
         return userRoleDao;
     }
-
-
 
 
 }

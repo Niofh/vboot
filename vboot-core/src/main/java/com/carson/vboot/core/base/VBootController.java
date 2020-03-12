@@ -68,7 +68,7 @@ public abstract class VBootController<T> {
     }
 
 
-    @PostMapping(value = "/del")
+    /*@PostMapping(value = "/del")
     @ResponseBody
     @ApiOperation(value = "根据id删除数据")
     public Result<Object> del(String id) {
@@ -78,7 +78,7 @@ public abstract class VBootController<T> {
         } else {
             return ResultUtil.error("删除失败");
         }
-    }
+    }*/
 
     @PostMapping(value = "/delByIds")
     @ResponseBody

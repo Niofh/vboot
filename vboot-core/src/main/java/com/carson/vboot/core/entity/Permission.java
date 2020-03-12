@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
@@ -24,7 +23,7 @@ public class Permission extends VbootBaseEntity {
     private String name;
 
     @ApiModelProperty(value = "是否显示,1时显示，0不显示")
-    private Integer show;
+    private Integer hidden = 1;
 
     @ApiModelProperty(value = "层级")
     private Integer level;
@@ -36,7 +35,6 @@ public class Permission extends VbootBaseEntity {
     private String title;
 
     @ApiModelProperty(value = "页面路径/资源链接path")
-    @NotNull(message = "请求路径不能为空")
     private String path;
 
     @ApiModelProperty(value = "前端组件")
@@ -48,14 +46,14 @@ public class Permission extends VbootBaseEntity {
     @ApiModelProperty(value = "按钮权限类型")
     private String buttonType;
 
-    @ApiModelProperty(value = "父id")
+    @ApiModelProperty(value = "父id 0是父组件")
     private String parentId;
 
     @ApiModelProperty(value = "说明备注")
     private String description;
 
     @ApiModelProperty(value = "排序值")
-    private BigDecimal sort;
+    private BigDecimal sort ;
 
     @ApiModelProperty(value = "是否启用 0启用 -1禁用")
     private Integer status = CommonEnums.STATUS_NORMAL.getId();
