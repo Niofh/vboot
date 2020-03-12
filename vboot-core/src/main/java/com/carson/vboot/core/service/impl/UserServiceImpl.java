@@ -6,7 +6,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
@@ -18,11 +17,12 @@ import com.carson.vboot.core.entity.User;
 import com.carson.vboot.core.entity.UserRole;
 import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.UserService;
-import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,59 +47,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleDao roleDao;
 
-    @Override
-    public VbootBaseDao<User> getBaseDao() {
-        return userDao;
-    }
-
-
-    /**
-     * 添加用户
-     *
-     * @param user
-     * @return
-     */
-    @Transactional
-    @Override
-    public Integer save(User user) {
-        try {
-            String username = user.getUsername();
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("username", username);
-            User userObj = userDao.selectOne(queryWrapper);
-
-            if (userObj != null) {
-                throw new VbootException(ExceptionEnums.USER_NAME_EXIST);
-            }
-            User u = this.commonUser(user);
-            return userDao.insert(u);
-        } catch (VbootException e) {
-            throw new VbootException(e.getCode(), e.getMessage());
-        } catch (Exception e) {
-            throw new VbootException(ExceptionEnums.ADD_ERROR);
-        }
-
-    }
-
-    /**
-     * / 修改用户
-     *
-     * @param user
-     * @return
-     */
-    @Override
-    public Integer update(User user) {
-        try {
-            user.setUsername(null);
-            User u = this.commonUser(user);
-            return userDao.updateById(u);
-        } catch (VbootException e) {
-            throw new VbootException(e.getCode(), e.getMessage());
-        } catch (Exception e) {
-            throw new VbootException(ExceptionEnums.UPDATE_ERROR);
-        }
-
-    }
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public IPage<User> getUserByPage(PageBo pageBo, User user) {
@@ -151,23 +100,109 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Override
+    public List<User> getAll() {
+        return userDao.selectList(null);
+    }
+
+
+    /**
+     * 根据id查询用户信息
+     *
+     * @param userId
+     * @return
+     */
+    @Cacheable(cacheNames = "user", key = "#userId")
+    @Override
+    public User getUserById(String userId) {
+        // todo
+        log.info("进来了--------------------------");
+        User user = userDao.selectById(userId);
+
+        if (null == user) {
+            throw new VbootException(ExceptionEnums.NO_SEARCH);
+        }
+
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+
+        ArrayList<String> roleIds = new ArrayList<>();
+        // 获取用户角色列表
+        List<UserRole> userRoleList = userRoleDao.selectList(queryWrapper);
+
+        for (UserRole userRole : userRoleList) {
+            String roleId = userRole.getRoleId();
+            roleIds.add(roleId);
+        }
+        user.setRoleIds(roleIds);
+        return user;
+    }
+
+    /**
+     * 添加用户,每添加一个成功，保存redis里
+     *
+     * @param user
+     * @return
+     */
+    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null")
     @Transactional
     @Override
-    public Integer delete(String id) {
+    public User insertUser(User user) {
         try {
-            userDao.deleteById(id);
-            QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
+            String username = user.getUsername();
 
-            // 删除该用户的关联角色
-            userRoleQueryWrapper.eq("user_id", id);
-            userRoleDao.delete(userRoleQueryWrapper);
-            return 1;
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("username", username);
+            User userObj = userDao.selectOne(queryWrapper);
+
+            if (userObj != null) {
+                throw new VbootException(ExceptionEnums.USER_NAME_EXIST);
+            }
+            User u = this.commonUser(user);
+            int insert = userDao.insert(u);
+            if (insert > 0) {
+                return u;
+            }
+            return null;
+        } catch (VbootException e) {
+            throw new VbootException(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            throw new VbootException(ExceptionEnums.DEL_ERROR);
+            throw new VbootException(ExceptionEnums.ADD_ERROR);
         }
 
     }
 
+    /**
+     * / 修改用户
+     *
+     * @param user
+     * @return
+     */
+    @CachePut(cacheNames = "user", key = "#user.id")
+    @Transactional
+    @Override
+    public User updateUser(User user) {
+        try {
+            user.setUsername(null);
+            User u = this.commonUser(user);
+            int i = userDao.updateById(u);
+            if (i > 0) {
+                return u;
+            }
+            return null;
+        } catch (VbootException e) {
+            throw new VbootException(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            throw new VbootException(ExceptionEnums.UPDATE_ERROR);
+        }
+    }
+
+
+    @Caching(
+            evict = {
+                    // @CacheEvict(cacheNames = "user", key = "'getAll'") // 删除用户所有数据
+            }
+    )
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
@@ -180,51 +215,16 @@ public class UserServiceImpl implements UserService {
                     QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
                     userRoleQueryWrapper.eq("user_id", userId);
                     userRoleDao.delete(userRoleQueryWrapper);
+                    // 删除对应用户id缓存
+                    stringRedisTemplate.delete("user::" + userId);
                 }
             }
-            return 1;
+            return idList.size();
         } catch (Exception e) {
             throw new VbootException(ExceptionEnums.DEL_ERROR);
         }
     }
 
-
-    /**
-     * 根据id查询用户信息
-     *
-     * @param userId
-     * @return
-     */
-    @Cacheable(cacheNames = "user", key = "#userId")
-    @Override
-    public UserVO getUserById(String userId) {
-        // todo
-        log.info("进来了--------------------------");
-        User user = userDao.selectById(userId);
-
-        if (null == user) {
-            throw new VbootException(ExceptionEnums.NO_SEARCH);
-        }
-
-        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
-
-        ArrayList<Role> roleArrayList = new ArrayList<>();
-        // 获取用户角色列表
-        List<UserRole> userRoleList = userRoleDao.selectList(queryWrapper);
-
-        for (UserRole userRole : userRoleList) {
-            String roleId = userRole.getRoleId();
-            // 获取角色
-            Role role = roleDao.selectById(roleId);
-            // 放入集合里
-            roleArrayList.add(role);
-        }
-        UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
-        userVO.setRoleList(roleArrayList);
-        return userVO;
-    }
 
     /**
      * 根据用户名查找用户
@@ -308,6 +308,7 @@ public class UserServiceImpl implements UserService {
                 userRoleDao.insert(userRole);
             }
         }
+        user.setRoleIds(roleList);
         return user;
     }
 

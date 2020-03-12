@@ -1,8 +1,6 @@
 package com.carson.vboot.core.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.carson.vboot.core.base.VBootController;
-import com.carson.vboot.core.base.VbootService;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.utils.ResultUtil;
 import com.carson.vboot.core.entity.User;
@@ -14,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 /**
  * created by Nicofh on 2020-03-08
@@ -22,15 +21,10 @@ import javax.validation.Valid;
 @Api(description = "用户接口")
 @RestController
 @RequestMapping("/user")
-public class UserController extends VBootController<User> {
+public class UserController {
+
     @Autowired
     private UserService userService;
-
-
-    @Override
-    public VbootService<User> getService() {
-        return userService;
-    }
 
 
     @RequestMapping(value = "/getUserByPage", method = RequestMethod.GET)
@@ -41,11 +35,41 @@ public class UserController extends VBootController<User> {
     }
 
 
-    @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @ApiOperation(value = "获取所有用户")
+    public Result<Object> getAll() {
+        return ResultUtil.data(userService.getAll());
+    }
+
+    @RequestMapping(value = "/getUser/{id}", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "通过userId获取用户")
-    @Override
-    public Result<Object> get(String userId) {
-        return ResultUtil.data(userService.getUserById(userId));
+    public Result<Object> getUserById(@PathVariable String id) {
+        return ResultUtil.data(userService.getUserById(id));
     }
+
+
+    @PostMapping("/addUser")
+    @ResponseBody
+    @ApiOperation(value = "添加用户")
+    public Result<Object> insertUser(@Valid User user) {
+        return ResultUtil.data(userService.insertUser(user));
+    }
+
+    @PostMapping("/deleteUser")
+    @ResponseBody
+    @ApiOperation(value = "批量删除用户")
+    public Result<Object> delete(String[] ids) {
+        return ResultUtil.data(userService.delete(Arrays.asList(ids)));
+    }
+
+
+    @PostMapping("/updateUser")
+    @ResponseBody
+    @ApiOperation(value = "更新用户")
+    public Result<Object> save(@Valid User user) {
+        return ResultUtil.data(userService.updateUser(user));
+    }
+
+
 }

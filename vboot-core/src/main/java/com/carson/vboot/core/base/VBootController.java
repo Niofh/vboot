@@ -46,8 +46,8 @@ public abstract class VBootController<T> {
     @ResponseBody
     @ApiOperation(value = "保存数据")
     public Result<Object> save(@Valid T entity) {
-        Integer save = getService().save(entity);
-        if (save > 0) {
+        T e = getService().save(entity);
+        if (e != null) {
             return ResultUtil.success("添加成功");
         } else {
             return ResultUtil.error("添加失败");
@@ -59,8 +59,8 @@ public abstract class VBootController<T> {
     @ResponseBody
     @ApiOperation(value = "更新数据")
     public Result<Object> update(@Valid T entity) {
-        Integer integer = getService().update(entity);
-        if (integer > 0) {
+        T e = getService().update(entity);
+        if (e != null) {
             return ResultUtil.success("更新成功");
         } else {
             return ResultUtil.error("更新失败");
@@ -71,7 +71,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/del")
     @ResponseBody
     @ApiOperation(value = "根据id删除数据")
-    public Result<Object>  del(String id) {
+    public Result<Object> del(String id) {
         Integer count = getService().delete(id);
         if (count > 0) {
             return ResultUtil.success("删除成功");
@@ -83,7 +83,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/delByIds")
     @ResponseBody
     @ApiOperation(value = "批量通过id删除")
-    public Result<Object> delAllByIds(String[] ids){
+    public Result<Object> delAllByIds(String[] ids) {
         Integer count = getService().delete(Arrays.asList(ids));
         if (count > 0) {
             return ResultUtil.success("删除成功");

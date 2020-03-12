@@ -45,8 +45,13 @@ public interface VbootService<T> {
      * @param entity
      * @return
      */
-    public default Integer save(T entity) {
-        return getBaseDao().insert(entity);
+    public default T save(T entity) {
+        int insert = getBaseDao().insert(entity);
+        if (insert > 0) {
+            return entity;
+        } else {
+            return null;
+        }
     }
 
 
@@ -56,8 +61,13 @@ public interface VbootService<T> {
      * @param entity
      * @return
      */
-    public default Integer update(T entity) {
-        return getBaseDao().updateById(entity);
+    public default T update(T entity) {
+        int i = getBaseDao().updateById(entity);
+        if (i > 0) {
+            return entity;
+        } else {
+            return null;
+        }
     }
 
 
