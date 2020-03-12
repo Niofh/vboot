@@ -80,6 +80,11 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
 
+# redis配置
+redis:
+  unit: day
+  time: 15
+
 # Swagger界面内容配置
 swagger:
   title: VBoot API接口文档
