@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -30,10 +30,11 @@ import java.time.Duration;
 @EnableCaching
 @Configuration
 @Slf4j
-@ConfigurationProperties(prefix = "redis")
 public class RedisConfig extends CachingConfigurerSupport {
 
+    @Value("${redis.unit}")
     private String unit;
+    @Value("${redis.time}")
     private Integer time;
 
     /**

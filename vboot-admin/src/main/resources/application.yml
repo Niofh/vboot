@@ -7,6 +7,7 @@ server:
     max-threads: 1000
     min-spare-threads: 30
 
+
 spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
@@ -65,9 +66,15 @@ spring:
   boot:
     admin:
       # 修改上下文路径
-      context-path: /vboot/admin
+      context-path: /admin
       client:
         url: http://127.0.0.1:${server.port}/vboot/admin
+        # 配置实例地址
+        instance:
+          health-url:  http://127.0.0.1:${server.port}/vboot/actuator/health
+          service-url: http://127.0.0.1:${server.port}/vboot
+          management-url: http://127.0.0.1:${server.port}/vboot/actuator
+
 
 
 # MBP配置文件
