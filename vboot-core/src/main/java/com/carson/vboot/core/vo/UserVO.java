@@ -3,6 +3,7 @@ package com.carson.vboot.core.vo;
 import com.carson.vboot.core.base.VbootBaseEntity;
 import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.enums.CommonEnums;
+import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.entity.Role;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +17,9 @@ public class UserVO extends VbootBaseEntity {
 
     @ApiModelProperty(value = "用户名")
     private String username;
+
+    @ApiModelProperty(value = "密码")
+    private String password;
 
     @ApiModelProperty(value = "昵称")
     private String nickName;
@@ -53,6 +57,12 @@ public class UserVO extends VbootBaseEntity {
     @ApiModelProperty(value = "所属部门id")
     private String departmentId;
 
+    @ApiModelProperty(value = "所属部门名称")
+    private String departmentTitle;
+
     @ApiModelProperty(value = "关联角色")
-    private List<Role> roleList;
+    private List<Role> roles;
+
+    @ApiModelProperty(value = "关联权限")
+    private List<Permission> permissions;
 }

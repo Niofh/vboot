@@ -53,7 +53,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
 
-
     /**
      * 获取全部数据
      *
@@ -236,5 +235,22 @@ public class DepartmentServiceImpl implements DepartmentService {
         } catch (Exception e) {
             throw new VbootException(ExceptionEnums.DEL_ERROR);
         }
+    }
+
+    @Override
+    public List<String> findChildByParentId(String depId) {
+
+        ArrayList<String> depIds = new ArrayList<>();
+        QueryWrapper<Department> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("parent_id", depId);
+
+        List<Department> departments = departmentDao.selectList(queryWrapper);
+        if (CollUtil.isNotEmpty(departments)) {
+            for (Department department : departments) {
+
+                depIds.add(department.getId());
+            }
+        }
+        return depIds;
     }
 }

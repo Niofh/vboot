@@ -67,6 +67,10 @@ public class User extends VbootBaseEntity {
     @ApiModelProperty(value = "所属部门id")
     private String departmentId;
 
+//   不在列表显示，或者在查看/修改时候渲染，减少数据库压力
+//    @TableField(exist = false)
+//    @ApiModelProperty(value = "所属部门名称")
+//    private String departmentTitle;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "关联角色id")

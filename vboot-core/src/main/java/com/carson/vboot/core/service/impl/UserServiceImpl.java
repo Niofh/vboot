@@ -9,15 +9,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
-import com.carson.vboot.core.dao.mapper.RoleDao;
-import com.carson.vboot.core.dao.mapper.UserDao;
-import com.carson.vboot.core.dao.mapper.UserRoleDao;
-import com.carson.vboot.core.entity.Role;
-import com.carson.vboot.core.entity.User;
-import com.carson.vboot.core.entity.UserRole;
+import com.carson.vboot.core.dao.mapper.*;
+import com.carson.vboot.core.entity.*;
 import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.UserService;
+import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -46,6 +44,11 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleDao roleDao;
+    @Autowired
+    private PermissionDao permissionDao;
+
+    @Autowired
+    private DepartmentDao departmentDao;
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
@@ -233,10 +236,37 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public User findByUsername(String username) {
+    public UserVO findByUsername(String username) {
+
+        // 查询用户
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.eq("username", username);
-        return userDao.selectOne(userQueryWrapper);
+        User user = userDao.selectOne(userQueryWrapper);
+
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+
+        // 查询部门
+        if (null != userVO.getDepartmentId()) {
+            Department department = departmentDao.selectById(userVO.getDepartmentId());
+            userVO.setDepartmentTitle(department.getTitle());
+        }
+
+        // 查询角色
+        if (CollUtil.isNotEmpty(user.getRoleIds())) {
+            ArrayList<Role> roles = new ArrayList<>();
+            for (String roleId : user.getRoleIds()) {
+                Role role = roleDao.selectById(roleId);
+                roles.add(role);
+            }
+            userVO.setRoles(roles);
+        }
+
+        // 查询权限
+        List<Permission> permissions = permissionDao.findByUserId(user.getId());
+        userVO.setPermissions(permissions);
+
+        return userVO;
     }
 
     /**

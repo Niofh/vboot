@@ -3,6 +3,7 @@ package com.carson.vboot.core.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.entity.User;
+import com.carson.vboot.core.vo.UserVO;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,7 +47,7 @@ public interface UserService {
      * @param username
      * @return
      */
-    User findByUsername(String username);
+    UserVO findByUsername(String username);
 
 
 }
