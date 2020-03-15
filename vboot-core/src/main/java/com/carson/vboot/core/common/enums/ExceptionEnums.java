@@ -20,6 +20,7 @@ public enum ExceptionEnums {
     USER_MOBILE_EXIST(10001, "手机号已存在"),
     USER_EMAIL_EXIST(10002, "邮箱已存在"),
     ROLE_NO_EXIST(10003, "角色不存在"),
+    USER_NO_EXIST(10004, "用户名不存在"),
     ;
     private Integer id;
     private String message;

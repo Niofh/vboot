@@ -3,6 +3,7 @@ package com.carson.vboot.core.config.security.jwts;
 import cn.hutool.core.util.StrUtil;
 import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.utils.ResponseUtil;
+import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.properties.TokenProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +62,9 @@ public class MyFailHandler extends SimpleUrlAuthenticationFailureHandler {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "用户名或密码错误"));
             }
         } else if (e instanceof DisabledException) {
-            ResponseUtil.out(response, ResponseUtil.resultMap(false,500,"账户被禁用，请联系管理员"));
-        }else {
-            ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "账户异常，请联系管理员"));
+            ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "账户被禁用，请联系管理员"));
+        } else {
+            ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, e.getMessage()));
         }
     }
 

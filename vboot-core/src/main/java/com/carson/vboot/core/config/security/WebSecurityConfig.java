@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -27,15 +28,16 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
  *
  * @author Carson
  * 教程 https://www.cnblogs.com/wuyoucao/p/10863419.html
+ * 开启注解模式 https://www.jianshu.com/p/41b7c3fb00e0
  */
 @Slf4j
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true) // 开启注解模式 https://www.jianshu.com/p/41b7c3fb00e0
+@EnableGlobalMethodSecurity(prePostEnabled=true)
+@EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
 
     @Autowired
     private IgnoredUrlsProperties ignoredUrlsProperties;
@@ -69,11 +71,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
+
+
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception{
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
                 .authorizeRequests();
+
 
         // 除配置文件忽略路径其它所有请求都需经过认证和授权
         for (String url : ignoredUrlsProperties.getUrls()) {
@@ -84,9 +89,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 表单登录方式
                 .formLogin()
                 // 登录页面，报错401，前端监听返回登录页面
-                .loginPage("/login/page")
+                .loginPage("/security/login/page")
                 // 登录地址
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/security/vboot/login")
                 .permitAll() // 权限放开
                 // 登录成功处理类
                 .successHandler(mySuccessHandler)
@@ -102,7 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 任何请求
                 .anyRequest()
-                // 需要身份认证
+                // 登录后可以访问
                 .authenticated()
                 .and()
                 // 允许跨域
@@ -116,9 +121,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .and()
                 // 添加自定义权限过滤器,用來配置按钮通过postman直接访问，如果没有登录直接拦截
-                .addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class)
+                 .addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class)
                 // 添加JWT认证过滤器
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), tokenProperties, redisTemplate, securityUtil));
 
+    }
+
+
+    public static void main(String[] args) {
+        String encryptPass = new BCryptPasswordEncoder().encode("123456");
+        System.out.println(encryptPass);
     }
 }

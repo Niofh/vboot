@@ -2,6 +2,7 @@ package com.carson.vboot.core.dao.mapper;
 
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.entity.Permission;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface PermissionDao extends VbootBaseDao<Permission> {
      * @param userId
      * @return
      */
-    List<Permission> findByUserId(String userId);
+    List<Permission> findByUserId(@Param("userId") String userId);
 }

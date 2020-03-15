@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @EnableTransactionManagement
 @Configuration
-@MapperScan({"com.carson.vboot.*.mapper", "com.carson.vboot.*.*.mapper"})
+@MapperScan({"com.carson.vboot.*.mapper", "com.carson.vboot.**.mapper"})
 public class MBPConfig {
 
     /**

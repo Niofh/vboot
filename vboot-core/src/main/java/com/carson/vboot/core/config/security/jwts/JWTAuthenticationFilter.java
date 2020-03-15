@@ -58,7 +58,6 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         // 获取header的token
         String header = request.getHeader(CommonConstant.HEADER);
         if (StrUtil.isBlank(header)) {

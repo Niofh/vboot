@@ -69,6 +69,8 @@ public class SecurityUserDetails extends UserVO implements UserDetails {
                 }
             });
         }
+
+        log.warn("authorityList {}", authorityList);
         return authorityList;
     }
 

@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
      * @param userId
      * @return
      */
-    @Cacheable(cacheNames = "user", key = "#userId")
+//    @Cacheable(cacheNames = "user", key = "#userId")
     @Override
     public User getUserById(String userId) {
         // todo
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return
      */
-    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null")
+//    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null")
     @Transactional
     @Override
     public User insertUser(User user) {
@@ -181,7 +181,7 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return
      */
-    @CachePut(cacheNames = "user", key = "#user.id")
+//    @CachePut(cacheNames = "user", key = "#user.id")
     @Transactional
     @Override
     public User updateUser(User user) {
@@ -242,6 +242,14 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.eq("username", username);
         User user = userDao.selectOne(userQueryWrapper);
+        if (user == null) {
+            throw new  VbootException(ExceptionEnums.USER_NO_EXIST);
+        }
+
+        // 查询用户角色表
+        QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
+        userRoleQueryWrapper.eq("user_id", user.getId());
+        List<UserRole> userRoles = userRoleDao.selectList(userRoleQueryWrapper);
 
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
@@ -252,11 +260,11 @@ public class UserServiceImpl implements UserService {
             userVO.setDepartmentTitle(department.getTitle());
         }
 
-        // 查询角色
-        if (CollUtil.isNotEmpty(user.getRoleIds())) {
+        // 添加角色
+        if (CollUtil.isNotEmpty(userRoles)) {
             ArrayList<Role> roles = new ArrayList<>();
-            for (String roleId : user.getRoleIds()) {
-                Role role = roleDao.selectById(roleId);
+            for (UserRole userRole : userRoles) {
+                Role role = roleDao.selectById(userRole.getRoleId());
                 roles.add(role);
             }
             userVO.setRoles(roles);

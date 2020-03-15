@@ -39,16 +39,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String flagKey = "loginFailFlag:" + username;
-        String value = redisTemplate.opsForValue().get(flagKey);
-        Long timeRest = redisTemplate.getExpire(flagKey, TimeUnit.MINUTES);
-        if (StrUtil.isNotBlank(value)) {
-            //超过限制次数
-            throw new VbootException(500, "登录错误次数超过限制，请" + timeRest + "分钟后再试");
-        }
-
+//        String flagKey = "loginFailFlag:" + username;
+//        String value = redisTemplate.opsForValue().get(flagKey);
+//        Long timeRest = redisTemplate.getExpire(flagKey, TimeUnit.MINUTES);
+//        if (StrUtil.isNotBlank(value)) {
+//            //超过限制次数
+//            throw new VbootException(500, "登录错误次数超过限制，请" + timeRest + "分钟后再试");
+//        }
         // 查询当前用户是否存在
+        log.info("username {}", username);
         UserVO user = userService.findByUsername(username);
+
+        log.info("uservo {}", user);
 
         return new SecurityUserDetails(user);
     }

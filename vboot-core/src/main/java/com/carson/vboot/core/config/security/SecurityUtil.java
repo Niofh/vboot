@@ -168,6 +168,10 @@ public class SecurityUtil {
     public List<String> getDepIds() {
 
         UserVO currUser = this.getCurrUser();
+
+
+        // 从缓存获取
+
         List<String> depIds = new ArrayList<>();
 
         // 如果当前没有部门，只能本人数据

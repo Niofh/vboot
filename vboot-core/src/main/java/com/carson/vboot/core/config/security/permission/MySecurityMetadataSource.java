@@ -2,7 +2,6 @@ package com.carson.vboot.core.config.security.permission;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +42,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
         ConfigAttribute cfg;
         // 获取启用的权限操作请求
         List<Permission> permissions = permissionService.getPermissionBtnAll();
+
         for(Permission permission : permissions) {
             if(StrUtil.isNotBlank(permission.getTitle())&&StrUtil.isNotBlank(permission.getPath())){
                 configAttributes = new ArrayList<>();

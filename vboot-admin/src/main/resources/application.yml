@@ -68,18 +68,18 @@ spring:
       # 修改上下文路径
       context-path: /admin
       client:
-        url: http://127.0.0.1:${server.port}/vboot/admin
+        url: http://127.0.0.1:${server.port}/admin
         # 配置实例地址
         instance:
-          health-url:  http://127.0.0.1:${server.port}/vboot/actuator/health
-          service-url: http://127.0.0.1:${server.port}/vboot
-          management-url: http://127.0.0.1:${server.port}/vboot/actuator
+          health-url:  http://127.0.0.1:${server.port}/actuator/health
+          service-url: http://127.0.0.1:${server.port}
+          management-url: http://127.0.0.1:${server.port}/actuator
 
 
 
 # MBP配置文件
 mybatis-plus:
-  mapper-locations: classpath*:mapper/*.xml
+  mapper-locations: classpath*:dao/mapper/*.xml
   global-config:
     db-config:
       logic-delete-field: del_flag  #全局逻辑删除字段值 3.3.0开始支持，详情看下面。
@@ -127,12 +127,13 @@ ignored:
     - /user/regist
     - /user/smsLogin
     - /user/resetByMobile
-    - /common/**
+    - /security/**
     - /druid/**
     - /swagger-ui.html
     - /swagger-resources/**
     - /swagger/**
     - /**/v2/api-docs
+    - /webjars/**
     - /**/*.js
     - /**/*.css
     - /**/*.png
@@ -162,6 +163,7 @@ logging:
     com:
       carson:
        vboot:
-        core: DEBUG
+        core:
+          dao: DEBUG
 
 
