@@ -4,11 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.enums.CommonEnums;
-import com.carson.vboot.core.dao.mapper.RoleDepartmentDao;
-import com.carson.vboot.core.entity.Department;
 import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.entity.Role;
-import com.carson.vboot.core.entity.User;
 import com.carson.vboot.core.properties.TokenProperties;
 import com.carson.vboot.core.service.DepartmentService;
 import com.carson.vboot.core.service.RoleDepartmentService;
@@ -20,7 +17,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +39,7 @@ public class SecurityUtil {
     private TokenProperties tokenProperties;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private UserService userService;
@@ -126,7 +123,7 @@ public class SecurityUtil {
             // 单设备登录 之前的token失效
             if (tokenProperties.getSdl()) {
                 // 获取以前的token
-                String oldToken = (String) redisTemplate.opsForValue().get(CommonConstant.USER_TOKEN + username);
+                String oldToken = redisTemplate.opsForValue().get(CommonConstant.USER_TOKEN + username);
                 if (StrUtil.isNotBlank(oldToken)) {
                     // 如果以前token存在，删除原来用户权限信息
                     redisTemplate.delete(CommonConstant.TOKEN_PRE + oldToken);
@@ -136,7 +133,7 @@ public class SecurityUtil {
             redisTemplate.opsForValue().set(CommonConstant.USER_TOKEN + username, token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
 
             // 根据token保存用户权限信息
-            redisTemplate.opsForValue().set(CommonConstant.TOKEN_PRE + token, user, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(CommonConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
         } else {
             // 存放在jwt
 

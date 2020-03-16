@@ -103,7 +103,7 @@ token:
   # token中存储用户权限数据 设为true开启后可避免每次请求再获取用户权限，但有可能导致编辑权限菜单后无法读取到最新权限数据（需用户重新登录）
   storePerms: true
   # token过期时间（分钟）
-  tokenExpireTime: 120
+  tokenExpireTime: 1200
   # 限制用户登陆错误次数（次）
   loginTimeLimit: 10
   # 错误超过次数后多少分钟后才能继续登录（分钟）

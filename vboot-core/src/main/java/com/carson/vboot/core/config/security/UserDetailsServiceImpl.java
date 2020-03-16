@@ -1,19 +1,14 @@
 package com.carson.vboot.core.config.security;
 
-import cn.hutool.core.util.StrUtil;
-import com.carson.vboot.core.entity.User;
-import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.UserService;
 import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * created by Nicofh on 2020-03-14
@@ -24,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private UserService userService;

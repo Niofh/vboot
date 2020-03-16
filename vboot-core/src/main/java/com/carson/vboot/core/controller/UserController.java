@@ -67,7 +67,7 @@ public class UserController {
     @PostMapping("/updateUser")
     @ResponseBody
     @ApiOperation(value = "更新用户")
-    public Result<Object> save(@Valid User user) {
+    public Result<Object> updateUser(@Valid User user) {
         return ResultUtil.data(userService.updateUser(user));
     }
 

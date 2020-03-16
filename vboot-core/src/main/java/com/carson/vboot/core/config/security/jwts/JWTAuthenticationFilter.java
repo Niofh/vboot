@@ -58,11 +58,14 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+
         // 获取header的token
         String header = request.getHeader(CommonConstant.HEADER);
+        log.info(header);
         if (StrUtil.isBlank(header)) {
             header = request.getParameter(CommonConstant.HEADER);
         }
+
         Boolean notValid = StrUtil.isBlank(header) || (!tokenProperties.getRedis() && !header.startsWith(CommonConstant.TOKEN_SPLIT));
         if (notValid) {
             chain.doFilter(request, response);
@@ -86,7 +89,6 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         String username = null;
         // 权限
         List<GrantedAuthority> authorities = new ArrayList<>();
-
         if (tokenProperties.getRedis()) {
             // redis
             String v = redisTemplate.opsForValue().get(CommonConstant.TOKEN_PRE + header);
@@ -148,5 +150,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         }
         return null;
     }
+
+
 }
 

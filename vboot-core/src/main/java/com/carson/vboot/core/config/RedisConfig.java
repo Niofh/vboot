@@ -37,18 +37,6 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Value("${redis.time}")
     private Integer time;
 
-    /**
-     * RedisTemplate 格式化配置
-     */
-    @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
-        // 设置json序列化格式
-        template.setDefaultSerializer(jackson2JsonRedisSerializer);
-        return template;
-    }
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
