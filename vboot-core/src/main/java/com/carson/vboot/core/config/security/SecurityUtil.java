@@ -13,6 +13,7 @@ import com.carson.vboot.core.service.UserService;
 import com.carson.vboot.core.vo.TokenUser;
 import com.carson.vboot.core.vo.UserVO;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -165,11 +166,16 @@ public class SecurityUtil {
     public List<String> getDepIds() {
 
         UserVO currUser = this.getCurrUser();
-
-
-        // 从缓存获取
-
         List<String> depIds = new ArrayList<>();
+        String key = CommonConstant.USER_DEPID + currUser.getId();
+        // 从缓存获取数据权限
+        String value = redisTemplate.opsForValue().get(key);
+
+        if (StrUtil.isNotBlank(value)) {
+            depIds = new Gson().fromJson(value, new TypeToken<List<String>>() {
+            }.getType());
+            return depIds;
+        }
 
         // 如果当前没有部门，只能本人数据
         if (StrUtil.isEmpty(currUser.getDepartmentId())) {
@@ -225,7 +231,8 @@ public class SecurityUtil {
 
         depIds.addAll(depIdsSet);
 
-        // 存入缓存里面
+        // 当前用户权限存入缓存里面
+        redisTemplate.opsForValue().set(key, new Gson().toJson(depIds));
 
         return depIds;
 

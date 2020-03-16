@@ -1,3 +1,7 @@
+
+# 项目名称
+appName: vboot
+
 server:
   servlet:
     context-path: /
@@ -162,8 +166,8 @@ logging:
   level:
     com:
       carson:
-       vboot:
-        core:
-          dao: DEBUG
+        vboot:
+          core:
+            dao: DEBUG
 
 

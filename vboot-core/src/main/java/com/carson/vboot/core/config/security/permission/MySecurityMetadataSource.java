@@ -72,7 +72,6 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
         }
         //Object中包含用户请求request
         String url = ((FilterInvocation) o).getRequestUrl();
-        log.info("请求Url: {}",url);
         Iterator<String> iterator = map.keySet().iterator();
         while (iterator.hasNext()) {
             String resURL = iterator.next();

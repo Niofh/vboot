@@ -17,6 +17,7 @@ import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -103,6 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Cacheable(cacheNames = "vboot::user", key = "'getall'")
     @Override
     public List<User> getAll() {
         return userDao.selectList(null);
@@ -115,7 +117,13 @@ public class UserServiceImpl implements UserService {
      * @param userId
      * @return
      */
-//    @Cacheable(cacheNames = "user", key = "#userId")
+    @Cacheable(cacheNames = "user", key = "#userId") // 根据用户id缓存
+    @Caching(
+
+            evict = {
+                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
+            }
+    )
     @Override
     public User getUserById(String userId) {
         // todo
@@ -147,7 +155,7 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return
      */
-//    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null")
+    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null")
     @Transactional
     @Override
     public User insertUser(User user) {
@@ -181,7 +189,7 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return
      */
-//    @CachePut(cacheNames = "user", key = "#user.id")
+    @CachePut(cacheNames = "user", key = "#user.id", condition = "#result!=null")
     @Transactional
     @Override
     public User updateUser(User user) {
@@ -243,7 +251,7 @@ public class UserServiceImpl implements UserService {
         userQueryWrapper.eq("username", username);
         User user = userDao.selectOne(userQueryWrapper);
         if (user == null) {
-            throw new  VbootException(ExceptionEnums.USER_NO_EXIST);
+            throw new VbootException(ExceptionEnums.USER_NO_EXIST);
         }
 
         // 查询用户角色表
