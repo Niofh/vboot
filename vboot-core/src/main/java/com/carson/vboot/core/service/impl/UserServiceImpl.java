@@ -191,12 +191,13 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Caching(
-            put = {
-                    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null") // 根据id缓存
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
-            }
+        put = {
+                @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null") // 根据id缓存
+        },
+        evict = {
+                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'"), // 删除用户所有数据
+                @CacheEvict(cacheNames = "vboot::user",key = "#result.username") // 删除用户名缓存用户信息
+        }
     )
     @Transactional
     @Override
@@ -218,9 +219,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Caching(
-            evict = {
-                    @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
-            }
+        evict = {
+                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
+        }
     )
     @Transactional
     @Override
@@ -251,6 +252,7 @@ public class UserServiceImpl implements UserService {
      * @param username
      * @return
      */
+    @Cacheable(cacheNames = "vboot::user",key = "username") // 根据用户名查询缓存
     @Override
     public UserVO findByUsername(String username) {
 

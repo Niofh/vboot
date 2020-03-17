@@ -16,6 +16,9 @@ import com.carson.vboot.core.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,17 +40,46 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleDepartmentDao roleDepartmentDao;
 
+
     @Override
     public VbootBaseDao<Role> getBaseDao() {
         return roleDao;
     }
 
 
+    @Cacheable(cacheNames = "vboot::roles", key = "'getAll'")
+    @Override
+    public List<Role> getAll() {
+        return roleDao.selectList(null);
+    }
+
+
+    @Cacheable(cacheNames = {"vboot::roles"},key = "'getAll'") // 删除所有角色
+    @Override
+    public Role save(Role role) {
+        int num = roleDao.insert(role);
+        if (num > 0) {
+            return role;
+        }
+        return null;
+    }
+
+    @CacheEvict(cacheNames = {"vboot::roles"},key = "'getAll'") // 删除所有角色
+    @Override
+    public Role update(Role role) {
+        int num = roleDao.updateById(role);
+        if (num > 0) {
+            return role;
+        }
+        return null;
+    }
+
     /**
      * 批量id删除
      *
      * @param idList
      */
+    @CacheEvict(cacheNames = {"user", "vboot::user", "user::role,vboot::roles"},allEntries = true) // 删除用户和用户关联表所有缓存
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
@@ -63,6 +95,7 @@ public class RoleServiceImpl implements RoleService {
             QueryWrapper<RolePermission> rolePermissionQueryWrapper = new QueryWrapper<>();
             rolePermissionQueryWrapper.eq("role_id", roleId);
             rolePermissionDao.delete(rolePermissionQueryWrapper);
+
         }
         return i;
     }

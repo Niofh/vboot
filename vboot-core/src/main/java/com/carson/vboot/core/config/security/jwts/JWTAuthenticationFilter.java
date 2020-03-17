@@ -61,7 +61,6 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
         // 获取header的token
         String header = request.getHeader(CommonConstant.HEADER);
-        log.info(header);
         if (StrUtil.isBlank(header)) {
             header = request.getParameter(CommonConstant.HEADER);
         }

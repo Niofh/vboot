@@ -9,6 +9,8 @@ import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -33,6 +35,8 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionDao;
     }
 
+
+    @Cacheable(value = "vboot::permiss",key = "'getAllBtn'") // 缓存所有权限按钮
     @Override
     public List<Permission> getPermissionBtnAll() {
 
@@ -48,12 +52,15 @@ public class PermissionServiceImpl implements PermissionService {
      * @param entity
      * @return
      */
+    @CacheEvict(cacheNames = "vboot::permiss",allEntries = true)
     @Override
     public Permission save(Permission entity) {
         int insert = permissionDao.insert(entity);
         if (insert > 0) {
-            // 重新加载权限
-            mySecurityMetadataSource.loadResourceDefine();
+            //如果更新了按钮， 重新加载权限
+            if(entity.getType().equals(CommonEnums.PERMISSION_OPERATION.getId())){
+                mySecurityMetadataSource.loadResourceDefine();
+            }
             return entity;
         }
         return null;
@@ -65,12 +72,15 @@ public class PermissionServiceImpl implements PermissionService {
      * @param entity
      * @return
      */
+    @CacheEvict(cacheNames = "vboot::permiss",allEntries = true)
     @Override
     public Permission update(Permission entity) {
         int num = permissionDao.updateById(entity);
         if (num > 0) {
-            // 重新加载权限
-            mySecurityMetadataSource.loadResourceDefine();
+            //如果更新了按钮， 重新加载权限
+            if(entity.getType().equals(CommonEnums.PERMISSION_OPERATION.getId())){
+                mySecurityMetadataSource.loadResourceDefine();
+            }
             return entity;
         }
         return null;
@@ -81,6 +91,7 @@ public class PermissionServiceImpl implements PermissionService {
      *
      * @param idList
      */
+    @CacheEvict(cacheNames = "vboot::permiss",allEntries = true)
     @Override
     public Integer delete(Collection<String> idList) {
         int num = permissionDao.deleteBatchIds(idList);

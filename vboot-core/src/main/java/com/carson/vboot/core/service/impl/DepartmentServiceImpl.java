@@ -237,6 +237,11 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
     }
 
+    /**
+     * 通过父部门id获取子部门id
+     * @param parentId
+     * @return
+     */
     @Override
     public List<String> findChildByParentId(String depId) {
 

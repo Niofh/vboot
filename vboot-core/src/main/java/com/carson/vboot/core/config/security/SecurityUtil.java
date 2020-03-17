@@ -161,7 +161,7 @@ public class SecurityUtil {
     /**
      * 获取部门查看数据权限
      *
-     * @return 空[]代表只能本人看，[id,id]就要在select * from xxxx where depId in [ids,ids]
+     * @return null看全部数据 空[]代表只能本人看，[id,id]就要在select * from xxxx where depId in [ids,ids]
      */
     public List<String> getDepIds() {
 
