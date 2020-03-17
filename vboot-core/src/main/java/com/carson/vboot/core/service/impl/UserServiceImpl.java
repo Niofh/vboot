@@ -118,12 +118,6 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Cacheable(cacheNames = "user", key = "#userId") // 根据用户id缓存
-    @Caching(
-
-            evict = {
-                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
-            }
-    )
     @Override
     public User getUserById(String userId) {
         // todo
@@ -155,7 +149,14 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return
      */
-    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null")
+    @Caching(
+        put = {
+                @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null") // 根据id缓存
+        },
+        evict = {
+                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
+        }
+    )
     @Transactional
     @Override
     public User insertUser(User user) {
@@ -189,7 +190,14 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return
      */
-    @CachePut(cacheNames = "user", key = "#user.id", condition = "#result!=null")
+    @Caching(
+            put = {
+                    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null") // 根据id缓存
+            },
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
+            }
+    )
     @Transactional
     @Override
     public User updateUser(User user) {
@@ -211,7 +219,7 @@ public class UserServiceImpl implements UserService {
 
     @Caching(
             evict = {
-                    // @CacheEvict(cacheNames = "user", key = "'getAll'") // 删除用户所有数据
+                    @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
             }
     )
     @Transactional
