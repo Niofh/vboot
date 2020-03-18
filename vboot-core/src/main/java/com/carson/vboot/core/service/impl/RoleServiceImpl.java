@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
+import com.carson.vboot.core.config.security.permission.MySecurityMetadataSource;
 import com.carson.vboot.core.dao.mapper.RoleDao;
 import com.carson.vboot.core.dao.mapper.RoleDepartmentDao;
 import com.carson.vboot.core.dao.mapper.RolePermissionDao;
@@ -40,6 +41,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private MySecurityMetadataSource mySecurityMetadataSource;
 
     @Override
     public VbootBaseDao<Role> getBaseDao() {
@@ -170,6 +174,9 @@ public class RoleServiceImpl implements RoleService {
                 rolePermissionDao.insert(rolePermission);
             }
         }
+        // 重新加载权限
+        mySecurityMetadataSource.loadResourceDefine();
+
     }
 
 

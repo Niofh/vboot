@@ -249,7 +249,7 @@ public class UserServiceImpl implements UserService {
      * @param username
      * @return
      */
-    @Cacheable(cacheNames = "vboot::user",key = "username") // 根据用户名查询缓存
+    @Cacheable(cacheNames = "vboot::user",key = "#username") // 根据用户名查询缓存
     @Override
     public UserVO findByUsername(String username) {
 

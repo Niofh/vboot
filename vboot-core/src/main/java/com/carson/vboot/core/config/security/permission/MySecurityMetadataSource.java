@@ -2,8 +2,11 @@ package com.carson.vboot.core.config.security.permission;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.carson.vboot.core.config.security.SecurityUtil;
 import com.carson.vboot.core.entity.Permission;
+import com.carson.vboot.core.entity.Role;
 import com.carson.vboot.core.service.PermissionService;
+import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -30,6 +33,9 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
     @Autowired
     private PathMatcher pathMatcher;
 
+    @Autowired
+    private SecurityUtil securityUtil;
+
     private Map<String, Collection<ConfigAttribute>> map = null;
 
     /**
@@ -38,6 +44,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
     public void loadResourceDefine(){
 
         map = new HashMap<>(16);
+
         Collection<ConfigAttribute> configAttributes;
         ConfigAttribute cfg;
         // 获取启用的权限操作请求
@@ -70,6 +77,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
         if(map == null){
             this.loadResourceDefine();
         }
+
         //Object中包含用户请求request
         String url = ((FilterInvocation) o).getRequestUrl();
         Iterator<String> iterator = map.keySet().iterator();
