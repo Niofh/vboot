@@ -15,9 +15,7 @@ import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,12 +38,26 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleDepartmentDao roleDepartmentDao;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public VbootBaseDao<Role> getBaseDao() {
         return roleDao;
     }
 
+
+    /**
+     * 根据ID获取实体类数据
+     *
+     * @param roleId
+     * @return
+     */
+    @Cacheable(cacheNames = "role", key = "roleId", condition = "#result!=null")
+    @Override
+    public Role getId(String roleId) {
+        return roleDao.selectById(roleId);
+    }
 
     @Cacheable(cacheNames = "vboot::roles", key = "'getAll'")
     @Override
@@ -54,7 +66,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
 
-    @Cacheable(cacheNames = {"vboot::roles"},key = "'getAll'") // 删除所有角色
+    @Cacheable(cacheNames = {"vboot::roles"}, key = "'getAll'") // 删除所有角色
     @Override
     public Role save(Role role) {
         int num = roleDao.insert(role);
@@ -64,7 +76,14 @@ public class RoleServiceImpl implements RoleService {
         return null;
     }
 
-    @CacheEvict(cacheNames = {"vboot::roles"},key = "'getAll'") // 删除所有角色
+    @Caching(
+        put = {
+                @CachePut(cacheNames = "role", key = "#result.id", condition = "#result!=null") // 更新根据id的缓存
+        },
+        evict = {
+                @CacheEvict(cacheNames = {"vboot::roles"}, key = "'getAll'"), // 删除所有角色
+        }
+    )
     @Override
     public Role update(Role role) {
         int num = roleDao.updateById(role);
@@ -79,7 +98,7 @@ public class RoleServiceImpl implements RoleService {
      *
      * @param idList
      */
-    @CacheEvict(cacheNames = {"user", "vboot::user", "user::role,vboot::roles"},allEntries = true) // 删除用户和用户关联表所有缓存
+    @CacheEvict(cacheNames = {"user", "vboot::user", "user::role", "vboot::roles"}, allEntries = true) // 删除用户和用户关联表所有缓存
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
@@ -96,6 +115,9 @@ public class RoleServiceImpl implements RoleService {
             rolePermissionQueryWrapper.eq("role_id", roleId);
             rolePermissionDao.delete(rolePermissionQueryWrapper);
 
+            // 删除角色单个缓存
+            redisTemplate.delete("role::" + roleId);
+
         }
         return i;
     }
@@ -106,6 +128,7 @@ public class RoleServiceImpl implements RoleService {
      * @param roleId
      * @return
      */
+    @Cacheable(cacheNames = "role::permission",key = "#roleId")
     @Override
     public List<String> getPermissionByRoleId(String roleId) {
         QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
@@ -153,6 +176,7 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 根据角色id获取部门id
      */
+    @Cacheable(cacheNames = "role::dep",key = "#roleId")
     @Override
     public List<String> getDepartmentByRoleId(String roleId) {
         Role role = roleDao.selectById(roleId);

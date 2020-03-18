@@ -35,6 +35,16 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionDao;
     }
 
+    /**
+     * 获取所有列表
+     *
+     * @return
+     */
+    @Cacheable(value = "vboot::permiss",key = "'getAll'") // 缓存所有权限按钮
+    @Override
+    public List<Permission> getAll() {
+        return permissionDao.selectList(null);
+    }
 
     @Cacheable(value = "vboot::permiss",key = "'getAllBtn'") // 缓存所有权限按钮
     @Override
@@ -72,7 +82,7 @@ public class PermissionServiceImpl implements PermissionService {
      * @param entity
      * @return
      */
-    @CacheEvict(cacheNames = "vboot::permiss",allEntries = true)
+    @CacheEvict(cacheNames = {"vboot::permiss"},allEntries = true)
     @Override
     public Permission update(Permission entity) {
         int num = permissionDao.updateById(entity);
@@ -91,7 +101,7 @@ public class PermissionServiceImpl implements PermissionService {
      *
      * @param idList
      */
-    @CacheEvict(cacheNames = "vboot::permiss",allEntries = true)
+    @CacheEvict(cacheNames = {"vboot::permiss","vboot::user","vboot::roles","roles","role::permission"},allEntries = true)
     @Override
     public Integer delete(Collection<String> idList) {
         int num = permissionDao.deleteBatchIds(idList);

@@ -13,6 +13,8 @@ import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +60,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      *
      * @return
      */
+    @Cacheable(cacheNames = "vboot::dep",key = "'getAll'")
     @Override
     public List<Department> getAll() {
         List<Department> departments = departmentDao.selectList(null);
@@ -104,6 +107,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @param department
      * @return
      */
+    @CacheEvict(cacheNames = "vboot::dep",key = "'getAll'")
     @Transactional
     @Override
     public Department save(Department department) {
@@ -155,6 +159,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @param department
      * @return
      */
+    @CacheEvict(cacheNames = "vboot::dep",key = "'getAll'")
     @Transactional
     @Override
     public Department update(Department department) {
@@ -211,6 +216,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      *
      * @param idList
      */
+    @CacheEvict(cacheNames = {"vboot::dep","role::dep"})
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
@@ -239,7 +245,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     /**
      * 通过父部门id获取子部门id
-     * @param parentId
+     * @param
      * @return
      */
     @Override

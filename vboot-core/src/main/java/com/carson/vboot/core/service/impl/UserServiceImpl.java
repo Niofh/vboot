@@ -150,9 +150,6 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Caching(
-        put = {
-                @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null") // 根据id缓存
-        },
         evict = {
                 @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
         }
