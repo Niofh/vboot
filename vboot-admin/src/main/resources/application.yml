@@ -129,6 +129,7 @@ ignored:
     - /social/**
     - /ws/**
     - /logout
+    - /security/login/page
     - /user/regist
     - /user/smsLogin
     - /user/resetByMobile
