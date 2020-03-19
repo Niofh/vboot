@@ -63,14 +63,14 @@ public class RoleServiceImpl implements RoleService {
         return roleDao.selectById(roleId);
     }
 
-    @Cacheable(cacheNames = "vboot::roles", key = "'getAll'")
+    @Cacheable(cacheNames = "vboot::roles", key = "'getall'")
     @Override
     public List<Role> getAll() {
         return roleDao.selectList(null);
     }
 
 
-    @Cacheable(cacheNames = {"vboot::roles"}, key = "'getAll'") // 删除所有角色
+    @Cacheable(cacheNames = {"vboot::roles"}, key = "'getall'") // 删除所有角色
     @Override
     public Role save(Role role) {
         int num = roleDao.insert(role);
@@ -82,10 +82,10 @@ public class RoleServiceImpl implements RoleService {
 
     @Caching(
         put = {
-                @CachePut(cacheNames = "role", key = "#result.id", condition = "#result!=null") // 更新根据id的缓存
+            @CachePut(cacheNames = "role", key = "#result.id", condition = "#result!=null") // 更新根据id的缓存
         },
         evict = {
-                @CacheEvict(cacheNames = {"vboot::roles"}, key = "'getAll'"), // 删除所有角色
+            @CacheEvict(cacheNames = {"vboot::roles"}, key = "'getall'"), // 删除所有角色
         }
     )
     @Override
@@ -102,7 +102,7 @@ public class RoleServiceImpl implements RoleService {
      *
      * @param idList
      */
-    @CacheEvict(cacheNames = {"user", "vboot::user", "user::role", "vboot::roles"}, allEntries = true) // 删除用户和用户关联表所有缓存
+    @CacheEvict(cacheNames = {"user", "vboot::user", "user::role", "vboot::roles","role::permission","role::dep"}, allEntries = true) // 删除用户和用户关联表所有缓存
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
@@ -151,11 +151,12 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 通过角色id赋值权限
      */
+    @CacheEvict(cacheNames = "role::permission",key = "#roleId")
     @Transactional
     @Override
     public void setPermissionByRoleId(String roleId, String[] permissionIds) {
 
-        Role role = roleDao.selectById(roleId);
+        Role role = this.getId(roleId);
         if (role == null) {
             throw new VbootException(ExceptionEnums.ROLE_NO_EXIST);
         }
@@ -186,7 +187,7 @@ public class RoleServiceImpl implements RoleService {
     @Cacheable(cacheNames = "role::dep",key = "#roleId")
     @Override
     public List<String> getDepartmentByRoleId(String roleId) {
-        Role role = roleDao.selectById(roleId);
+        Role role = this.getId(roleId);
         if (role == null) {
             throw new VbootException(ExceptionEnums.ROLE_NO_EXIST);
         }
@@ -209,10 +210,11 @@ public class RoleServiceImpl implements RoleService {
      * @param dataType 权限类型 CommonEnums.DATA_TYPE_CUSTOM
      * @param depIds
      */
+    @CacheEvict(cacheNames = "role::dep",key = "#roleId")
     @Override
     public void setDepartmentByRoleId(String roleId, Integer dataType, String[] depIds) {
 
-        Role role = roleDao.selectById(roleId);
+        Role role = this.getId(roleId);
         if (role == null) {
             throw new VbootException(ExceptionEnums.ROLE_NO_EXIST);
         }
@@ -234,6 +236,7 @@ public class RoleServiceImpl implements RoleService {
                 RoleDepartment roleDepartment = new RoleDepartment();
                 roleDepartment.setDepartmentId(depId);
                 roleDepartment.setRoleId(roleId);
+                roleDepartmentDao.insert(roleDepartment);
             }
         }
     }

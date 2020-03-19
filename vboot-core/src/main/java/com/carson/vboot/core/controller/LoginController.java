@@ -5,10 +5,11 @@ import com.carson.vboot.core.common.utils.ResultUtil;
 import com.carson.vboot.core.dao.mapper.PermissionDao;
 import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.vo.Result;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import jdk.nashorn.internal.objects.annotations.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ import java.util.Map;
 @Api(description = "登录接口")
 @RestController
 @RequestMapping("/security")
+@Slf4j
 public class LoginController {
 
     @Autowired
@@ -32,7 +34,7 @@ public class LoginController {
     @ApiOperation(value = "没有登录")
     public Result<Object> needLogin() {
 
-        return ResultUtil.error(401, "您还未登录");
+        return ResultUtil.error(401, "您还未登录，请重新登录");
     }
 
 
@@ -49,7 +51,9 @@ public class LoginController {
 //        params.put("captchaId", captchaId);
 //        params.put("code", code);
         String result = HttpUtil.post(loginUrl, params);
-        return ResultUtil.data(result);
+        Result result1 = new Gson().fromJson(result, Result.class);
+        log.info("{}",result1);
+        return result1;
     }
 
 

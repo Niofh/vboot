@@ -12,6 +12,7 @@ import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.dao.mapper.*;
 import com.carson.vboot.core.entity.*;
 import com.carson.vboot.core.exception.VbootException;
+import com.carson.vboot.core.service.RoleService;
 import com.carson.vboot.core.service.UserService;
 import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleDao roleDao;
+
+    @Autowired
+    private RoleService roleService;
+
     @Autowired
     private PermissionDao permissionDao;
 
@@ -151,7 +157,7 @@ public class UserServiceImpl implements UserService {
      */
     @Caching(
         evict = {
-                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
+                @CacheEvict(cacheNames = "vboot::user", key = "'getall'") // 删除用户所有数据
         }
     )
     @Transactional
@@ -189,21 +195,23 @@ public class UserServiceImpl implements UserService {
      */
     @Caching(
         put = {
-                @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null") // 根据id缓存
+                @CachePut(cacheNames = "user", key = "#result.id",condition = "#result!=null") // 根据id缓存
         },
         evict = {
-                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'"), // 删除用户所有数据
-                @CacheEvict(cacheNames = "vboot::user",key = "#result.username") // 删除用户名缓存用户信息
+            @CacheEvict(cacheNames = "vboot::user", key = "'getall'"), // 删除用户所有数据
         }
     )
     @Transactional
     @Override
     public User updateUser(User user) {
         try {
+            String username =user.getUsername();
             user.setUsername(null);
             User u = this.commonUser(user);
             int i = userDao.updateById(u);
             if (i > 0) {
+                // 删除用户名缓存用户信息
+                stringRedisTemplate.delete("vboot::user::"+username);
                 return u;
             }
             return null;
@@ -217,7 +225,7 @@ public class UserServiceImpl implements UserService {
 
     @Caching(
         evict = {
-                @CacheEvict(cacheNames = "vboot::user", key = "'getAll'") // 删除用户所有数据
+                @CacheEvict(cacheNames = "vboot::user", key = "'getall'") // 删除用户所有数据
         }
     )
     @Transactional
@@ -279,7 +287,7 @@ public class UserServiceImpl implements UserService {
         if (CollUtil.isNotEmpty(userRoles)) {
             ArrayList<Role> roles = new ArrayList<>();
             for (UserRole userRole : userRoles) {
-                Role role = roleDao.selectById(userRole.getRoleId());
+                Role role = roleService.getId(userRole.getRoleId());
                 roles.add(role);
             }
             userVO.setRoles(roles);
@@ -326,10 +334,22 @@ public class UserServiceImpl implements UserService {
 
         if (null != userId) {
             // ussrId存在代表是修改，先清空对应角色id
+
+            user = this.getUserById(userId);
+
             QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", userId);
             userRoleDao.delete(wrapper);
+        }else{
+            // 新加用户
+            if(user.getPassword()!=null){
+                // 密码加密
+                String encode = new BCryptPasswordEncoder().encode(user.getPassword());
+                user.setPassword(encode);
+            }
         }
+
+
 
         // 创建一个空数组
         List<String> roleList = new ArrayList<>();

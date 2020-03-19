@@ -34,7 +34,7 @@ public class DepartmentHeaderServiceImpl implements DepartmentHeaderService {
      *
      * @param idList
      */
-    @CacheEvict(cacheNames = "vboot::dep",key = "'getAll'") // 删除部门
+    @CacheEvict(cacheNames = "vboot::dep",key = "'getall'") // 删除部门
     @Override
     public Integer delete(Collection<String> idList) {
         return getBaseDao().deleteBatchIds(idList);

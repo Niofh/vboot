@@ -4,8 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.enums.CommonEnums;
+import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.entity.Role;
+import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.properties.TokenProperties;
 import com.carson.vboot.core.service.DepartmentService;
 import com.carson.vboot.core.service.RoleDepartmentService;
@@ -89,72 +91,77 @@ public class SecurityUtil {
      */
     public String getTokenAndSetAuthority(String username, List<String> list) {
 
-        if (CollUtil.isEmpty(list)) {
-            // 如果数组为空，那么就从数据库获取
-            UserVO u = userService.findByUsername(username);
-            list = new ArrayList<>();
-            // 缓存权限
-            if (tokenProperties.getStorePerms()) {
-                for (Permission p : u.getPermissions()) {
-                    if (CommonEnums.PERMISSION_OPERATION.getId().equals(p.getType())
-                            && StrUtil.isNotBlank(p.getTitle())
-                            && StrUtil.isNotBlank(p.getPath())) {
-                        list.add(p.getTitle());
+        try {
+            if (CollUtil.isEmpty(list)) {
+                // 如果数组为空，那么就从数据库获取
+                UserVO u = userService.findByUsername(username);
+                list = new ArrayList<>();
+                // 缓存权限
+                if (tokenProperties.getStorePerms()) {
+                    for (Permission p : u.getPermissions()) {
+                        if (CommonEnums.PERMISSION_OPERATION.getId().equals(p.getType())
+                                && StrUtil.isNotBlank(p.getTitle())
+                                && StrUtil.isNotBlank(p.getPath())) {
+                            list.add(p.getTitle());
+                        }
+                    }
+                    for (Role r : u.getRoles()) {
+                        list.add(r.getName());
                     }
                 }
-                for (Role r : u.getRoles()) {
-                    list.add(r.getName());
-                }
             }
+
+
+            // 登陆成功生成token
+            String token;
+            // 如果存放在redis
+            if (tokenProperties.getRedis()) {
+                // redis
+                token = UUID.randomUUID().toString().replace("-", "");
+
+                TokenUser user = new TokenUser(username, list);
+                // 不缓存权限
+                if (!tokenProperties.getStorePerms()) {
+                    user.setPermissions(null);
+                }
+                // 单设备登录 之前的token失效
+                if (tokenProperties.getSdl()) {
+                    // 获取以前的token
+                    String oldToken = redisTemplate.opsForValue().get(CommonConstant.USER_TOKEN + username);
+                    if (StrUtil.isNotBlank(oldToken)) {
+                        // 如果以前token存在，删除原来用户权限信息
+                        redisTemplate.delete(CommonConstant.TOKEN_PRE + oldToken);
+                    }
+                }
+                // 保存token
+                redisTemplate.opsForValue().set(CommonConstant.USER_TOKEN + username, token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+
+                // 根据token保存用户权限信息
+                redisTemplate.opsForValue().set(CommonConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+            } else {
+                // 存放在jwt
+
+                // 不缓存权限
+                if (!tokenProperties.getStorePerms()) {
+                    list = null;
+                }
+                token = CommonConstant.TOKEN_SPLIT + Jwts.builder()
+                        //主题 放入用户名
+                        .setSubject(username)
+                        //自定义属性 放入用户拥有请求权限
+                        .claim(CommonConstant.AUTHORITIES, new Gson().toJson(list))
+                        //失效时间
+                        .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
+                        //签名算法和密钥
+                        .signWith(SignatureAlgorithm.HS512, CommonConstant.JWT_SIGN_KEY)
+                        .compact();
+            }
+
+            return token;
+        }catch (Exception e ){
+           throw  new VbootException(ExceptionEnums.SYS_ERROR);
         }
 
-
-        // 登陆成功生成token
-        String token;
-        // 如果存放在redis
-        if (tokenProperties.getRedis()) {
-            // redis
-            token = UUID.randomUUID().toString().replace("-", "");
-
-            TokenUser user = new TokenUser(username, list);
-            // 不缓存权限
-            if (!tokenProperties.getStorePerms()) {
-                user.setPermissions(null);
-            }
-            // 单设备登录 之前的token失效
-            if (tokenProperties.getSdl()) {
-                // 获取以前的token
-                String oldToken = redisTemplate.opsForValue().get(CommonConstant.USER_TOKEN + username);
-                if (StrUtil.isNotBlank(oldToken)) {
-                    // 如果以前token存在，删除原来用户权限信息
-                    redisTemplate.delete(CommonConstant.TOKEN_PRE + oldToken);
-                }
-            }
-            // 保存token
-            redisTemplate.opsForValue().set(CommonConstant.USER_TOKEN + username, token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
-
-            // 根据token保存用户权限信息
-            redisTemplate.opsForValue().set(CommonConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
-        } else {
-            // 存放在jwt
-
-            // 不缓存权限
-            if (!tokenProperties.getStorePerms()) {
-                list = null;
-            }
-            token = CommonConstant.TOKEN_SPLIT + Jwts.builder()
-                    //主题 放入用户名
-                    .setSubject(username)
-                    //自定义属性 放入用户拥有请求权限
-                    .claim(CommonConstant.AUTHORITIES, new Gson().toJson(list))
-                    //失效时间
-                    .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
-                    //签名算法和密钥
-                    .signWith(SignatureAlgorithm.HS512, CommonConstant.JWT_SIGN_KEY)
-                    .compact();
-        }
-
-        return token;
     }
 
 

@@ -1,10 +1,7 @@
 package com.carson.vboot.core.config.security;
 
 
-import com.carson.vboot.core.config.security.jwts.JWTAuthenticationFilter;
-import com.carson.vboot.core.config.security.jwts.MyFailHandler;
-import com.carson.vboot.core.config.security.jwts.MySuccessHandler;
-import com.carson.vboot.core.config.security.jwts.RestAccessDeniedHandler;
+import com.carson.vboot.core.config.security.jwts.*;
 import com.carson.vboot.core.config.security.permission.MyFilterSecurityInterceptor;
 import com.carson.vboot.core.properties.IgnoredUrlsProperties;
 import com.carson.vboot.core.properties.TokenProperties;
@@ -55,6 +52,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
 
+    @Autowired
+    private MyLogoutSuccessHandler myLogoutSuccessHandler;
+
 
     @Autowired
     private TokenProperties tokenProperties;
@@ -102,7 +102,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                 .logout()
-                .permitAll()
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(myLogoutSuccessHandler)
                 .and()
                 .authorizeRequests()
                 // 任何请求

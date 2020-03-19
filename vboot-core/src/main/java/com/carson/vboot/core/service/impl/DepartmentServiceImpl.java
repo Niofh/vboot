@@ -60,7 +60,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      *
      * @return
      */
-    @Cacheable(cacheNames = "vboot::dep",key = "'getAll'")
+    @Cacheable(cacheNames = "vboot::dep",key = "'getall'")
     @Override
     public List<Department> getAll() {
         List<Department> departments = departmentDao.selectList(null);
@@ -107,7 +107,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @param department
      * @return
      */
-    @CacheEvict(cacheNames = "vboot::dep",key = "'getAll'")
+    @CacheEvict(cacheNames = "vboot::dep",key = "'getall'")
     @Transactional
     @Override
     public Department save(Department department) {
@@ -159,7 +159,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @param department
      * @return
      */
-    @CacheEvict(cacheNames = "vboot::dep",key = "'getAll'")
+    @CacheEvict(cacheNames = "vboot::dep",key = "'getall'")
     @Transactional
     @Override
     public Department update(Department department) {

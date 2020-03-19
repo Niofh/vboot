@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public enum ExceptionEnums {
 
-
+    SYS_ERROR(900,"连接超时，请重新操作"),
     ADD_ERROR(1000, "添加失败"),
     UPDATE_ERROR(1001, "更新失败"),
     DEL_ERROR(1002, "删除失败"),
