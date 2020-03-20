@@ -296,7 +296,6 @@ public class UserServiceImpl implements UserService {
         // 查询权限
         List<Permission> permissions = permissionDao.findByUserId(user.getId());
         userVO.setPermissions(permissions);
-
         return userVO;
     }
 

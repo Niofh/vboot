@@ -52,10 +52,11 @@ spring:
     host: 39.108.113.143
     password:
     # 数据库索引 默认0
-    database: 1
+    database: 0
     port: 6379
     # 超时时间 Duration类型 5秒
     timeout: 5000
+
   # 文件大小上传配置
   servlet:
     multipart:

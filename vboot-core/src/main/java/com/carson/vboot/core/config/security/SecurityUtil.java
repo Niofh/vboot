@@ -62,7 +62,6 @@ public class SecurityUtil {
 
         // 获取当前缓存的信息
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         log.info("【Security保存的用户信息】{}", user);
         return userService.findByUsername(user.getUsername());
     }
@@ -92,9 +91,10 @@ public class SecurityUtil {
     public String getTokenAndSetAuthority(String username, List<String> list) {
 
         try {
+            UserVO  u = userService.findByUsername(username);
             if (CollUtil.isEmpty(list)) {
                 // 如果数组为空，那么就从数据库获取
-                UserVO u = userService.findByUsername(username);
+
                 list = new ArrayList<>();
                 // 缓存权限
                 if (tokenProperties.getStorePerms()) {
@@ -119,7 +119,7 @@ public class SecurityUtil {
                 // redis
                 token = UUID.randomUUID().toString().replace("-", "");
 
-                TokenUser user = new TokenUser(username, list);
+                TokenUser user = new TokenUser(u.getId(),username, list);
                 // 不缓存权限
                 if (!tokenProperties.getStorePerms()) {
                     user.setPermissions(null);
