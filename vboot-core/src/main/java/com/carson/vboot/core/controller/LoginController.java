@@ -1,9 +1,9 @@
 package com.carson.vboot.core.controller;
 
 import cn.hutool.http.HttpUtil;
+import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.utils.ResultUtil;
 import com.carson.vboot.core.dao.mapper.PermissionDao;
-import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.vo.Result;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
@@ -11,10 +11,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +29,9 @@ public class LoginController {
 
     @Autowired
     private PermissionDao permissionDao;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @GetMapping("/login/page")
     @ApiOperation(value = "没有登录")
@@ -60,9 +63,8 @@ public class LoginController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ApiOperation(value = "test")
-    public Result<Object> test() {
-        List<Permission> byUserId = permissionDao.findByUserId("249024568428072960");
-        return ResultUtil.data(byUserId);
+    public String test(@RequestParam  String token) {
+        return stringRedisTemplate.opsForValue().get(CommonConstant.TOKEN_PRE + token);
     }
 
 }
