@@ -76,7 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
 
-        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry =
+                http.cors().and().csrf().disable()  // 允许跨域,csrf 关闭跨站请求
                 .authorizeRequests();
 
 
@@ -90,6 +91,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 // 登录页面，报错401，前端监听返回登录页面
                 .loginPage("/security/login/page")
+                .permitAll()
                 // 登录地址
                 .loginProcessingUrl("/security/vboot/login")
                 .permitAll() // 权限放开
@@ -111,10 +113,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 登录后可以访问
                 .authenticated()
                 .and()
-                // 允许跨域
-                .cors().and()
-                // 关闭跨站请求防护
-                .csrf().disable()
                 // 前后端分离采用JWT 不需要session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

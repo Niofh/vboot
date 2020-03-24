@@ -34,7 +34,8 @@ public class LoginController {
     @ApiOperation(value = "没有登录")
     public Result<Object> needLogin() {
 
-        return ResultUtil.error(401, "您还未登录，请重新登录");
+        Result<Object> result = ResultUtil.error(401, "您还未登录，请重新登录");
+        return result;
     }
 
 
