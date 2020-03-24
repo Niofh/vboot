@@ -46,7 +46,7 @@ public class Permission extends VbootBaseEntity {
     @ApiModelProperty(value = "按钮权限类型")
     private String buttonType;
 
-    @ApiModelProperty(value = "父id 0是父组件")
+    @ApiModelProperty(value = "父id null是父组件")
     private String parentId;
 
     @ApiModelProperty(value = "说明备注")
@@ -60,6 +60,9 @@ public class Permission extends VbootBaseEntity {
 
     @ApiModelProperty(value = "网页链接")
     private String url;
+
+    @ApiModelProperty(value = "是否缓存 1是，0不是")
+    private Integer nocache;
 
 
 }

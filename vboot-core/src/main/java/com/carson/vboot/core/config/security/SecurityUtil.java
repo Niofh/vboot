@@ -133,6 +133,7 @@ public class SecurityUtil {
                         redisTemplate.delete(CommonConstant.TOKEN_PRE + oldToken);
                     }
                 }
+                log.info("tokenProperties.getTokenExpireTime() {}",tokenProperties.getTokenExpireTime());
                 // 保存token
                 redisTemplate.opsForValue().set(CommonConstant.USER_TOKEN + username, token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
 

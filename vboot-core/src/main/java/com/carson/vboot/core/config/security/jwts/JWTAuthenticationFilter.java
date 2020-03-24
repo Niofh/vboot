@@ -91,6 +91,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         if (tokenProperties.getRedis()) {
             // redis
             String v = redisTemplate.opsForValue().get(CommonConstant.TOKEN_PRE + header);
+            log.warn("token:{}",v);
             if (StrUtil.isBlank(v)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
                 return null;

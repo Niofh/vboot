@@ -65,6 +65,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SecurityUtil securityUtil;
 
+
+
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 自定义用户和密码
@@ -76,8 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
 
-        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry =
-                http.cors().and().csrf().disable()  // 允许跨域,csrf 关闭跨站请求
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.cors().and().csrf().disable()  // 允许跨域,csrf 关闭跨站请求
                 .authorizeRequests();
 
 
