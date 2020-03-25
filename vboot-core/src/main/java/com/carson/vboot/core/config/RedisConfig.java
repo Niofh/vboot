@@ -4,9 +4,6 @@ package com.carson.vboot.core.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.lettuce.core.ClientOptions;
-import io.lettuce.core.SocketOptions;
-import io.lettuce.core.TimeoutOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
@@ -18,9 +15,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -41,13 +40,19 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Value("${redis.time}")
     private Integer time;
 
-    // https://blog.csdn.net/u010531336/article/details/98874102?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task
+    @Value("${spring.redis.host}")
+    private String host;
 
-    // https://blog.csdn.net/zzhongcy/article/details/102584028
+    @Value("${spring.redis.port}")
+    private Integer port;
+
+    @Value("${spring.redis.password}")
+    private String password;
 
 
+    // 配合 @caecheable
     @Bean
-    public CacheManager cacheManager(LettuceConnectionFactory factory) {
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisSerializer<String> redisSerializer = new StringRedisSerializer();
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
 
@@ -77,11 +82,49 @@ public class RedisConfig extends CachingConfigurerSupport {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
                 .disableCachingNullValues();
 
-        RedisCacheManager cacheManager = RedisCacheManager.builder(factory)
+        RedisCacheManager cacheManager = RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(config)
                 .build();
         return cacheManager;
     }
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(jedisConnectionFactory());
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.activateDefaultTyping(new ObjectMapper().getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL);
+        // 不转换值为 null 的对象
+        // om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+
+        // key 采用 string 的序列化方式
+        template.setKeySerializer(stringRedisSerializer);
+        // value 采用 jackson 的序列化方式
+        template.setValueSerializer(jackson2JsonRedisSerializer);
+        // hash 的 key 采用 string 的序列化方式
+        template.setHashKeySerializer(stringRedisSerializer);
+        // hash 的 value 采用 jackson 的序列化方式
+        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+        template.afterPropertiesSet();
+        return template;
+    }
+
+    // 使用jedis，用luttuce会出现超时问题
+    @Bean
+    public JedisConnectionFactory jedisConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        config.setHostName(host);
+        config.setPort(port);
+        config.setPassword(RedisPassword.of(password));
+        JedisConnectionFactory connectionFactory = new JedisConnectionFactory(config);
+        return connectionFactory;
+    }
+
 
     /**
      * 异常处理 当Redis缓存相关操作发生异常时 打印日志 程序正常走

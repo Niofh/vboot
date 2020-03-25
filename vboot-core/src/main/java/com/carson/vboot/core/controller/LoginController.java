@@ -33,6 +33,8 @@ public class LoginController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+
+
     @GetMapping("/login/page")
     @ApiOperation(value = "没有登录")
     public Result<Object> needLogin() {
@@ -56,14 +58,14 @@ public class LoginController {
 //        params.put("code", code);
         String result = HttpUtil.post(loginUrl, params);
         Result result1 = new Gson().fromJson(result, Result.class);
-        log.info("{}",result1);
+        log.info("{}", result1);
         return result1;
     }
 
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ApiOperation(value = "test")
-    public String test(@RequestParam  String token) {
+    public String test(@RequestParam String token) {
         return stringRedisTemplate.opsForValue().get(CommonConstant.TOKEN_PRE + token);
     }
 
