@@ -146,6 +146,7 @@ ignored:
     - /swagger-ui.html
     - /swagger-resources/**
     - /swagger/**
+    - /doc.html
     - /**/v2/api-docs
     - /webjars/**
     - /**/*.js

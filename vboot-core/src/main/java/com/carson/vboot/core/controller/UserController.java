@@ -21,7 +21,7 @@ import java.util.Arrays;
  */
 
 @Slf4j
-@Api(description = "用户接口")
+@Api(tags = "用户接口")
 @RestController
 @RequestMapping("/user")
 public class UserController {

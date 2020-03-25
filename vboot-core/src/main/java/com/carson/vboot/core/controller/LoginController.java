@@ -21,7 +21,7 @@ import java.util.Map;
  * created by Nicofh on 2020-03-15
  */
 
-@Api(description = "登录接口")
+@Api(tags = "登录接口")
 @RestController
 @RequestMapping("/security")
 @Slf4j

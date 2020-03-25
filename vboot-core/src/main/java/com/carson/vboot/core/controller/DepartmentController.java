@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author oufuhua
  */
-@Api(description = "部门管理")
+@Api(tags = "部门管理")
 @RestController
 @RequestMapping("/department")
 public class DepartmentController extends VBootController<Department> {

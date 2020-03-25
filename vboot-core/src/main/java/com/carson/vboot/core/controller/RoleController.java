@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 
-@Api(description = "角色接口")
+@Api(tags = "角色接口")
 @RestController
 @RequestMapping("/role")
 public class RoleController extends VBootController<Role> {

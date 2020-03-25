@@ -15,9 +15,9 @@
 
     <dependencies>
         <!-- Beetl代码生成使用 -->
-        <dependency>
-            <groupId>com.ibeetl</groupId>
-            <artifactId>beetl</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.ibeetl</groupId>-->
+            <!--<artifactId>beetl</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
 </project>
