@@ -90,15 +90,9 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         // 权限
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (tokenProperties.getRedis()) {
-            String v;
-            try {
-                // redis
-                 v = redisTemplate.opsForValue().get(CommonConstant.TOKEN_PRE + header);
 
-            }catch (Exception e ){
-                log.error("token:{}",e);
-                throw new VbootException(500,"redis出错");
-            }
+            // redis
+            String v = redisTemplate.opsForValue().get(CommonConstant.TOKEN_PRE + header);
 
             if (StrUtil.isBlank(v)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
