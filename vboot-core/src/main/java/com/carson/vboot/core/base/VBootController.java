@@ -32,7 +32,7 @@ public abstract class VBootController<T> {
     }
 
 
-    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @RequestMapping(value = "/getAllBase", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "获取全部数据")
     public Result<Object> getAll() {
@@ -42,7 +42,7 @@ public abstract class VBootController<T> {
     }
 
 
-    @PostMapping(value = "/save")
+    @PostMapping(value = "/saveBase")
     @ResponseBody
     @ApiOperation(value = "保存数据")
     public Result<Object> save(@Valid T entity) {
@@ -55,7 +55,7 @@ public abstract class VBootController<T> {
     }
 
 
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/updateBase")
     @ResponseBody
     @ApiOperation(value = "更新数据")
     public Result<Object> update(@Valid T entity) {

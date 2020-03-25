@@ -41,7 +41,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @RequestMapping(value = "/getAllBase", method = RequestMethod.GET)
     @ApiOperation(value = "获取所有用户")
     public Result<Object> getAll() {
         return ResultUtil.data(userService.getAll());
@@ -63,14 +63,14 @@ public class UserController {
     }
 
 
-    @PostMapping("/addUser")
+    @PostMapping("/saveBase")
     @ResponseBody
     @ApiOperation(value = "添加用户")
     public Result<Object> insertUser(@Valid User user) {
         return ResultUtil.data(userService.insertUser(user));
     }
 
-    @PostMapping("/deleteUser")
+    @PostMapping("/delByIds")
     @ResponseBody
     @ApiOperation(value = "批量删除用户")
     public Result<Object> delete(String[] ids) {
@@ -78,7 +78,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/updateUser")
+    @PostMapping("/updateBase")
     @ResponseBody
     @ApiOperation(value = "更新用户")
     public Result<Object> updateUser(@Valid User user) {
