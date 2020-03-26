@@ -58,7 +58,7 @@ public class User extends VbootBaseEntity {
     @ApiModelProperty(value = "用户类型 0普通用户 1管理员")
     private Integer type = CommonEnums.USER_TYPE_NORMAL.getId();
 
-    @ApiModelProperty(value = "状态 默认0正常 -1拉黑")
+    @ApiModelProperty(value = "状态 默认0正常 -1禁用")
     private Integer status = CommonEnums.USER_STATUS_NORMAL.getId();
 
     @ApiModelProperty(value = "描述/详情/备注")
