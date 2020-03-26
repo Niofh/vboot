@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
+import com.carson.vboot.core.config.security.SecurityUtil;
 import com.carson.vboot.core.dao.mapper.*;
 import com.carson.vboot.core.entity.*;
 import com.carson.vboot.core.exception.VbootException;
@@ -60,6 +61,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private SecurityUtil securityUtil;
+
     @Override
     public IPage<User> getUserByPage(PageBo pageBo, User user) {
         Page<User> usersPage = new Page<>(pageBo.getPageIndex(), pageBo.getPageSize());
@@ -69,6 +73,10 @@ public class UserServiceImpl implements UserService {
 
         if (StrUtil.isNotBlank(user.getUsername())) {
             userQueryWrapper.like("username", user.getUsername());
+        }
+
+        if (StrUtil.isNotBlank(user.getNickName())) {
+            userQueryWrapper.like("nick_name", user.getNickName());
         }
 
         if (StrUtil.isNotBlank(user.getMobile())) {
@@ -101,6 +109,17 @@ public class UserServiceImpl implements UserService {
             userQueryWrapper.between("create_time", start, DateUtil.endOfDay(end));
         }
 
+        // todo 如果需要部门展示数据，需要加以下判断
+        List<String> depIds = securityUtil.getDepIds();
+        log.info("所在部门：{}", depIds);
+        if (CollUtil.isNotEmpty(depIds)) {
+            userQueryWrapper.in("departmentId", depIds);
+        }else{
+            if(!securityUtil.getCurrUser().getUsername().equals("admin")){
+                // 如果不是admin账户，是其他没有部门账户，只能看到自己数据
+                userQueryWrapper.eq("username",securityUtil.getCurrUser().getUsername());
+            }
+        }
 
         // 根据时间倒序
         userQueryWrapper.orderByDesc(true, "create_time");
@@ -156,9 +175,9 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Caching(
-        evict = {
-                @CacheEvict(cacheNames = "vboot::user", key = "'getall'") // 删除用户所有数据
-        }
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::user", key = "'getall'") // 删除用户所有数据
+            }
     )
     @Transactional
     @Override
@@ -194,24 +213,24 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Caching(
-        put = {
-                @CachePut(cacheNames = "user", key = "#result.id",condition = "#result!=null") // 根据id缓存
-        },
-        evict = {
-            @CacheEvict(cacheNames = "vboot::user", key = "'getall'"), // 删除用户所有数据
-        }
+            put = {
+                    @CachePut(cacheNames = "user", key = "#result.id", condition = "#result!=null") // 根据id缓存
+            },
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::user", key = "'getall'"), // 删除用户所有数据
+            }
     )
     @Transactional
     @Override
     public User updateUser(User user) {
         try {
-            String username =user.getUsername();
+            String username = user.getUsername();
             user.setUsername(null);
             User u = this.commonUser(user);
             int i = userDao.updateById(u);
             if (i > 0) {
                 // 删除用户名缓存用户信息
-                stringRedisTemplate.delete("vboot::user::"+username);
+                stringRedisTemplate.delete("vboot::user::" + username);
                 return u;
             }
             return null;
@@ -224,9 +243,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Caching(
-        evict = {
-                @CacheEvict(cacheNames = "vboot::user", key = "'getall'") // 删除用户所有数据
-        }
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::user", key = "'getall'") // 删除用户所有数据
+            }
     )
     @Transactional
     @Override
@@ -257,7 +276,7 @@ public class UserServiceImpl implements UserService {
      * @param username
      * @return
      */
-    @Cacheable(cacheNames = "vboot::user",key = "#username") // 根据用户名查询缓存
+    @Cacheable(cacheNames = "vboot::user", key = "#username") // 根据用户名查询缓存
     @Override
     public UserVO findByUsername(String username) {
 
@@ -339,15 +358,14 @@ public class UserServiceImpl implements UserService {
             QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", userId);
             userRoleDao.delete(wrapper);
-        }else{
+        } else {
             // 新加用户
-            if(user.getPassword()!=null){
+            if (user.getPassword() != null) {
                 // 密码加密
                 String encode = new BCryptPasswordEncoder().encode(user.getPassword());
                 user.setPassword(encode);
             }
         }
-
 
 
         // 创建一个空数组

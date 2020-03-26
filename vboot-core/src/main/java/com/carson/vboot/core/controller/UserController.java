@@ -35,7 +35,7 @@ public class UserController {
 
     @RequestMapping(value = "/getUserByPage", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取")
-    public Result<IPage<User>> getUserByPage(@Valid PageBo pageBo, User user) {
+    public Result<IPage<User>> getUserByPage(@Valid PageBo pageBo,  User user) {
 
         return ResultUtil.data(userService.getUserByPage(pageBo, user));
     }

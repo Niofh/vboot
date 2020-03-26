@@ -1,6 +1,9 @@
-
 # 项目名称
 appName: vboot
+
+vboot:
+  adminUserName: admin  # 一个管理系统只有一个admin账号，也是最高权限
+
 
 server:
   servlet:
@@ -125,41 +128,41 @@ token:
 ignored:
   # 无需登录认证的请求
   urls:
-    - /oauth2/**
-    - /actuator/**
-    - /admin/**
-    - /editor-app/**
-    - /act/**
-    - /dictData/getByType/**
-    - /email/sendResetCode/**
-    - /email/resetByEmail
-    - /file/view/**
-    - /social/**
-    - /ws/**
-    - /logout
-    - /security/login/page
-    - /user/regist
-    - /user/smsLogin
-    - /user/resetByMobile
-    - /security/**
-    - /druid/**
-    - /swagger-ui.html
-    - /swagger-resources/**
-    - /swagger/**
-    - /doc.html
-    - /**/v2/api-docs
-    - /webjars/**
-    - /**/*.js
-    - /**/*.css
-    - /**/*.png
-    - /**/*.ico
-    - /test/**
+  - /oauth2/**
+  - /actuator/**
+  - /admin/**
+  - /editor-app/**
+  - /act/**
+  - /dictData/getByType/**
+  - /email/sendResetCode/**
+  - /email/resetByEmail
+  - /file/view/**
+  - /social/**
+  - /ws/**
+  - /logout
+  - /security/login/page
+  - /user/regist
+  - /user/smsLogin
+  - /user/resetByMobile
+  - /security/**
+  - /druid/**
+  - /swagger-ui.html
+  - /swagger-resources/**
+  - /swagger/**
+  - /doc.html
+  - /**/v2/api-docs
+  - /webjars/**
+  - /**/*.js
+  - /**/*.css
+  - /**/*.png
+  - /**/*.ico
+  - /test/**
   # 限流及黑名单不拦截的路径
   limitUrls:
-    - /**/*.js
-    - /**/*.css
-    - /**/*.png
-    - /**/*.ico
+  - /**/*.js
+  - /**/*.css
+  - /**/*.png
+  - /**/*.ico
 
 # Swagger界面内容配置
 swagger:

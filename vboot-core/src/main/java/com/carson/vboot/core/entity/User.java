@@ -11,6 +11,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
 @Data
 @TableName("t_user")
 @ApiModel(value = "用户")
-public class User extends VbootBaseEntity {
+public class User extends VbootBaseEntity  {
 
     private static final long serialVersionUID = 1L;
 

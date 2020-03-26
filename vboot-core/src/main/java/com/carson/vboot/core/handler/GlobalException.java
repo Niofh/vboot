@@ -47,7 +47,7 @@ public class GlobalException {
             return ResultUtil.error(400, msg);
         } else {
             log.error("【系统异常】 {}", e);
-            return ResultUtil.error(500, "系统异常");
+            return ResultUtil.error(500, "系统异常："+e.getMessage());
         }
 
     }
