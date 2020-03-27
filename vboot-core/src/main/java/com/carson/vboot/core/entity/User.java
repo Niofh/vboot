@@ -11,7 +11,6 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -48,10 +47,10 @@ public class User extends VbootBaseEntity  {
     private String street;
 
     @ApiModelProperty(value = "性别")
-    private String sex;
+    private Integer sex;
 
     @ApiModelProperty(value = "密码强度")
-    private String passStrength;
+    private Integer passStrength;
 
     @ApiModelProperty(value = "用户头像")
     private String avatar = CommonConstant.USER_DEFAULT_AVATAR;

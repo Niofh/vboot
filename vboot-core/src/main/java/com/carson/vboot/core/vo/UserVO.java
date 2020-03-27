@@ -37,10 +37,10 @@ public class UserVO extends VbootBaseEntity {
     private String street;
 
     @ApiModelProperty(value = "性别")
-    private String sex;
+    private Integer sex;
 
     @ApiModelProperty(value = "密码强度")
-    private String passStrength;
+    private Integer passStrength;
 
     @ApiModelProperty(value = "用户头像")
     private String avatar = CommonConstant.USER_DEFAULT_AVATAR;

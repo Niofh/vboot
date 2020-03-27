@@ -114,10 +114,10 @@ public class UserServiceImpl implements UserService {
         log.info("所在部门：{}", depIds);
         if (CollUtil.isNotEmpty(depIds)) {
             userQueryWrapper.in("departmentId", depIds);
-        }else{
-            if(!securityUtil.getCurrUser().getUsername().equals("admin")){
+        } else {
+            if (!securityUtil.getCurrUser().getUsername().equals("admin")) {
                 // 如果不是admin账户，是其他没有部门账户，只能看到自己数据
-                userQueryWrapper.eq("username",securityUtil.getCurrUser().getUsername());
+                userQueryWrapper.eq("username", securityUtil.getCurrUser().getUsername());
             }
         }
 
@@ -192,7 +192,7 @@ public class UserServiceImpl implements UserService {
             if (userObj != null) {
                 throw new VbootException(ExceptionEnums.USER_NAME_EXIST);
             }
-            User u = this.commonUser(user);
+            User u = this.commonUser(user, true);
             int insert = userDao.insert(u);
             if (insert > 0) {
                 return u;
@@ -201,6 +201,7 @@ public class UserServiceImpl implements UserService {
         } catch (VbootException e) {
             throw new VbootException(e.getCode(), e.getMessage());
         } catch (Exception e) {
+            log.info("添加失败：{}", e);
             throw new VbootException(ExceptionEnums.ADD_ERROR);
         }
 
@@ -226,8 +227,10 @@ public class UserServiceImpl implements UserService {
         try {
             String username = user.getUsername();
             user.setUsername(null);
-            User u = this.commonUser(user);
+            User u = this.commonUser(user, false);
             int i = userDao.updateById(u);
+
+            u.setUsername(username);
             if (i > 0) {
                 // 删除用户名缓存用户信息
                 stringRedisTemplate.delete("vboot::user::" + username);
@@ -237,6 +240,7 @@ public class UserServiceImpl implements UserService {
         } catch (VbootException e) {
             throw new VbootException(e.getCode(), e.getMessage());
         } catch (Exception e) {
+            log.error("【添加失败】{}", e);
             throw new VbootException(ExceptionEnums.UPDATE_ERROR);
         }
     }
@@ -322,10 +326,11 @@ public class UserServiceImpl implements UserService {
      * 新增和修改公共方法
      *
      * @param user
+     * @param addFlag 是否是添加
      * @return
      */
     @Transactional
-    public User commonUser(User user) {
+    public User commonUser(User user, Boolean addFlag) {
         // 获取用户id
         String userId = user.getId();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -350,11 +355,11 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        if (null != userId) {
-            // ussrId存在代表是修改，先清空对应角色id
-
-            user = this.getUserById(userId);
-
+        if (!addFlag) {
+            // addFlag===false代表是修改，先清空对应角色id
+            User userById = this.getUserById(userId);
+            // 设置他的角色
+            user.setRoleIds(userById.getRoleIds());
             QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", userId);
             userRoleDao.delete(wrapper);
