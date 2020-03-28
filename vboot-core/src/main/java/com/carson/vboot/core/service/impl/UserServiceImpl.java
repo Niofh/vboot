@@ -23,6 +23,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -200,6 +201,9 @@ public class UserServiceImpl implements UserService {
             return null;
         } catch (VbootException e) {
             throw new VbootException(e.getCode(), e.getMessage());
+        } catch (DuplicateKeyException e) {
+            // 因为用户名是唯一，假删除时候会可能有2个名字相同，所以一般不要删除用户比较好
+            throw new VbootException(ExceptionEnums.USER_NAME_EXIST);
         } catch (Exception e) {
             log.info("添加失败：{}", e);
             throw new VbootException(ExceptionEnums.ADD_ERROR);
@@ -228,7 +232,7 @@ public class UserServiceImpl implements UserService {
 
             User userById = this.getUserById(user.getId());
 
-            if(userById==null){
+            if (userById == null) {
                 throw new VbootException(ExceptionEnums.USER_NO_EXIST);
             }
             // 因为名字是不能修改的
@@ -343,7 +347,7 @@ public class UserServiceImpl implements UserService {
         // 验证手机号唯一性
         if (StrUtil.isNotBlank(user.getMobile())) {
             queryWrapper.clear(); // 清空sql判断语句
-            queryWrapper.eq("mobile", user.getMobile()).ne("id", user.getId());
+            queryWrapper.eq("mobile", user.getMobile()).ne("username", user.getUsername());
             User mUser = userDao.selectOne(queryWrapper);
             if (null != mUser) {
                 throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
@@ -353,7 +357,7 @@ public class UserServiceImpl implements UserService {
         // 验证邮箱唯一性
         if (StrUtil.isNotBlank(user.getEmail())) {
             queryWrapper.clear(); // 清空sql判断语句
-            queryWrapper.eq("email", user.getEmail()).ne("id", user.getId());
+            queryWrapper.eq("email", user.getEmail()).ne("username", user.getUsername());
             User mUser = userDao.selectOne(queryWrapper);
             if (null != mUser) {
                 throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
