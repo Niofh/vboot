@@ -225,15 +225,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         try {
-            String username = user.getUsername();
-            user.setUsername(null);
+
+            User userById = this.getUserById(user.getId());
+
+            if(userById==null){
+                throw new VbootException(ExceptionEnums.USER_NO_EXIST);
+            }
+            // 因为名字是不能修改的
+            user.setUsername(userById.getUsername());
             User u = this.commonUser(user, false);
             int i = userDao.updateById(u);
 
-            u.setUsername(username);
             if (i > 0) {
                 // 删除用户名缓存用户信息
-                stringRedisTemplate.delete("vboot::user::" + username);
+                stringRedisTemplate.delete("vboot::user::" + userById.getUsername());
                 return u;
             }
             return null;
@@ -335,20 +340,20 @@ public class UserServiceImpl implements UserService {
         String userId = user.getId();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 
-        // 验证手机号
+        // 验证手机号唯一性
         if (StrUtil.isNotBlank(user.getMobile())) {
             queryWrapper.clear(); // 清空sql判断语句
-            queryWrapper.eq("mobile", user.getMobile());
+            queryWrapper.eq("mobile", user.getMobile()).ne("id", user.getId());
             User mUser = userDao.selectOne(queryWrapper);
             if (null != mUser) {
                 throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
             }
         }
 
-        // 验证邮箱
+        // 验证邮箱唯一性
         if (StrUtil.isNotBlank(user.getEmail())) {
             queryWrapper.clear(); // 清空sql判断语句
-            queryWrapper.eq("email", user.getEmail());
+            queryWrapper.eq("email", user.getEmail()).ne("id", user.getId());
             User mUser = userDao.selectOne(queryWrapper);
             if (null != mUser) {
                 throw new VbootException(ExceptionEnums.USER_MOBILE_EXIST);
