@@ -13,6 +13,7 @@
     <modules>
         <module>vboot-admin</module>
         <module>vboot-core</module>
+        <module>vboot-common</module>
     </modules>
 
     <properties>
@@ -146,6 +147,13 @@
                 <groupId>com.github.ulisesbocchio</groupId>
                 <artifactId>jasypt-spring-boot-starter</artifactId>
                 <version>${jasypt.version}</version>
+            </dependency>
+
+            <!--模板工具-->
+            <dependency>
+                <groupId>com.ibeetl</groupId>
+                <artifactId>beetl</artifactId>
+                <version>3.0.11.RELEASE</version>
             </dependency>
 
 

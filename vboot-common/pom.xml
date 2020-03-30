@@ -19,6 +19,13 @@
         <module>vboot-generator</module>
 
     </modules>
+    <dependencies>
+            <dependency>
+                <groupId>com.carson</groupId>
+                <artifactId>vboot-core</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+    </dependencies>
 
     <build>
         <plugins>
