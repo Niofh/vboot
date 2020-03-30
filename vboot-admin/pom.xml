@@ -26,7 +26,7 @@
         <!--公共包-->
         <dependency>
             <groupId>com.carson</groupId>
-            <artifactId>vboot-common</artifactId>
+            <artifactId>vboot-generator</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
