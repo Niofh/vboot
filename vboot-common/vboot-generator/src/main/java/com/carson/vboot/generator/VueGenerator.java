@@ -1,5 +1,6 @@
 package com.carson.vboot.generator;
 
+import cn.hutool.core.io.FileUtil;
 import com.carson.vboot.core.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 @RestController
@@ -45,7 +49,12 @@ public class VueGenerator {
         }
         GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
         Template t = gt.getTemplate("/hello.txt");
+        t.binding("name", "beetl");
         String str = t.render();
+
+
+        // 文件写入
+//        FileUtil.writeBytes("哈哈哈".getBytes(), "E:\\vboot\\vboot-common\\vboot-generator\\src\\main\\resources\\test.txt");
         System.out.println(str);
     }
 }
