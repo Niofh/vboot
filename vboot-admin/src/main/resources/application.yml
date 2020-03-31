@@ -183,5 +183,5 @@ logging:
         vboot:
           core:
             dao: DEBUG
-
-
+          generator:
+           dao: DEBUG

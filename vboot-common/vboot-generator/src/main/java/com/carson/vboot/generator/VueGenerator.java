@@ -8,13 +8,12 @@ import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 @RestController
@@ -52,9 +51,19 @@ public class VueGenerator {
         t.binding("name", "beetl");
         String str = t.render();
 
+//        String property = System.getProperty("user.dir"); 获取项目路径
+//        System.out.println(property);
 
+       // spingboot文件下载 https://blog.csdn.net/zhangvalue/article/details/89387261
+
+        // 获取当前class资源路径
+        String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+
+
+        System.out.println(path);
+        File file = new File(path+"/vue/test.txt");
         // 文件写入
-//        FileUtil.writeBytes("哈哈哈".getBytes(), "E:\\vboot\\vboot-common\\vboot-generator\\src\\main\\resources\\test.txt");
+        FileUtil.writeBytes(str.getBytes(), file.getPath());
         System.out.println(str);
     }
 }
