@@ -21,6 +21,8 @@ public enum ExceptionEnums {
     USER_EMAIL_EXIST(10002, "邮箱已存在"),
     ROLE_NO_EXIST(10003, "角色不存在"),
     USER_NO_EXIST(10004, "用户不存在"),
+    CODE_DETAIL_NO_EXIST(10005,"代码属性没有配置"),
+    DATA_NO_EXIST(20000, "数据不存在"),
     ;
     private Integer id;
     private String message;

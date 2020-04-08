@@ -15,6 +15,14 @@ public class Code  extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
 
+    @ApiModelProperty(value = "生成文件名称")
+    @NotNull(message = "生成文件名称不能为空")
+    private String name;
+
+    @ApiModelProperty(value = "包路径")
+    @NotNull(message = "包路径不为空")
+    private String packageName;
+
     @ApiModelProperty(value = "表名称")
     @NotNull(message = "表名称不能为空")
     private String tableName;

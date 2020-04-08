@@ -1,0 +1,10 @@
+package #{code.packageName}.service;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.carson.vboot.core.base.VbootService;
+import com.carson.vboot.core.bo.PageBo;
+import #{code.packageName}.entity.#{Name};
+
+public interface #{Name}Service extends VbootService< #{Name}> {
+    IPage<Code> getCodeByPage(PageBo pageBo, #{Name} #{name});
+}

@@ -28,8 +28,16 @@ public class CodeDetail extends VbootBaseEntity {
     @NotNull(message = "中文名不能为空")
     private String chinaName;
 
+    @ApiModelProperty(value = "java类型")
+    @NotNull(message = "java类型不能为空")
+    private String javaType;
+
     @ApiModelProperty(value = "字段类型 varchar,datetime,tinyint,decimal等类型")
+    @NotNull(message = "字段类型不能为空")
     private String nameType;
+
+    @ApiModelProperty(value = "备注 sql使用的")
+    private String description;
 
     @ApiModelProperty(value = "是否必填 0是不必填，1是必填")
     private Integer required;
@@ -37,7 +45,7 @@ public class CodeDetail extends VbootBaseEntity {
     @ApiModelProperty(value = "是否显示表格中 0不，1是")
     private Integer tableSite;
 
-    @ApiModelProperty(value = "表单类型：输入框，单选，多选，时间框，下拉列表，上传，textarea")
+    @ApiModelProperty(value = "表单类型：1输入框，单选，多选，时间框，下拉列表，上传，textarea")
     private Integer formType;
 
     @ApiModelProperty(value = "查询方式 = != >= <= like notNull between")

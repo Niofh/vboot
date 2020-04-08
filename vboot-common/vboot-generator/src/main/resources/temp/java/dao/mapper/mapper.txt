@@ -1,0 +1,11 @@
+package #{code.packageName}.dao.mapper;
+
+
+import com.carson.vboot.core.base.VbootBaseDao;
+import #{code.packageName}.entity.#{Name};
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface #{Name}Dao extends VbootBaseDao< #{Name}> {
+}
+

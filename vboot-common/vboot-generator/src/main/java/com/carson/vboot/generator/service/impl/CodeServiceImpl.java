@@ -1,23 +1,43 @@
 package com.carson.vboot.generator.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
+import com.carson.vboot.core.common.enums.ExceptionEnums;
+import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.generator.dao.mapper.CodeDao;
+import com.carson.vboot.generator.dao.mapper.CodeDetailDao;
 import com.carson.vboot.generator.entity.Code;
+import com.carson.vboot.generator.entity.CodeDetail;
 import com.carson.vboot.generator.service.CodeService;
 import lombok.extern.slf4j.Slf4j;
+import org.beetl.core.Configuration;
+import org.beetl.core.GroupTemplate;
+import org.beetl.core.Template;
+import org.beetl.core.resource.ClasspathResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ClassUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
 public class CodeServiceImpl implements CodeService {
     @Autowired
     private CodeDao codeDao;
+
+    @Autowired
+    private CodeDetailDao codeDetailDao;
 
     @Override
     public VbootBaseDao<Code> getBaseDao() {
@@ -40,5 +60,98 @@ public class CodeServiceImpl implements CodeService {
         Page<Code> codePage = codeDao.selectPage(page, codeQueryWrapper);
 
         return codePage;
+    }
+
+    @Override
+    public String fileDownLoad(String id) {
+        // 获取code信息
+        Code code = codeDao.selectById(id);
+        if (code == null) {
+            throw new VbootException(ExceptionEnums.DATA_NO_EXIST);
+        }
+        // code
+        QueryWrapper<CodeDetail> codeDetailQueryWrapper = new QueryWrapper<>();
+        codeDetailQueryWrapper.eq("code_id", id);
+        List<CodeDetail> codeDetailList = codeDetailDao.selectList(codeDetailQueryWrapper);
+
+        if (CollUtil.isEmpty(codeDetailList)) {
+
+            throw new VbootException(ExceptionEnums.CODE_DETAIL_NO_EXIST);
+        }
+
+        renderFiled(code, codeDetailList);
+        return null;
+    }
+
+    /**
+     * 生成文件
+     *
+     * @param code
+     * @param codeDetailList
+     * @return
+     */
+    private String renderFiled(Code code, List<CodeDetail> codeDetailList) {
+
+        // 获取当前class资源路径
+        String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+
+        final String FROM = "/temp";
+        final String TARGET = "/render";
+
+        String name = code.getName();
+        String Name = name.substring(0, 1).toUpperCase() + name.substring(1);
+
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/");
+        Configuration cfg = null;
+        try {
+            cfg = Configuration.defaultConfiguration();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
+
+        // 设置共享变量
+        Map<String, Object> shared = new HashMap<String, Object>();
+        shared.put("name", name);
+        shared.put("Name", Name);
+        shared.put("code", code);
+        shared.put("codeDetailList", codeDetailList);
+        gt.setSharedVars(shared);
+
+        // api接口生成
+        this.commonFile(gt,FROM + "/vue/api.txt",path + TARGET + "/vue/" + name + ".js");
+
+        // mysql生成
+        this.commonFile(gt,FROM + "/mysql/sql.txt",path + TARGET + "/mysql/" + code.getTableName() + ".sql");
+
+        // entity生成
+        this.commonFile(gt,FROM + "/java/entity/entity.txt",path + TARGET + "/java/entity/" + Name + ".java");
+        // mapper生成
+        this.commonFile(gt,FROM + "/java/dao/mapper/mapper.txt",path + TARGET + "/java/dao/mapper/" + Name + "Dao.java");
+
+        // service
+        this.commonFile(gt,FROM + "/java/service/service.txt",path + TARGET + "/java/service/" + Name + "Service.java");
+        this.commonFile(gt,FROM + "/java/service/impl/serviceImpl.txt",path + TARGET + "/java/service/impl/" + Name + "ServiceImpl.java");
+
+        // controller
+        this.commonFile(gt,FROM + "/java/controller/controller.txt",path + TARGET + "/java/controller/" + Name + "Controller.java");
+
+        return TARGET;
+    }
+
+    /**
+     *
+     * @param gt GroupTemplate
+     * @param from ；来源路径
+     * @param target 目标路径
+     */
+    private void commonFile(GroupTemplate gt, String from, String target) {
+        Template t = gt.getTemplate(from);
+        // 模板渲染
+        String data = t.render();
+        File file = new File(target);
+        // 文件写入
+        FileUtil.writeBytes(data.getBytes(), file.getPath());
     }
 }

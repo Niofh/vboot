@@ -1,0 +1,25 @@
+package #{code.packageName}.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.carson.vboot.core.base.VbootBaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+
+@Data
+@TableName("#{code.tableName}")
+@ApiModel(value = "#{code.description}")
+public class #{Name}  extends VbootBaseEntity {
+    private static final long serialVersionUID = 1L;
+
+<% for(item in codeDetailList){ %>
+    @ApiModelProperty(value = "#{item.chinaName}")
+  <% if(item.required==1){  %>
+    @NotNull(message = "#{item.chinaName}不能为空")
+  <% }  %>
+    private #{item.javaType} #{item.name};
+<% } %>
+
+}

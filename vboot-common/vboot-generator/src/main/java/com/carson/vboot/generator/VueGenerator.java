@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/vue")
+@RequestMapping("/temp/vue")
 @Api(tags = "vue生成增删改查模板")
 public class VueGenerator {
 
@@ -47,8 +47,13 @@ public class VueGenerator {
             e.printStackTrace();
         }
         GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
-        Template t = gt.getTemplate("/hello.txt");
-        t.binding("name", "beetl");
+
+        Template t = gt.getTemplate("/temp/vue/api.txt");
+
+        String name = "code";
+
+        t.binding("name", "code");
+        t.binding("Name","Code");
         String str = t.render();
 
 //        String property = System.getProperty("user.dir"); 获取项目路径
@@ -61,7 +66,7 @@ public class VueGenerator {
 
 
         System.out.println(path);
-        File file = new File(path+"/vue/test.txt");
+        File file = new File(path+ "/temp/vue/code.js");
         // 文件写入
         FileUtil.writeBytes(str.getBytes(), file.getPath());
         System.out.println(str);

@@ -1,0 +1,14 @@
+CREATE TABLE `#{code["tableName"]}`  (
+  `id` varchar(255)  NOT NULL COMMENT '代码主键',
+
+<% for(item in codeDetailList){%>
+  `#{item.name}` #{item.nameType}  DEFAULT NULL COMMENT '#{item.description}',
+<% } %>
+
+  `create_time` datetime(0)  DEFAULT NULL COMMENT '创建时间',
+  `create_by` varchar(255)   DEFAULT NULL COMMENT '创建用户名',
+  `update_time` datetime(0)  DEFAULT NULL COMMENT '更新时间',
+  `update_by` varchar(255)   DEFAULT NULL COMMENT '更新用户名',
+  `del_flag` tinyint(4)  DEFAULT NULL COMMENT '删除标记 0是未删除，1是已删除',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '#{code["description"]}';
