@@ -54,4 +54,7 @@ public class CodeDetail extends VbootBaseEntity {
     @ApiModelProperty(value = "数字字典id")
     private String dicId;
 
+    @ApiModelProperty(value="排序号")
+    private String num;
+
 }

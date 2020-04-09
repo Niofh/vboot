@@ -10,6 +10,7 @@ import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.exception.VbootException;
+import com.carson.vboot.generator.common.Constant;
 import com.carson.vboot.generator.dao.mapper.CodeDao;
 import com.carson.vboot.generator.dao.mapper.CodeDetailDao;
 import com.carson.vboot.generator.entity.Code;
@@ -95,11 +96,12 @@ public class CodeServiceImpl implements CodeService {
         // 获取当前class资源路径
         String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
 
-        final String FROM = "/temp";
-        final String TARGET = "/render";
 
         String name = code.getName();
         String Name = name.substring(0, 1).toUpperCase() + name.substring(1);
+
+        String FROM = Constant.FROM_PATH + name;
+        String TARGET = Constant.TARGET_PATH + name;
 
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/");
         Configuration cfg = null;
@@ -120,30 +122,29 @@ public class CodeServiceImpl implements CodeService {
         gt.setSharedVars(shared);
 
         // api接口生成
-        this.commonFile(gt,FROM + "/vue/api.txt",path + TARGET + "/vue/" + name + ".js");
+        this.commonFile(gt, FROM + "/vue/api.txt", path + TARGET + "/vue/" + name + ".js");
 
         // mysql生成
-        this.commonFile(gt,FROM + "/mysql/sql.txt",path + TARGET + "/mysql/" + code.getTableName() + ".sql");
+        this.commonFile(gt, FROM + "/mysql/sql.txt", path + TARGET + "/mysql/" + code.getTableName() + ".sql");
 
         // entity生成
-        this.commonFile(gt,FROM + "/java/entity/entity.txt",path + TARGET + "/java/entity/" + Name + ".java");
+        this.commonFile(gt, FROM + "/java/entity/entity.txt", path + TARGET + "/java/entity/" + Name + ".java");
         // mapper生成
-        this.commonFile(gt,FROM + "/java/dao/mapper/mapper.txt",path + TARGET + "/java/dao/mapper/" + Name + "Dao.java");
+        this.commonFile(gt, FROM + "/java/dao/mapper/mapper.txt", path + TARGET + "/java/dao/mapper/" + Name + "Dao.java");
 
         // service
-        this.commonFile(gt,FROM + "/java/service/service.txt",path + TARGET + "/java/service/" + Name + "Service.java");
-        this.commonFile(gt,FROM + "/java/service/impl/serviceImpl.txt",path + TARGET + "/java/service/impl/" + Name + "ServiceImpl.java");
+        this.commonFile(gt, FROM + "/java/service/service.txt", path + TARGET + "/java/service/" + Name + "Service.java");
+        this.commonFile(gt, FROM + "/java/service/impl/serviceImpl.txt", path + TARGET + "/java/service/impl/" + Name + "ServiceImpl.java");
 
         // controller
-        this.commonFile(gt,FROM + "/java/controller/controller.txt",path + TARGET + "/java/controller/" + Name + "Controller.java");
+        this.commonFile(gt, FROM + "/java/controller/controller.txt", path + TARGET + "/java/controller/" + Name + "Controller.java");
 
         return TARGET;
     }
 
     /**
-     *
-     * @param gt GroupTemplate
-     * @param from ；来源路径
+     * @param gt     GroupTemplate
+     * @param from   ；来源路径
      * @param target 目标路径
      */
     private void commonFile(GroupTemplate gt, String from, String target) {

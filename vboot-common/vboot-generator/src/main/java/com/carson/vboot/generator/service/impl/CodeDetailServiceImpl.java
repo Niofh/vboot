@@ -19,4 +19,20 @@ public class CodeDetailServiceImpl implements CodeDetailService {
     public VbootBaseDao<CodeDetail> getBaseDao() {
         return codeDetailDao;
     }
+
+    /**
+     * 修改
+     *
+     * @param entity
+     * @return
+     */
+    @Override
+    public CodeDetail update(CodeDetail entity) {
+        int i = codeDetailDao.updateById(entity);
+        if (i > 0) {
+            return entity;
+        } else {
+            return null;
+        }
+    }
 }
