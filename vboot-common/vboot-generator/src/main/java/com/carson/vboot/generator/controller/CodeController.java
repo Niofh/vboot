@@ -52,15 +52,21 @@ public class CodeController extends VBootController<Code> {
 
     @GetMapping(value = "/fileDownLoad")
     @ApiOperation(value = "代码文件下载")
-    public void fileDownLoad(HttpServletResponse  response,@RequestParam(name="id") String id) {
+    public void fileDownLoad(HttpServletResponse response, @RequestParam(name = "id") String id) {
         //文件下载https://blog.csdn.net/zhangvalue/article/details/89387261
         String path = codeService.fileDownLoad(id);
         ZipUtil.zip(path);
         try {
-            FileUtil.downLoad(response, id+".zip", path + ".zip");
+            FileUtil.downLoad(response, id + ".zip", path + ".zip");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    @GetMapping(value = "/showCode")
+    @ApiOperation(value = "预览代码")
+    public Result<Object> showCode( @RequestParam(name = "id") String id) {
+        return ResultUtil.data(codeService.showCode(id));
     }
 
 

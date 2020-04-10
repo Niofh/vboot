@@ -5,6 +5,8 @@ import com.carson.vboot.core.base.VbootService;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.generator.entity.Code;
 
+import java.util.HashMap;
+
 public interface CodeService extends VbootService<Code> {
     IPage<Code> getCodeByPage(PageBo pageBo, Code code);
 
@@ -13,4 +15,11 @@ public interface CodeService extends VbootService<Code> {
      * @param id
      */
     String  fileDownLoad(String id);
+
+    /**
+     * 生成代码返回前端
+     * @param id
+     * @return
+     */
+    HashMap<String,Object> showCode(String id);
 }
