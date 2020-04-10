@@ -157,6 +157,7 @@ ignored:
   - /**/*.png
   - /**/*.ico
   - /test/**
+  - /code/fileDownLoad
   # 限流及黑名单不拦截的路径
   limitUrls:
   - /**/*.js

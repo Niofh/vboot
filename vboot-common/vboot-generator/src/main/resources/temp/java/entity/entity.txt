@@ -20,6 +20,7 @@ public class #{Name}  extends VbootBaseEntity {
     @NotNull(message = "#{item.chinaName}不能为空")
   <% }  %>
     private #{item.javaType} #{item.name};
+
 <% } %>
 
 }

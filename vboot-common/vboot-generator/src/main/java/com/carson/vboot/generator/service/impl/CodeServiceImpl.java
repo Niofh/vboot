@@ -80,8 +80,8 @@ public class CodeServiceImpl implements CodeService {
             throw new VbootException(ExceptionEnums.CODE_DETAIL_NO_EXIST);
         }
 
-        renderFiled(code, codeDetailList);
-        return null;
+        String path = renderFiled(code, codeDetailList);
+        return path;
     }
 
     /**
@@ -100,8 +100,8 @@ public class CodeServiceImpl implements CodeService {
         String name = code.getName();
         String Name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
-        String FROM = Constant.FROM_PATH + name;
-        String TARGET = Constant.TARGET_PATH + name;
+        String FROM = Constant.FROM_PATH;
+        String TARGET = Constant.TARGET_PATH + "/"+name;
 
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/");
         Configuration cfg = null;
@@ -139,7 +139,7 @@ public class CodeServiceImpl implements CodeService {
         // controller
         this.commonFile(gt, FROM + "/java/controller/controller.txt", path + TARGET + "/java/controller/" + Name + "Controller.java");
 
-        return TARGET;
+        return path+TARGET;
     }
 
     /**

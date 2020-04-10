@@ -1,10 +1,8 @@
 CREATE TABLE `#{code["tableName"]}`  (
   `id` varchar(255)  NOT NULL COMMENT '代码主键',
-
 <% for(item in codeDetailList){%>
   `#{item.name}` #{item.nameType}  DEFAULT NULL COMMENT '#{item.description}',
 <% } %>
-
   `create_time` datetime(0)  DEFAULT NULL COMMENT '创建时间',
   `create_by` varchar(255)   DEFAULT NULL COMMENT '创建用户名',
   `update_time` datetime(0)  DEFAULT NULL COMMENT '更新时间',

@@ -1,5 +1,6 @@
 package com.carson.vboot.generator.service;
 
+import cn.hutool.core.util.ZipUtil;
 import com.carson.vboot.generator.common.Constant;
 import com.carson.vboot.generator.dao.mapper.CodeDetailDao;
 import com.carson.vboot.generator.entity.CodeDetail;
@@ -26,7 +27,9 @@ public class CodeServiceTest {
 
     @Test
     public void renderFile() {
-        codeService.fileDownLoad("257299003744456704");
+        String s = codeService.fileDownLoad("257299003744456704");
+        log.info(s);
+        ZipUtil.zip(s);
     }
     @Test
     public void addCodeDetail(){
@@ -39,7 +42,7 @@ public class CodeServiceTest {
         codeDetail.setRequired(1);
         codeDetail.setTableSite(1);
         codeDetail.setFormType(1);
-        codeDetail.setSearch("=");
+        codeDetail.setSearch(1);
 
         codeDetailDao.insert(codeDetail);
     }

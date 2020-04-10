@@ -49,7 +49,7 @@ public class CodeDetail extends VbootBaseEntity {
     private Integer formType;
 
     @ApiModelProperty(value = "查询方式 = != >= <= like notNull between")
-    private String search;
+    private Integer search;
 
     @ApiModelProperty(value = "数字字典id")
     private String dicId;
