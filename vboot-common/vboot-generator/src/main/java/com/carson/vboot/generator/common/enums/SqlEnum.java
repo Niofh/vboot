@@ -7,13 +7,11 @@ import java.util.HashMap;
 @Getter
 public enum SqlEnum {
 
-    DENGYU(1, "=","DENGYU"),
-    DAYU(2, ">=","DAYU"),
-    XIAOYU(3, "<=>","XIAOYU"),
-    BUDENGYU(4, "!=","BUDENGYU"),
-    LIKE(5, "Like","LIKE"),
-    NOTNULL(6, "NOTNULL","NOTNULL"),
-    BETWEEN(7, "BETWEEN","BETWEEN");
+    eq(1, "=","eq"),
+    ge(2, ">=","ge"),
+    le(3, "<=","le"),
+    ne(4, "!=","ne"),
+    like(5, "like","like");
 
     private Integer id;
     private String name;

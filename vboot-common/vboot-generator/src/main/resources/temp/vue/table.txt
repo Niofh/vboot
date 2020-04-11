@@ -1,18 +1,28 @@
 <template>
   <div class="app-container user">
     <el-form ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" size="small">
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="searchForm.username" clearable placeholder="用户名" />
-      </el-form-item>
-      <el-form-item label="昵称" prop="nickName">
-        <el-input v-model="searchForm.nickName" clearable placeholder="昵称" />
-      </el-form-item>
-      <el-form-item label="用户状态" prop="status">
-        <el-select v-model="searchForm.status" placeholder="用户状态">
-          <el-option label="启用" :value="0" />
-          <el-option label="禁用" :value="-1" />
-        </el-select>
-      </el-form-item>
+    <%
+     for(item in codeDetailList){
+    %>
+      <% if(item.search!=null) {%>
+        <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+           <% if(item.search==formEnum.INPUT){%>
+              <el-input v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}" />
+           <% } else if(item.search==formEnum.DATE){ %>
+                <el-date-picker
+                     v-model="searchForm.#{item.name}"
+                     type="date"
+                     placeholder="选择#{item.chinaName}">
+               </el-date-picker>
+            <% } else { %>
+               <el-select v-model="searchForm.#{item.name}" placeholder="#{item.chinaName}">
+                 <el-option label="0" :value="0" />
+                 <el-option label="-1" :value="-1" />
+               </el-select>
+           <% } %>
+       </el-form-item>
+      <% }%>
+    <% } %>
       <el-form-item label="创建时间" prop="date">
         <el-date-picker
           v-model="searchForm.date"
@@ -214,9 +224,13 @@ export default {
   data() {
     return {
       searchForm: {
-        username: '',
-        nickName: '',
-        status: '',
+    <%
+     for(item in codeDetailList){
+    %>
+      <% if(item.search!='') {%>
+        #{item.name}:'',
+      <% }%>
+    <% } %>
         date: '',
         createDate: '',
         endDate: ''

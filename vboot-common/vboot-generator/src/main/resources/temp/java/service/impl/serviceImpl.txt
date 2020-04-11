@@ -53,6 +53,34 @@ public class #{Name}ServiceImpl implements #{Name}Service {
         QueryWrapper< #{Name}> #{name}QueryWrapper = new QueryWrapper<>();
 
 
+       <%
+         for(item in codeDetailList){
+        %>
+          <% if(item.search!=null) {%>
+           if (StrUtil.isNotBlank(#{name}.get#{Name}())) {
+
+             <% if(item.search==sqlEnum.eq) {%>
+               #{name}QueryWrapper.eq("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+
+             <% } else if(item.search==sqlEnum.ge){%>
+
+               #{name}QueryWrapper.ge("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+
+            <% } else if(item.search==sqlEnum.le){%>
+               #{name}QueryWrapper.le("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+
+            <% } else if(item.search==sqlEnum.ne){%>
+               #{name}QueryWrapper.ne("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+
+            <% } else if(item.search==sqlEnum.like){%>
+               #{name}QueryWrapper.like("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+            <% }%>
+           }
+          <% }%>
+
+        <% } %>
+
+
 
         // 根据时间倒序
         #{name}QueryWrapper.orderByDesc(true, "create_time");

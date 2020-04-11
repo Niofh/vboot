@@ -143,6 +143,7 @@ public class CodeServiceImpl implements CodeService {
 
         GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
 
+
         // 设置共享变量
         Map<String, Object> shared = new HashMap<String, Object>();
         shared.put("name", name);
