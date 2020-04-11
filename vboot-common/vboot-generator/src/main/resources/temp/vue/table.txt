@@ -169,7 +169,7 @@
                <% }  else if(item.formType==formEnum.Date) { %>
                   <el-col :span="12">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{iten.name}" />
+                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}" />
                    <el-form-item>
                   </el-col>
                <% }  else if(item.formType==formEnum.RADIO){ %>
