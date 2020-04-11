@@ -60,20 +60,20 @@ public class #{Name}ServiceImpl implements #{Name}Service {
            if (StrUtil.isNotBlank(#{name}.get#{Name}())) {
 
              <% if(item.search==sqlEnum.eq) {%>
-               #{name}QueryWrapper.eq("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+               #{name}QueryWrapper.eq("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}());
 
              <% } else if(item.search==sqlEnum.ge){%>
 
-               #{name}QueryWrapper.ge("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+               #{name}QueryWrapper.ge("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}());
 
             <% } else if(item.search==sqlEnum.le){%>
-               #{name}QueryWrapper.le("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+               #{name}QueryWrapper.le("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}());
 
             <% } else if(item.search==sqlEnum.ne){%>
-               #{name}QueryWrapper.ne("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+               #{name}QueryWrapper.ne("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}());
 
             <% } else if(item.search==sqlEnum.like){%>
-               #{name}QueryWrapper.like("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}()))
+               #{name}QueryWrapper.like("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}());
             <% }%>
            }
           <% }%>
