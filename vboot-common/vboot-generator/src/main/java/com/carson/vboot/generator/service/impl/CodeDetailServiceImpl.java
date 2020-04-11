@@ -35,4 +35,19 @@ public class CodeDetailServiceImpl implements CodeDetailService {
         codeDetailQueryWrapper.orderByAsc("create_time");
         return codeDetailDao.selectList(codeDetailQueryWrapper);
     }
+
+    /**
+     * 根据codeId获取详细属性信息
+     *
+     * @param codeId
+     * @return
+     */
+    @Override
+    public List<CodeDetail> getAllBaseByCodeId(String codeId) {
+        QueryWrapper<CodeDetail> codeDetailQueryWrapper = new QueryWrapper<>();
+        codeDetailQueryWrapper.eq("code_id",codeId);
+        codeDetailQueryWrapper.orderByDesc("num");
+        codeDetailQueryWrapper.orderByAsc("create_time");
+        return codeDetailDao.selectList(codeDetailQueryWrapper);
+    }
 }
