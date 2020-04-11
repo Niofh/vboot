@@ -9,4 +9,4 @@ CREATE TABLE `#{code["tableName"]}`  (
   `update_by` varchar(255)   DEFAULT NULL COMMENT '更新用户名',
   `del_flag` tinyint(4)  DEFAULT NULL COMMENT '删除标记 0是未删除，1是已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8_general_ci COMMENT = '#{code["description"]}';
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '#{code["description"]}';
