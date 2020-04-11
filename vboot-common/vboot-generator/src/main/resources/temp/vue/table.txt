@@ -260,9 +260,9 @@ export default {
               if(item.formType==formEnum.SELECT || item.formType==formEnum.DATE){
 
             %>
-                { required: true, message: '请选择#{item.chinaName}', trigger: 'change' }
+                { required: true, message: '请选择#{item.chinaName}', trigger: 'change' },
             <% }else{ %>
-            { required: true, message: '这是必填项', trigger: 'blur' }
+            { required: true, message: '这是必填项', trigger: 'blur' },
             <% } %>
          ]
     <% } %>
