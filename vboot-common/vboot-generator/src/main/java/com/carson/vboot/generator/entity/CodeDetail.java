@@ -45,7 +45,7 @@ public class CodeDetail extends VbootBaseEntity {
     @ApiModelProperty(value = "是否显示表格中 0不，1是")
     private Integer tableSite;
 
-    @ApiModelProperty(value = "表单类型：1输入框，单选，多选，时间框，下拉列表，上传，textarea")
+    @ApiModelProperty(value = "表单类型：1输入框，单选，多选，时间框，下拉列表，textarea")
     private Integer formType;
 
     @ApiModelProperty(value = "查询方式 = != >= <= like notNull between")

@@ -1,8 +1,28 @@
 <template>
-  <div class="app-container">
+  <div class="app-container user">
     <el-form ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" size="small">
-      <el-form-item label="表名" prop="tableName">
-        <el-input v-model="searchForm.tableName" clearable placeholder="表名" />
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="searchForm.username" clearable placeholder="用户名" />
+      </el-form-item>
+      <el-form-item label="昵称" prop="nickName">
+        <el-input v-model="searchForm.nickName" clearable placeholder="昵称" />
+      </el-form-item>
+      <el-form-item label="用户状态" prop="status">
+        <el-select v-model="searchForm.status" placeholder="用户状态">
+          <el-option label="启用" :value="0" />
+          <el-option label="禁用" :value="-1" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="创建时间" prop="date">
+        <el-date-picker
+          v-model="searchForm.date"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+        />
       </el-form-item>
       <el-form-item>
         <el-button icon="el-icon-search" type="primary" @click="handleSearch">查询</el-button>
@@ -20,6 +40,25 @@
       >删除
       </el-button>
       <el-button class="btn-default" size="small" icon="el-icon-refresh-left" @click="handleRefresh">刷新</el-button>
+      <el-popover
+        placement="right"
+        trigger="click"
+      >
+        <!--排版-->
+        <el-checkbox-group v-model="checkFieldList">
+        <%
+          for(item in codeDetailList){
+        %>
+          <p>
+             <el-checkbox label="#{item.name}" checked>#{item.chinaName}</el-checkbox>
+          </p>
+        <% } %>
+          <p>
+            <el-checkbox label="createTime" checked>创建时间</el-checkbox>
+          </p>
+        </el-checkbox-group>
+        <el-button slot="reference" class="btn-default" size="small" icon="el-icon-edit">排版</el-button>
+      </el-popover>
 
     </div>
     <el-table
@@ -35,42 +74,30 @@
         type="selection"
         width="55"
       />
+  <%
+     for(item in codeDetailList){
+  %>
       <el-table-column
-        prop="name"
-        label="文件名"
-        width="180"
+        v-if="showField('#{item.name}')"
+        prop="#{item.name}"
+        label="#{item.chinaName}"
+        width="150"
         sortable
       />
+   <% } %>
       <el-table-column
-        prop="tableName"
-        label="表名"
-        width="180"
-        sortable
-      />
-      <el-table-column
-        prop="packageName"
-        label="包名"
-        sortable
-      />
-      <el-table-column
-        prop="description"
-        label="备注"
-        sortable
-      />
-      <el-table-column
+        v-if="showField('createTime')"
         prop="createTime"
         label="创建时间"
         width="180"
         sortable
       />
-
       <el-table-column
         fixed="right"
         label="操作"
         width="150"
       >
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="handleAttrEdit">属性编辑</el-button>
           <el-button type="text" size="small" @click="openEditModal(scope.row)">编辑</el-button>
           <el-button type="text" size="small" @click="delByIds(scope.row.id)">删除</el-button>
         </template>
@@ -96,34 +123,73 @@
       width="700px"
       top="5vh"
       :close-on-click-modal="false"
-      :title="dialogTitle+'数据库表'"
+      :title="dialogTitle+'#{code.tableName}'"
       :visible.sync="dialogFormVisible"
-      @closed="handleClosed"
+      @closed="resetForm('ruleForm')"
     >
 
       <el-form ref="ruleForm" :model="form" :rules="rules" :label-width="formLabelWidth" size="small">
 
         <el-row :gutter="5">
-          <el-col :span="12">
-            <el-form-item label="文件名称" prop="name">
-              <el-input v-model="form.name" autocomplete="off" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="表名" prop="tableName">
-              <el-input v-model="form.tableName" autocomplete="off" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="包名" prop="packageName">
-              <el-input v-model="form.packageName" type="textarea" autocomplete="off" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="描述" prop="description">
-              <el-input v-model="form.description" type="textarea" />
-            </el-form-item>
-          </el-col>
+         <%
+              for(item in codeDetailList){
+         %>
+               <%
+                 if(item.formType==formEnum.INPUT){
+               %>
+                 <el-col :span="12">
+                   <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                   </el-form-item>
+                 </el-col>
+               <% }else if(item.formType==formEnum.TEXTAREA){ %>
+                  <el-col :span="24">
+                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                      <el-input v-model="form.#{item.name}" type="textarea" />
+                    </el-form-item>
+                  </el-col>
+               <% }else if(item.formType==formEnum.SELECT){ %>
+                  <el-col :span="12">
+                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-select v-model="form.#{item.name}" placeholder="请选择#{item.chinaName}">
+                       <el-option label="请选择#{item.name}" value=""></el-option>
+                     </el-select>
+                    </el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.Date) { %>
+                  <el-col :span="12">
+                   <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{iten.name}" />
+                   <el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.RADIO){ %>
+                  <el-col :span="12" style="height: 51px">
+                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                         <el-radio-group v-model="form.#{item.name}" >
+                            <el-radio :label="1">1</el-radio>
+                            <el-radio :label="0">0</el-radio>
+                          </el-radio-group>
+                      <el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.CHECKBOX) { %>
+                  <el-col :span="12">
+                      <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                        <el-checkbox-group v-model="form.#{item.name}">
+                           <el-checkbox label="单纯品牌曝光" name="#{item.name}"></el-checkbox>
+                        </el-checkbox-group>
+                      </el-form-item>
+                  </el-col>
+
+               <% } else if(item.formType==formEnum.INPUTNUMBER){ %>
+                  <el-col :span="12">
+                      <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                           <el-input-number v-model="#{item.name}"  :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
+                      </el-form-item>
+                  </el-col>
+
+               <% } %>
+
+         <% } %>
 
         </el-row>
 
@@ -139,83 +205,104 @@
 <script>
 import tableMixin from '@/mixins/tableMixin'
 import formMixin from '@/mixins/formMixin'
+import {get#{Name}ById, #{name}DelByIdsApi, #{name}SaveBaseApi, #{name}UpdateBaseApi, get#{Name}ByPageApi } from '@/api/#{name}'
+import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
-import { codeDelByIdsApi, codeSaveBaseApi, codeUpdateBaseApi, getCodeByPageApi } from '@/api/code'
 export default {
-  name: 'CodeRender',
+  name: '#{Name}',
   mixins: [tableMixin, formMixin],
   data() {
     return {
       searchForm: {
-        tableName: ''
+        username: '',
+        nickName: '',
+        status: '',
+        date: '',
+        createDate: '',
+        endDate: ''
       },
       checkFieldList: [], // 选中的字段
       multipleSelection: [],
       form: {
-        id: '',
-        name: '',
-        tableName: '',
-        description: '',
-        packageName: ''
+      <%
+      for(item in codeDetailList){
+      %>
+        <% if(item.formType == formEnum.CHECKBOX){ %>
+            #{item.name}:[],
+        <% } else {%>
+           #{item.name}:'',
+        <% } %>
+
+      <% } %>
       },
       rules: {
-        name: [
-          { required: true, message: '这是必填项', trigger: 'blur' }
-        ],
-        packageName: [
-          { required: true, message: '这是必填项', trigger: 'blur' }
-        ],
-        tableName: [
-          { required: true, message: '这是必填项', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: '这是必填项', trigger: 'blur' }
-        ]
+  <%
+    for(item in codeDetailList){
+       if(item.required==1){
+
+  %>
+         #{item.name}: [
+            <%
+              if(item.formType==formEnum.SELECT || item.formType==formEnum.DATE){
+
+            %>
+                { required: true, message: '请选择#{item.chinaName}', trigger: 'change' }
+            <% }else{ %>
+            { required: true, message: '这是必填项', trigger: 'blur' }
+            <% } %>
+         ]
+    <% } %>
+  <% } %>
       },
       dialogFormVisible: false,
       formLabelWidth: '120px',
       dialogType: CommonEnum.ADD.id,
       dialogTitle: CommonEnum.ADD.value,
       CommonEnum: CommonEnum,
-      defaultProps: {
-        children: 'children',
-        label: 'title'
-      }
+    }
+  },
+  computed: {
+
+  },
+  watch: {
+    'searchForm.date'(val) {
+      const startAndTime = commonUtil.getStartAndTime(val)
+      this.searchForm.createDate = startAndTime[0]
+      this.searchForm.endDate = startAndTime[1]
     }
   },
   created() {
     this.getDataList()
   },
   methods: {
+    // 判断是否存在排版里面
+    showField(name) {
+      return this.checkFieldList.indexOf(name) > -1
+    },
     // 全选
     handleSelectionChange(tableItem) {
       this.multipleSelection = tableItem.map(item => item.id)
     },
     // 重置表单
     handleResetFrom() {
+      this.searchForm.createDate = ''
+      this.searchForm.endDate = ''
       this.resetForm('searchForm')
       this.handleReset()
+
     },
     // 分页
     getDataList() {
       this.dataListLoading = true
       const params = { ...this.page, ...this.searchForm }
       delete params.date
-      getCodeByPageApi(params).then(res => {
+      get#{Name}ByPageApi(params).then(res => {
         this.dataListLoading = false
         if (res.code === this.$code) {
           this.dataList = res.result.records
           this.page.total = res.result.total
         }
       })
-    },
-    // 关闭窗口
-    handleClosed() {
-      this.resetForm('ruleForm')
-      // 清空表单数据
-      for (const key in this.form) {
-        this.form[key] = ''
-      }
     },
     // 打开弹出框
     openModal(type) {
@@ -225,13 +312,17 @@ export default {
     },
     // 修改弹出框
     openEditModal(tableItem) {
-      this.form = { ...tableItem }
+      get#{Name}ById(tableItem.id).then(res => {
+        if (res.code === this.$code) {
+          this.form = res.result
+        }
+      })
       this.openModal(CommonEnum.UPDATE.id)
     },
-    // 添加用户
+    // 添加
     saveBase() {
       this.loading = true
-      codeSaveBaseApi(this.form).then(res => {
+      #{name}SaveBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
           this.getDataList()
           this.closeModal()
@@ -244,7 +335,7 @@ export default {
     // 更新用户
     updateBase() {
       this.loading = true
-      codeUpdateBaseApi(this.form).then(res => {
+      #{name}UpdateBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
           this.getDataList()
           this.closeModal()
@@ -265,7 +356,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        codeDelByIdsApi({
+        #{name}DelByIdsApi({
           ids: ids
         }).then(res => {
           if (res.code === this.$code) {
@@ -302,6 +393,6 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

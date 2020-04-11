@@ -11,6 +11,8 @@ import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.generator.common.Constant;
+import com.carson.vboot.generator.common.enums.FormEnum;
+import com.carson.vboot.generator.common.enums.SqlEnum;
 import com.carson.vboot.generator.dao.mapper.CodeDao;
 import com.carson.vboot.generator.dao.mapper.CodeDetailDao;
 import com.carson.vboot.generator.entity.Code;
@@ -147,11 +149,14 @@ public class CodeServiceImpl implements CodeService {
         shared.put("Name", Name);
         shared.put("code", code);
         shared.put("codeDetailList", codeDetailList);
+        shared.put("formEnum", FormEnum.getObject());
+        shared.put("sqlEnum", SqlEnum.getObject());
         gt.setSharedVars(shared);
 
         HashMap<String, Object> result = new HashMap<>();
         // api接口生成
         String api = this.commonFile(gt, FROM + "/vue/api.txt", path + TARGET + "/vue/" + name + ".js", createFile);
+        String table = this.commonFile(gt, FROM + "/vue/table.txt", path + TARGET + "/vue/" + name + ".vue", createFile);
 
         // mysql生成
         String mysql = this.commonFile(gt, FROM + "/mysql/sql.txt", path + TARGET + "/mysql/" + code.getTableName() + ".sql", createFile);
@@ -170,6 +175,7 @@ public class CodeServiceImpl implements CodeService {
 
         result.put("path",path + TARGET);
         result.put("api",api);
+        result.put("table",table);
         result.put("mysql",mysql);
         result.put("entity",entity);
         result.put("mapper",mapper);
