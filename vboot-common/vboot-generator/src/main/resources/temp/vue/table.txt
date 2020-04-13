@@ -46,7 +46,7 @@
         type="danger"
         size="small"
         icon="el-icon-delete"
-        @click="delByIds"
+        @click="del#{Name}ByIds"
       >删除
       </el-button>
       <el-button class="btn-default" size="small" icon="el-icon-refresh-left" @click="handleRefresh">刷新</el-button>
@@ -109,7 +109,7 @@
       >
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="openEditModal(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" @click="delByIds(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="del#{Name}ByIds(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -334,7 +334,7 @@ export default {
       this.openModal(CommonEnum.UPDATE.id)
     },
     // 添加
-    saveBase() {
+    save#{Name}Base() {
       this.loading = true
       #{name}SaveBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
@@ -346,8 +346,8 @@ export default {
         this.loading = false
       })
     },
-    // 更新用户
-    updateBase() {
+    // 更新
+    update#{Name}Base() {
       this.loading = true
       #{name}UpdateBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
@@ -360,7 +360,7 @@ export default {
       })
     },
     // 删除
-    delByIds(id) {
+    del#{Name}ByIds(id) {
       let ids = this.multipleSelection.toString()
       if (ids.length === 0) {
         ids = id
@@ -393,9 +393,9 @@ export default {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           if (this.dialogType === CommonEnum.ADD.id) {
-            this.saveBase()
+            this.save#{Name}Base()
           } else {
-            this.updateBase()
+            this.update#{Name}Base()
           }
         } else {
           console.log('error submit!!')
