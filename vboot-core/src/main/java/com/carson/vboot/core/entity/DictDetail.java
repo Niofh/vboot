@@ -16,7 +16,6 @@ public class DictDetail extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "所属字典id")
-    @NotBlank(message = "所属字典id不能为空")
     private String dicId;
 
     @ApiModelProperty(value = "字典名称")
@@ -25,7 +24,7 @@ public class DictDetail extends VbootBaseEntity {
 
     @ApiModelProperty(value = "字典值")
     @NotBlank(message = "字典值不能为空")
-    private String value;
+    private String code;
 
     @ApiModelProperty(value = "排序")
     private BigDecimal sort;

@@ -12,7 +12,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -40,10 +42,9 @@ public class DictDetailController extends VBootController<DictDetail> {
 
     @RequestMapping(value = "/getDictDetailByPage", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取")
-    public Result<IPage<DictDetail>> getUserByPage(@Valid PageBo pageBo,  DictDetail dictDetail) {
+    public Result<IPage<DictDetail>> getUserByPage(@Valid PageBo pageBo, DictDetail dictDetail) {
 
         return ResultUtil.data(dictDetailService.getDictDetailByPage(pageBo, dictDetail));
     }
-
 
 }

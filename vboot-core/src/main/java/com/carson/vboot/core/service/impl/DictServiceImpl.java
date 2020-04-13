@@ -27,6 +27,7 @@ public class DictServiceImpl implements DictService {
 
     /**
      * 分页查询
+     *
      * @param pageBo
      * @param dict
      * @return
