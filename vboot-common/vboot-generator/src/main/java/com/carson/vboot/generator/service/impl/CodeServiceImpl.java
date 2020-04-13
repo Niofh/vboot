@@ -13,6 +13,7 @@ import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.generator.common.Constant;
 import com.carson.vboot.generator.common.enums.FormEnum;
 import com.carson.vboot.generator.common.enums.SqlEnum;
+import com.carson.vboot.generator.common.utils.StringTool;
 import com.carson.vboot.generator.dao.mapper.CodeDao;
 import com.carson.vboot.generator.dao.mapper.CodeDetailDao;
 import com.carson.vboot.generator.entity.Code;
@@ -126,8 +127,8 @@ public class CodeServiceImpl implements CodeService {
         // 获取当前class资源路径
         String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
 
-
-        String name = code.getName();
+        StringTool stringTool = new StringTool();
+        String name = stringTool.lineToHump(code.getName()) ; // 下划线转驼峰
         String Name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
         String FROM = Constant.FROM_PATH;

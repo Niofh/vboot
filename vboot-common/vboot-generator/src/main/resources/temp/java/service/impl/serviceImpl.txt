@@ -78,6 +78,11 @@ public class #{Name}ServiceImpl implements #{Name}Service {
            }
           <% }%>
 
+          <% if(item.name=="sort") { %>
+                // 排序
+                #{name}QueryWrapper.orderByDesc("#{item.name}")
+          <% } %>
+
         <% } %>
 
 
