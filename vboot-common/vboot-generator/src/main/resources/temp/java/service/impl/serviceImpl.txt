@@ -42,10 +42,12 @@ public class #{Name}ServiceImpl implements #{Name}Service {
         return #{name}Dao;
     }
 
-     /**
-     * 分页查询
-     * @param #{Name} 查询条件
-     */
+      /**
+      * 分页查询
+      * @param pageBo
+      * @param #{name}
+      * @return
+      */
     @Override
     public IPage< #{Name}> get#{Name}ByPage(PageBo pageBo, #{Name} #{name}) {
 
@@ -57,7 +59,7 @@ public class #{Name}ServiceImpl implements #{Name}Service {
          for(item in codeDetailList){
         %>
           <% if(item.search!=null) {%>
-           if (StrUtil.isNotBlank(#{name}.get#{Name}())) {
+           if (StrUtil.isNotBlank(#{name}.get#{stringTool.capitalize(item.name)}())) {
 
              <% if(item.search==sqlEnum.eq) {%>
                #{name}QueryWrapper.eq("#{stringTool.humpToLine(item.name)}",#{name}.get#{stringTool.capitalize(item.name)}());

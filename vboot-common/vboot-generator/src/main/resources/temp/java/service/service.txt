@@ -6,5 +6,5 @@ import com.carson.vboot.core.bo.PageBo;
 import #{code.packageName}.entity.#{Name};
 
 public interface #{Name}Service extends VbootService< #{Name}> {
-    IPage<Code> getCodeByPage(PageBo pageBo, #{Name} #{name});
+    IPage< #{Name}> get#{Name}ByPage(PageBo pageBo, #{Name} #{name});
 }

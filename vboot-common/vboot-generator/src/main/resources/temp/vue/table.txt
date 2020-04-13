@@ -6,9 +6,9 @@
     %>
       <% if(item.search!=null) {%>
         <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-           <% if(item.search==formEnum.INPUT){%>
+           <% if(item.formType==formEnum.INPUT){%>
               <el-input v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}" />
-           <% } else if(item.search==formEnum.DATE){ %>
+           <% } else if(item.formType==formEnum.DATE){ %>
                 <el-date-picker
                      v-model="searchForm.#{item.name}"
                      type="date"
@@ -133,7 +133,7 @@
       width="700px"
       top="5vh"
       :close-on-click-modal="false"
-      :title="dialogTitle+'#{code.tableName}'"
+      :title="dialogTitle+'#{code.description}'"
       :visible.sync="dialogFormVisible"
       @closed="resetForm('ruleForm')"
     >
@@ -264,7 +264,7 @@ export default {
             <% }else{ %>
             { required: true, message: '这是必填项', trigger: 'blur' },
             <% } %>
-         ]
+         ],
     <% } %>
   <% } %>
       },
