@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class Department extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "部门名称")
-    @NotNull(message = "部门名称不能为空")
+    @NotBlank(message = "部门名称不能为空")
     private String title;
 
     @ApiModelProperty(value = "父id，parentId=0为第一级")

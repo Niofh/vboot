@@ -68,18 +68,6 @@ public abstract class VBootController<T> {
     }
 
 
-    /*@PostMapping(value = "/del")
-    @ResponseBody
-    @ApiOperation(value = "根据id删除数据")
-    public Result<Object> del(String id) {
-        Integer count = getService().delete(id);
-        if (count > 0) {
-            return ResultUtil.success("删除成功");
-        } else {
-            return ResultUtil.error("删除失败");
-        }
-    }*/
-
     @PostMapping(value = "/delByIds")
     @ResponseBody
     @ApiOperation(value = "批量通过id删除")

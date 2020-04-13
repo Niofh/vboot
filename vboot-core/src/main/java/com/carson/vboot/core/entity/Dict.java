@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @TableName("t_dict")
@@ -15,11 +15,11 @@ public class Dict  extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "字典名称")
-    @NotNull(message = "字典名称不能为空")
+    @NotBlank(message = "字典名称不能为空")
     private String dicName;
 
     @ApiModelProperty(value = "字典Key")
-    @NotNull(message = "字典Key不能为空")
+    @NotBlank(message = "字典Key不能为空")
     private String dicKey;
 
 

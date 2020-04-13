@@ -147,7 +147,7 @@
                <%
                  if(item.formType==formEnum.INPUT){
                %>
-                 <el-col :span="12">
+                 <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-input v-model="form.#{item.name}"  autocomplete="off" />
                    </el-form-item>
@@ -159,15 +159,15 @@
                     </el-form-item>
                   </el-col>
                <% }else if(item.formType==formEnum.SELECT){ %>
-                  <el-col :span="12">
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-select v-model="form.#{item.name}" placeholder="请选择#{item.chinaName}">
                        <el-option label="请选择#{item.name}" value=""></el-option>
                      </el-select>
                     </el-form-item>
                   </el-col>
-               <% }  else if(item.formType==formEnum.Date) { %>
-                  <el-col :span="12">
+               <% }  else if(item.formType==formEnum.DATE) { %>
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}" />
                    <el-form-item>
@@ -182,7 +182,7 @@
                       <el-form-item>
                   </el-col>
                <% }  else if(item.formType==formEnum.CHECKBOX) { %>
-                  <el-col :span="12">
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                       <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                         <el-checkbox-group v-model="form.#{item.name}">
                            <el-checkbox label="单纯品牌曝光" name="#{item.name}"></el-checkbox>
@@ -193,7 +193,7 @@
                <% } else if(item.formType==formEnum.INPUTNUMBER){ %>
                   <el-col :span="12">
                       <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                           <el-input-number v-model="#{item.name}"  :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
+                           <el-input-number v-model="form.#{item.name}"  :step="0.1" :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
                       </el-form-item>
                   </el-col>
 
@@ -227,7 +227,7 @@ export default {
     <%
      for(item in codeDetailList){
     %>
-      <% if(item.search!='') {%>
+      <% if(item.search != null) {%>
         #{item.name}:'',
       <% }%>
     <% } %>
@@ -246,7 +246,6 @@ export default {
         <% } else {%>
            #{item.name}:'',
         <% } %>
-
       <% } %>
       },
       rules: {
