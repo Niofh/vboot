@@ -52,7 +52,7 @@ public class CodeDetail extends VbootBaseEntity {
     private Integer search;
 
     @ApiModelProperty(value = "数字字典id")
-    private String dicId;
+    private String dictId;
 
     @ApiModelProperty(value="排序号")
     private String num;

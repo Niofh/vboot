@@ -45,7 +45,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/saveBase")
     @ResponseBody
     @ApiOperation(value = "保存数据")
-    public Result<Object> save(@RequestBody @Valid T entity) {
+    public Result<Object> save(@Valid @RequestBody  T entity) {
         T e = getService().save(entity);
         if (e != null) {
             return ResultUtil.success("添加成功");
@@ -58,7 +58,7 @@ public abstract class VBootController<T> {
     @PostMapping(value = "/updateBase")
     @ResponseBody
     @ApiOperation(value = "更新数据")
-    public Result<Object> update(@RequestBody @Valid T entity) {
+    public Result<Object> update(@Valid @RequestBody T entity) {
         T e = getService().update(entity);
         if (e != null) {
             return ResultUtil.success("更新成功");

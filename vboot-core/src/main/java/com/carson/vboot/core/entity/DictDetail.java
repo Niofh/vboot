@@ -16,7 +16,8 @@ public class DictDetail extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "所属字典id")
-    private String dicId;
+    @NotBlank(message = "所属字典Id不能为空")
+    private String dictId;
 
     @ApiModelProperty(value = "字典名称")
     @NotBlank(message = "字典名称不能为空")

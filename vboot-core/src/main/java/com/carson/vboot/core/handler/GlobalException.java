@@ -6,6 +6,7 @@ import com.carson.vboot.core.vo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -45,7 +46,17 @@ public class GlobalException {
             FieldError error = fieldErrors.get(0);
             String msg = error.getDefaultMessage();
             return ResultUtil.error(400, msg);
-        } else {
+        }
+        else if (e instanceof MethodArgumentNotValidException) {
+            // 表单验证
+            List<FieldError> fieldErrors = ((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors();
+            log.info("fieldErrors={}",fieldErrors);
+            //多个错误，取第一个
+            FieldError error = fieldErrors.get(0);
+            String msg = error.getDefaultMessage();
+            return ResultUtil.error(400, msg);
+        }
+        else {
             log.error("【系统异常】 {}", e);
             return ResultUtil.error(500, "系统异常："+e.getMessage());
         }
