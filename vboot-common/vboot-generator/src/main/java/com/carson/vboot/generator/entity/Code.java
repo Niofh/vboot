@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @TableName("t_code")
@@ -16,18 +16,18 @@ public class Code  extends VbootBaseEntity {
 
 
     @ApiModelProperty(value = "生成文件名称")
-    @NotNull(message = "生成文件名称不能为空")
+    @NotBlank(message = "生成文件名称不能为空")
     private String name;
 
     @ApiModelProperty(value = "包路径")
-    @NotNull(message = "包路径不为空")
+    @NotBlank(message = "包路径不为空")
     private String packageName;
 
     @ApiModelProperty(value = "表名称")
-    @NotNull(message = "表名称不能为空")
+    @NotBlank(message = "表名称不能为空")
     private String tableName;
 
     @ApiModelProperty(value = "备注")
-    @NotNull(message = "备注不能为空")
+    @NotBlank(message = "备注不能为空")
     private String description;
 }

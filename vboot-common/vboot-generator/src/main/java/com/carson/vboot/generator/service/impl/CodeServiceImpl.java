@@ -83,7 +83,7 @@ public class CodeServiceImpl implements CodeService {
             throw new VbootException(ExceptionEnums.CODE_DETAIL_NO_EXIST);
         }
 
-        HashMap<String, Object> stringObjectHashMap = renderFiled(code, codeDetailList,true);
+        HashMap<String, Object> stringObjectHashMap = renderFiled(code, codeDetailList, true);
         return (String) stringObjectHashMap.get("path");
     }
 
@@ -110,8 +110,8 @@ public class CodeServiceImpl implements CodeService {
             throw new VbootException(ExceptionEnums.CODE_DETAIL_NO_EXIST);
         }
 
-        HashMap<String, Object> map = renderFiled(code, codeDetailList,false);
-        return  map;
+        HashMap<String, Object> map = renderFiled(code, codeDetailList, false);
+        return map;
     }
 
     /**
@@ -122,13 +122,13 @@ public class CodeServiceImpl implements CodeService {
      * @param createFile
      * @return
      */
-    private HashMap<String,Object> renderFiled(Code code, List<CodeDetail> codeDetailList,Boolean createFile) {
+    private HashMap<String, Object> renderFiled(Code code, List<CodeDetail> codeDetailList, Boolean createFile) {
 
         // 获取当前class资源路径
         String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
 
         StringTool stringTool = new StringTool();
-        String name = stringTool.lineToHump(code.getName()) ; // 下划线转驼峰
+        String name = stringTool.lineToHump(code.getName()); // 下划线转驼峰
         String Name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
         String FROM = Constant.FROM_PATH;
@@ -175,33 +175,32 @@ public class CodeServiceImpl implements CodeService {
         // controller
         String controller = this.commonFile(gt, FROM + "/java/controller/controller.txt", path + TARGET + "/java/controller/" + Name + "Controller.java", createFile);
 
-        result.put("path",path + TARGET);
-        result.put("api",api);
-        result.put("table",table);
-        result.put("mysql",mysql);
-        result.put("entity",entity);
-        result.put("mapper",mapper);
-        result.put("service",service);
-        result.put("serviceImpl",serviceImpl);
-        result.put("controller",controller);
+        result.put("path", path + TARGET);
+        result.put("api", api);
+        result.put("table", table);
+        result.put("mysql", mysql);
+        result.put("entity", entity);
+        result.put("mapper", mapper);
+        result.put("service", service);
+        result.put("serviceImpl", serviceImpl);
+        result.put("controller", controller);
 
         return result;
     }
 
 
-
     /**
-     * @param gt     GroupTemplate
-     * @param from   ；来源路径
-     * @param target 目标路径
+     * @param gt         GroupTemplate
+     * @param from       ；来源路径
+     * @param target     目标路径
      * @param createFile 是否创建文件
      */
-    private String commonFile(GroupTemplate gt, String from, String target,Boolean createFile) {
+    private String commonFile(GroupTemplate gt, String from, String target, Boolean createFile) {
         Template t = gt.getTemplate(from);
         // 模板渲染
         String data = t.render();
 
-        if(createFile){
+        if (createFile) {
             File file = new File(target);
             // 文件写入
             FileUtil.writeBytes(data.getBytes(), file.getPath());

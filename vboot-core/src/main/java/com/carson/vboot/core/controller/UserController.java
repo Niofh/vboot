@@ -66,7 +66,7 @@ public class UserController {
     @PostMapping("/saveBase")
     @ResponseBody
     @ApiOperation(value = "添加用户")
-    public Result<Object> insertUser(@Valid User user) {
+    public Result<Object> insertUser(@Valid  User user) {
         return ResultUtil.data(userService.insertUser(user));
     }
 

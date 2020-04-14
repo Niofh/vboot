@@ -32,10 +32,9 @@ public class CodeDetailController extends VBootController<CodeDetail> {
     }
 
 
-
     @GetMapping(value = "/getAllBaseByCodeId")
     @ApiOperation(value = "通过代码生成id获取详情列表")
-    public Result<List<CodeDetail>> getAllBaseByCodeId (String codeId){
+    public Result<List<CodeDetail>> getAllBaseByCodeId(String codeId) {
         return new ResultUtil<List<CodeDetail>>().setData(codeDetailService.getAllBaseByCodeId(codeId));
     }
 }

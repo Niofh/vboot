@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author oufuhua
@@ -21,19 +21,19 @@ public class CodeDetail extends VbootBaseEntity {
     private String codeId;
 
     @ApiModelProperty(value = "字段名(英文)")
-    @NotNull(message = "字段名不能为空")
+    @NotBlank(message = "字段名不能为空")
     private String name;
 
     @ApiModelProperty(value = "中文名")
-    @NotNull(message = "中文名不能为空")
+    @NotBlank(message = "中文名不能为空")
     private String chinaName;
 
     @ApiModelProperty(value = "java类型")
-    @NotNull(message = "java类型不能为空")
+    @NotBlank(message = "java类型不能为空")
     private String javaType;
 
     @ApiModelProperty(value = "字段类型 varchar,datetime,tinyint,decimal等类型")
-    @NotNull(message = "字段类型不能为空")
+    @NotBlank(message = "字段类型不能为空")
     private String nameType;
 
     @ApiModelProperty(value = "备注 sql使用的")
@@ -54,7 +54,7 @@ public class CodeDetail extends VbootBaseEntity {
     @ApiModelProperty(value = "数字字典id")
     private String dictId;
 
-    @ApiModelProperty(value="排序号")
+    @ApiModelProperty(value = "排序号")
     private String num;
 
 }
