@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.utils.ResponseUtil;
 import com.carson.vboot.core.config.security.SecurityUtil;
-import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.properties.TokenProperties;
 import com.carson.vboot.core.vo.TokenUser;
 import com.google.gson.Gson;
@@ -93,7 +92,8 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
             // redis
             String v = redisTemplate.opsForValue().get(CommonConstant.TOKEN_PRE + header);
-
+            log.warn("token {}",header);
+            log.warn("User {}",v);
             if (StrUtil.isBlank(v)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
                 return null;

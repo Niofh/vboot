@@ -19,6 +19,7 @@ import com.carson.vboot.core.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,6 +41,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
+
+    @Value("${vboot.adminUserName}")
+    private String adminUserName;
 
     @Autowired
     private UserDao userDao;
@@ -116,7 +120,7 @@ public class UserServiceImpl implements UserService {
         if (CollUtil.isNotEmpty(depIds)) {
             userQueryWrapper.in("departmentId", depIds);
         } else {
-            if (!securityUtil.getCurrUser().getUsername().equals("admin")) {
+            if (!securityUtil.getCurrUser().getUsername().equals(adminUserName)) {
                 // 如果不是admin账户，是其他没有部门账户，只能看到自己数据
                 userQueryWrapper.eq("username", securityUtil.getCurrUser().getUsername());
             }

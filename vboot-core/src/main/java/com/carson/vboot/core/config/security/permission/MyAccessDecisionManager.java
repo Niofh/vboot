@@ -1,6 +1,7 @@
 package com.carson.vboot.core.config.security.permission;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -23,13 +24,16 @@ import java.util.Iterator;
 @Component
 public class MyAccessDecisionManager implements AccessDecisionManager {
 
+    @Value("${vboot.adminUserName}")
+    private String adminUserName;
+
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> configAttributes) throws AccessDeniedException, InsufficientAuthenticationException {
 
         // 获取用户信息
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
-        if(username.equals("admin")){
+        if(username.equals(adminUserName)){
             return;  // 如果admin登录，放开所有权限
         }
         log.info("==============================================  {}", principal.getUsername());
