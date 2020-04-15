@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author oufuhua
@@ -45,6 +46,12 @@ public class DictDetailController extends VBootController<DictDetail> {
     public Result<IPage<DictDetail>> getUserByPage(@Valid PageBo pageBo, DictDetail dictDetail) {
 
         return ResultUtil.data(dictDetailService.getDictDetailByPage(pageBo, dictDetail));
+    }
+
+    @RequestMapping(value = "/getDictDetailByDictId", method = RequestMethod.GET)
+    @ApiOperation(value = "根据dictID获取字典详情")
+    public Result<List<DictDetail>> getDictDetailByDictId(DictDetail dictDetail) {
+        return ResultUtil.data(dictDetailService.getDictDetailByDictId(dictDetail.getDictId(), dictDetail.getName()));
     }
 
 }

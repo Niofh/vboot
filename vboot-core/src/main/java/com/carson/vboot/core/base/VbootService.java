@@ -76,9 +76,9 @@ public interface VbootService<T> {
      *
      * @param id
      */
-    public default Integer delete(String id) {
-        return getBaseDao().deleteById(id);
-    }
+//    public default Integer delete(String id) {
+//        return getBaseDao().deleteById(id);
+//    }
 
 
     /**
