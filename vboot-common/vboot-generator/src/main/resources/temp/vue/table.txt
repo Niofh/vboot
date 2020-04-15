@@ -378,7 +378,8 @@ export default {
               type: 'success',
               message: '删除成功!'
             })
-          } else {
+          }
+          else {
             this.$message({
               type: 'error',
               message: res.message

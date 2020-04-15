@@ -44,3 +44,10 @@ export function #{name}DelByIdsApi(data) {
     data
   })
 }
+// 获取所有数据
+export function get#{Name}AllBaseApi() {
+  return request({
+    url: '/#{name}/getAllBase',
+    method: 'get'
+  })
+}

@@ -1,6 +1,5 @@
 package com.carson.vboot.core.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -74,7 +73,7 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @return
      */
     @Override
-    @Cacheable(cacheNames = "dictDetail", key = "#dictId", condition = "#name==''") // 根据dictId缓存字典详情
+    @Cacheable(cacheNames = "vboot::dictDetail", key = "#dictId", condition = "#name==''") // 根据dictId缓存字典详情
     public List<DictDetail> getDictDetailByDictId(String dictId, String name) {
 
         QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
@@ -100,9 +99,9 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @return
      */
     @Caching(
-            evict = {
-                    @CacheEvict(cacheNames = "dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
-            }
+        evict = {
+            @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
+        }
     )
     @Override
     public DictDetail save(DictDetail entity) {
@@ -121,9 +120,9 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @return
      */
     @Caching(
-            put = {
-                    @CachePut(cacheNames = "dictDetail", key = "#result.dictId", condition = "#result!=null") // 根据dictID缓存
-            }
+        put = {
+            @CachePut(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 根据dictID缓存
+        }
     )
     @Override
     public DictDetail update(DictDetail entity) {
@@ -140,15 +139,13 @@ public class DictDetailServiceImpl implements DictDetailService {
      *
      * @param idList
      */
+    @Caching(
+        evict = {
+            @CacheEvict(cacheNames = "vboot::dictDetail") // 删除缓存
+        }
+    )
     @Override
     public Integer delete(Collection<String> idList) {
-        if (CollUtil.isNotEmpty(idList)) {
-            for (String id : idList) {
-                // 删除缓存
-                stringRedisTemplate.delete("dictDetail::" + id);
-            }
-
-        }
 
         return dictDetailDao.deleteBatchIds(idList);
     }
