@@ -100,9 +100,9 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @return
      */
     @Caching(
-        evict = {
-            @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
-        }
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
+            }
     )
     @Override
     public DictDetail save(DictDetail entity) {
@@ -127,9 +127,9 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @return
      */
     @Caching(
-        evict = {
-                @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
-        }
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
+            }
     )
     @Override
     public DictDetail update(DictDetail entity) {
@@ -153,9 +153,9 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @param idList
      */
     @Caching(
-        evict = {
-                @CacheEvict(cacheNames = "vboot::dictDetail") // 删除缓存
-        }
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::dictDetail", allEntries = true) // 删除缓存,allEntries忽略指定key
+            }
     )
     @Override
     public Integer delete(Collection<String> idList) {

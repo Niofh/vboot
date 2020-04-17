@@ -1,5 +1,6 @@
 package com.carson.vboot.core.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,12 +9,17 @@ import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.dao.mapper.DictDao;
+import com.carson.vboot.core.dao.mapper.DictDetailDao;
 import com.carson.vboot.core.entity.Dict;
+import com.carson.vboot.core.entity.DictDetail;
 import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.DictService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 
 @Service
 @Slf4j
@@ -21,6 +27,8 @@ public class DictServiceImpl implements DictService {
     @Autowired
     private DictDao dictDao;
 
+    @Autowired
+    private DictDetailDao dictDetailDao;
 
     @Override
     public VbootBaseDao<Dict> getBaseDao() {
@@ -96,5 +104,27 @@ public class DictServiceImpl implements DictService {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 批量id删除
+     *
+     * @param idList
+     */
+    @Transactional
+    @Override
+    public Integer delete(Collection<String> idList) {
+        Integer num = 0;
+        if (CollUtil.isNotEmpty(idList)) {
+            for (String dictId : idList) {
+                // 删除字典详情
+                QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
+                dictDetailQueryWrapper.eq("dict_id",dictId);
+                dictDetailDao.delete(dictDetailQueryWrapper);
+            }
+            num = getBaseDao().deleteBatchIds(idList);
+        }
+
+        return num;
     }
 }

@@ -216,7 +216,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      *
      * @param idList
      */
-    @CacheEvict(cacheNames = {"vboot::dep","role::dep"})
+    @CacheEvict(cacheNames = {"vboot::dep","role::dep"}, allEntries = true)
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
