@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -60,6 +61,27 @@ public class DictServiceImpl implements DictService {
         Page<Dict> dictPage = dictDao.selectPage(page, dictQueryWrapper);
 
         return dictPage;
+    }
+
+    /**
+     * 根据dickName获取字典详情
+     *
+     * @param dickName
+     * @return
+     */
+    @Override
+    public List<DictDetail> getDictDetailByDictName(String dickName) {
+
+        // todo 还没完成
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("dic_name",dickName);
+        Dict dict = dictDao.selectOne(dictQueryWrapper);
+        if(dict==null){
+
+        }
+
+
+        return null;
     }
 
     /**
