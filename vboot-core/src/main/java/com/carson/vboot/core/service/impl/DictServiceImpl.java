@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
+import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.dao.mapper.DictDao;
 import com.carson.vboot.core.entity.Dict;
+import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.DictService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,4 +54,47 @@ public class DictServiceImpl implements DictService {
         return dictPage;
     }
 
+    /**
+     * 保存
+     *
+     * @param entity
+     * @return
+     */
+    @Override
+    public Dict save(Dict entity) {
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("dic_key", entity.getDicKey());
+        Dict dict = dictDao.selectOne(dictQueryWrapper);
+        if (dict != null) {
+            throw new VbootException(ExceptionEnums.DICT_KEY_EXIST);
+        }
+        int insert = dictDao.insert(entity);
+        if (insert > 0) {
+            return entity;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 修改
+     *
+     * @param entity
+     * @return
+     */
+    @Override
+    public Dict update(Dict entity) {
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.ne("id", entity.getId()).eq("dic_key", entity.getDicKey());
+        Dict dict = dictDao.selectOne(dictQueryWrapper);
+        if (dict != null) {
+            throw new VbootException(ExceptionEnums.DICT_KEY_EXIST);
+        }
+        int i = dictDao.updateById(entity);
+        if (i > 0) {
+            return entity;
+        } else {
+            return null;
+        }
+    }
 }

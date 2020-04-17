@@ -88,6 +88,8 @@ public class RedisConfig extends CachingConfigurerSupport {
         return cacheManager;
     }
 
+
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();

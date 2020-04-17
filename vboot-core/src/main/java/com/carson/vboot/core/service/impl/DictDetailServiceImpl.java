@@ -6,13 +6,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
+import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.dao.mapper.DictDetailDao;
 import com.carson.vboot.core.entity.DictDetail;
+import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.DictDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -105,6 +106,12 @@ public class DictDetailServiceImpl implements DictDetailService {
     )
     @Override
     public DictDetail save(DictDetail entity) {
+        QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
+        dictDetailQueryWrapper.eq("code", entity.getCode()).eq("dict_id", entity.getDictId());
+        DictDetail dictDetail = dictDetailDao.selectOne(dictDetailQueryWrapper);
+        if (dictDetail != null) {
+            throw new VbootException(ExceptionEnums.DICT_CODE_EXIST);
+        }
         int insert = dictDetailDao.insert(entity);
         if (insert > 0) {
             return entity;
@@ -120,12 +127,18 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @return
      */
     @Caching(
-        put = {
-            @CachePut(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 根据dictID缓存
+        evict = {
+                @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
         }
     )
     @Override
     public DictDetail update(DictDetail entity) {
+        QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
+        dictDetailQueryWrapper.ne("id", entity.getDictId()).ne("dict_id", entity.getDictId()).eq("code", entity.getCode());
+        DictDetail dictDetail = dictDetailDao.selectOne(dictDetailQueryWrapper);
+        if (dictDetail != null) {
+            throw new VbootException(ExceptionEnums.DICT_CODE_EXIST);
+        }
         int i = dictDetailDao.updateById(entity);
         if (i > 0) {
             return entity;
@@ -141,7 +154,7 @@ public class DictDetailServiceImpl implements DictDetailService {
      */
     @Caching(
         evict = {
-            @CacheEvict(cacheNames = "vboot::dictDetail") // 删除缓存
+                @CacheEvict(cacheNames = "vboot::dictDetail") // 删除缓存
         }
     )
     @Override

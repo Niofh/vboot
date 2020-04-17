@@ -141,6 +141,7 @@
       <el-form ref="ruleForm" :model="form" :rules="rules" :label-width="formLabelWidth" size="small">
 
         <el-row :gutter="5">
+            <el-form-item v-show="false" prop="id" label="id" />
          <%
               for(item in codeDetailList){
          %>
@@ -238,6 +239,7 @@ export default {
       checkFieldList: [], // 选中的字段
       multipleSelection: [],
       form: {
+        id:'',
       <%
       for(item in codeDetailList){
       %>

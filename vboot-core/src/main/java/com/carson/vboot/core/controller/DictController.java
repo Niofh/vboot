@@ -25,7 +25,7 @@ import javax.validation.Valid;
 @RestController
 @Slf4j
 @RequestMapping("/dict")
-public class DictController extends VBootController< Dict> {
+public class DictController extends VBootController<Dict> {
 
     @Autowired
     private DictService dictService;
@@ -36,13 +36,13 @@ public class DictController extends VBootController< Dict> {
      * @return
      */
     @Override
-    public VbootService< Dict> getService() {
+    public VbootService<Dict> getService() {
         return dictService;
     }
 
     @RequestMapping(value = "/getDictByPage", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取")
-    public Result<IPage< Dict>> getUserByPage(@Valid PageBo pageBo, Dict dict) {
+    public Result<IPage<Dict>> getUserByPage(@Valid PageBo pageBo, Dict dict) {
 
         return ResultUtil.data(dictService.getDictByPage(pageBo, dict));
     }

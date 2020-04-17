@@ -1,6 +1,5 @@
 package com.carson.vboot.generator.service;
 
-import com.carson.vboot.core.entity.DictDetail;
 import com.carson.vboot.generator.dao.mapper.CodeDetailDao;
 import com.carson.vboot.generator.entity.CodeDetail;
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ClassUtils;
-
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -22,7 +19,7 @@ public class CodeServiceTest {
     private String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private CodeService codeService;
@@ -53,7 +50,9 @@ public class CodeServiceTest {
 
     @Test
     public void test(){
-        List<DictDetail> dictDetails = (List<DictDetail>) redisTemplate.opsForValue().get("dictDetail::262010503281250304");
+        Long ex = redisTemplate.getExpire("VBOOT_TOKEN_PREda53eb6bf80c45cf97215f4d4a7815d6");
+        log.info(ex+"");
+        String dictDetails =  redisTemplate.opsForValue().get("vboot::dictDetail::262010503281250304");
         log.info("dictDetails {}",dictDetails);
     }
 }
