@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ClassUtils;
 
+import java.util.concurrent.TimeUnit;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
@@ -32,8 +34,9 @@ public class CodeServiceTest {
         String s = codeService.fileDownLoad("257299003744456704");
         log.info(s);
     }
+
     @Test
-    public void addCodeDetail(){
+    public void addCodeDetail() {
         CodeDetail codeDetail = new CodeDetail();
         codeDetail.setCodeId("257299003744456704");
         codeDetail.setName("username");
@@ -49,10 +52,10 @@ public class CodeServiceTest {
     }
 
     @Test
-    public void test(){
-        Long ex = redisTemplate.getExpire("VBOOT_TOKEN_PREda53eb6bf80c45cf97215f4d4a7815d6");
-        log.info(ex+"");
-        String dictDetails =  redisTemplate.opsForValue().get("vboot::dictDetail::262010503281250304");
-        log.info("dictDetails {}",dictDetails);
+    public void test() {
+//        redisTemplate.delete("vboot::dictDetail::1252150469406507010");
+
+        redisTemplate.expire("vboot::dictDetail::1252150469406507010",0, TimeUnit.MILLISECONDS);
+
     }
 }

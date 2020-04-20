@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -26,10 +27,12 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.net.UnknownHostException;
 import java.time.Duration;
 
 /**
  * redis json格式化
+ * https://segmentfault.com/a/1190000017057950 redis配置教程
  */
 @EnableCaching
 @Configuration
@@ -90,9 +93,12 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    public StringRedisTemplate stringRedisTemplate() {
+    @ConditionalOnMissingBean( StringRedisTemplate.class)
+    public StringRedisTemplate stringRedisTemplate(
+            RedisConnectionFactory redisConnectionFactory)
+            throws UnknownHostException {
         StringRedisTemplate template = new StringRedisTemplate();
-        template.setConnectionFactory(jedisConnectionFactory());
+        template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
 

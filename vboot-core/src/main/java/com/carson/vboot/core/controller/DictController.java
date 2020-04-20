@@ -6,6 +6,7 @@ import com.carson.vboot.core.base.VbootService;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.utils.ResultUtil;
 import com.carson.vboot.core.entity.Dict;
+import com.carson.vboot.core.entity.DictDetail;
 import com.carson.vboot.core.service.DictService;
 import com.carson.vboot.core.vo.Result;
 import io.swagger.annotations.Api;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author oufuhua
@@ -45,6 +47,12 @@ public class DictController extends VBootController<Dict> {
     public Result<IPage<Dict>> getUserByPage(@Valid PageBo pageBo, Dict dict) {
 
         return ResultUtil.data(dictService.getDictByPage(pageBo, dict));
+    }
+
+    @RequestMapping(value = "/getDictDetailByDictName", method = RequestMethod.GET)
+    @ApiOperation(value = "根据dickName获取字典详情")
+    public Result<List<DictDetail>> getDictDetailByDictName(String dickName) {
+        return ResultUtil.data(dictService.getDictDetailByDictName(dickName));
     }
 
 }

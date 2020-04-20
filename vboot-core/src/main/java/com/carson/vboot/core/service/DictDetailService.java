@@ -17,4 +17,5 @@ public interface DictDetailService extends VbootService<DictDetail> {
      * @return
      */
     List<DictDetail> getDictDetailByDictId(String dictId,String name);
+
 }

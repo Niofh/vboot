@@ -13,9 +13,11 @@ import com.carson.vboot.core.dao.mapper.DictDetailDao;
 import com.carson.vboot.core.entity.Dict;
 import com.carson.vboot.core.entity.DictDetail;
 import com.carson.vboot.core.exception.VbootException;
+import com.carson.vboot.core.service.DictDetailService;
 import com.carson.vboot.core.service.DictService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,12 @@ public class DictServiceImpl implements DictService {
 
     @Autowired
     private DictDetailDao dictDetailDao;
+
+    @Autowired
+    private DictDetailService dictDetailService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public VbootBaseDao<Dict> getBaseDao() {
@@ -71,17 +79,15 @@ public class DictServiceImpl implements DictService {
      */
     @Override
     public List<DictDetail> getDictDetailByDictName(String dickName) {
-
-        // todo 还没完成
+        // todo 需要根据名称缓存下来
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
-        dictQueryWrapper.eq("dic_name",dickName);
+        dictQueryWrapper.eq("dic_name", dickName);
         Dict dict = dictDao.selectOne(dictQueryWrapper);
-        if(dict==null){
-
+        if (dict == null) {
+            throw new VbootException(ExceptionEnums.DICT_KEY_NO_EXIST);
         }
 
-
-        return null;
+        return dictDetailService.getDictDetailByDictId(dict.getId(), "");
     }
 
     /**
@@ -138,13 +144,18 @@ public class DictServiceImpl implements DictService {
     public Integer delete(Collection<String> idList) {
         Integer num = 0;
         if (CollUtil.isNotEmpty(idList)) {
+
             for (String dictId : idList) {
+
+                // 删除缓存
+                stringRedisTemplate.delete("vboot::dictDetail::" + dictId);
+
                 // 删除字典详情
                 QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
-                dictDetailQueryWrapper.eq("dict_id",dictId);
+                dictDetailQueryWrapper.eq("dict_id", dictId);
                 dictDetailDao.delete(dictDetailQueryWrapper);
             }
-            num = getBaseDao().deleteBatchIds(idList);
+            num = dictDao.deleteBatchIds(idList);
         }
 
         return num;

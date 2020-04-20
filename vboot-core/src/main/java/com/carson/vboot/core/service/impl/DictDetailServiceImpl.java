@@ -74,7 +74,8 @@ public class DictDetailServiceImpl implements DictDetailService {
      * @return
      */
     @Override
-    @Cacheable(cacheNames = "vboot::dictDetail", key = "#dictId", condition = "#name==''") // 根据dictId缓存字典详情
+    @Cacheable(cacheNames = "vboot::dictDetail", key = "#dictId", condition = "#name==''&&#dictId!=null")
+    // 根据dictId缓存字典详情
     public List<DictDetail> getDictDetailByDictId(String dictId, String name) {
 
         QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
@@ -92,6 +93,7 @@ public class DictDetailServiceImpl implements DictDetailService {
 
         return dictDetails;
     }
+
 
     /**
      * 保存
@@ -159,7 +161,9 @@ public class DictDetailServiceImpl implements DictDetailService {
     )
     @Override
     public Integer delete(Collection<String> idList) {
-
         return dictDetailDao.deleteBatchIds(idList);
     }
+
+
+
 }
