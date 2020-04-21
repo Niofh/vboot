@@ -16,8 +16,9 @@
                </el-date-picker>
             <% } else { %>
                <el-select v-model="searchForm.#{item.name}" placeholder="#{item.chinaName}">
-                 <el-option label="0" :value="0" />
-                 <el-option label="-1" :value="-1" />
+                     <% if(item.dictKey!='') {%>
+                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                    <% }%>
                </el-select>
            <% } %>
        </el-form-item>
@@ -87,6 +88,21 @@
   <%
      for(item in codeDetailList){
   %>
+    <%
+      if(item.dictKey!=''){
+    %>
+    <el-table-column
+       v-if="showField('#{item.name}')"
+       prop="#{item.name}"
+       label="#{item.chinaName}"
+       width="150"
+       sortable
+    >
+      <template slot-scope="scope">
+        {{ scope.row.#{item.name} | dictFilter(#{item.dictKey}DictList) }}
+      </template>
+            </el-table-column>
+    <% }else { %>
       <el-table-column
         v-if="showField('#{item.name}')"
         prop="#{item.name}"
@@ -94,6 +110,7 @@
         width="150"
         sortable
       />
+    <% } %>
    <% } %>
       <el-table-column
         v-if="showField('createTime')"
@@ -164,6 +181,9 @@
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-select v-model="form.#{item.name}" placeholder="请选择#{item.chinaName}">
                        <el-option label="请选择#{item.name}" value=""></el-option>
+                         <% if(item.dictKey!='') {%>
+                       <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                         <% }%>
                      </el-select>
                     </el-form-item>
                   </el-col>
@@ -219,6 +239,7 @@ import formMixin from '@/mixins/formMixin'
 import {get#{Name}ById, #{name}DelByIdsApi, #{name}SaveBaseApi, #{name}UpdateBaseApi, get#{Name}ByPageApi } from '@/api/#{name}'
 import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
+import { mapState } from 'vuex'
 export default {
   name: '#{Name}',
   mixins: [tableMixin, formMixin],
@@ -278,6 +299,13 @@ export default {
   },
   computed: {
 
+    ...mapState({
+   <% for(item in codeDetailList){%>
+     <% if(item.dictKey!=''){%>
+      #{item.dictKey}DictList: state => state.dict.#{item.dictKey}DictList,
+     <%}%>
+    <%}%>
+    })
   },
   watch: {
     'searchForm.date'(val) {
@@ -287,9 +315,17 @@ export default {
     }
   },
   created() {
+    this.getDict()
     this.getDataList()
   },
   methods: {
+   getDict(){
+    <% for(item in codeDetailList){%>
+      <% if(item.dictKey!=''){%>
+        this.$store.dispatch('dict/get#{stringTool.capitalize(item.dictKey)}DictList')
+      <%}%>
+    <%}%>
+   },
     // 判断是否存在排版里面
     showField(name) {
       return this.checkFieldList.indexOf(name) > -1
