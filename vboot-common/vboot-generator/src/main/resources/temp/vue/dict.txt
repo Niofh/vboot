@@ -1,0 +1,62 @@
+import { getDictDetailByDictKey } from '@/api/dict'
+
+const getDefaultState = () => {
+  return {
+
+     <% for(item in codeDetailList){%>
+       <% if(item.dictKey!=''){%>
+        #{item.dictKey}DictList: [],
+       <%}%>
+     <%}%>
+  }
+}
+
+const state = getDefaultState()
+
+const getters = {}
+
+const mutations = {
+  <% for(item in codeDetailList){%>
+     <% if(item.dictKey!=''){%>
+          SET_#{stringTool.toUpperCase(item.dictKey)}_DICT_LIST(state, #{item.dictKey}DictList) {
+            state.#{item.dictKey}DictList = #{item.dictKey}DictList
+          },
+     <%}%>
+  <%}%>
+}
+
+const actions = {
+   <% for(item in codeDetailList){%>
+     <% if(item.dictKey!=''){%>
+      // 获取#{item.chinaName}字典
+      get#{stringTool.capitalize(item.dictKey)}DictList({ commit, state }) {
+        return new Promise((resolve, reject) => {
+          if (state.#{item.dictKey}DictList.length > 0) {
+            resolve(state.#{item.dictKey}DictList)
+            return
+          }
+          getDictDetailByDictKey({
+            dictKey: '#{item.dictKey}'
+          }).then(response => {
+            if (response.code === 200) {
+              commit('SET_#{stringTool.toUpperCase(item.dictKey)}_DICT_LIST', response.result)
+            }
+            resolve(response.result)
+          }).catch(() => {
+            reject([])
+          })
+        })
+      },
+     <%}%>
+    <%}%>
+
+}
+
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters
+}
+

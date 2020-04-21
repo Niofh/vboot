@@ -159,6 +159,7 @@ public class CodeServiceImpl implements CodeService {
         // api接口生成
         String api = this.commonFile(gt, FROM + "/vue/api.txt", path + TARGET + "/vue/" + name + ".js", createFile);
         String table = this.commonFile(gt, FROM + "/vue/table.txt", path + TARGET + "/vue/" + name + ".vue", createFile);
+        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", path + TARGET + "/vue/" + name + ".js", createFile);
 
         // mysql生成
         String mysql = this.commonFile(gt, FROM + "/mysql/sql.txt", path + TARGET + "/mysql/" + code.getTableName() + ".sql", createFile);
@@ -177,6 +178,7 @@ public class CodeServiceImpl implements CodeService {
 
         result.put("path", path + TARGET);
         result.put("api", api);
+        result.put("vuexDict", vuexDict);
         result.put("table", table);
         result.put("mysql", mysql);
         result.put("entity", entity);

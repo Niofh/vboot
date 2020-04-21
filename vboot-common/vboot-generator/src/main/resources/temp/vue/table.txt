@@ -180,7 +180,7 @@
                   <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-select v-model="form.#{item.name}" placeholder="请选择#{item.chinaName}">
-                       <el-option label="请选择#{item.name}" value=""></el-option>
+                       <el-option label="请选择#{item.chinaName}" value=""></el-option>
                          <% if(item.dictKey!='') {%>
                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                          <% }%>
