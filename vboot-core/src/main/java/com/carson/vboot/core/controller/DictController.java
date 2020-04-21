@@ -49,10 +49,10 @@ public class DictController extends VBootController<Dict> {
         return ResultUtil.data(dictService.getDictByPage(pageBo, dict));
     }
 
-    @RequestMapping(value = "/getDictDetailByDictName", method = RequestMethod.GET)
-    @ApiOperation(value = "根据dickName获取字典详情")
-    public Result<List<DictDetail>> getDictDetailByDictName(String dickName) {
-        return ResultUtil.data(dictService.getDictDetailByDictName(dickName));
+    @RequestMapping(value = "/getDictDetailByDictKey", method = RequestMethod.GET)
+    @ApiOperation(value = "根据dictKey获取字典详情")
+    public Result<List<DictDetail>> getDictDetailByDictKey(String dictKey) {
+        return ResultUtil.data(dictService.getDictDetailByDictKey(dictKey));
     }
 
 }

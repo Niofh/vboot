@@ -17,6 +17,8 @@ import com.carson.vboot.core.service.DictDetailService;
 import com.carson.vboot.core.service.DictService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,9 +60,9 @@ public class DictServiceImpl implements DictService {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
 
 
-        if (StrUtil.isNotBlank(dict.getDicName())) {
+        if (StrUtil.isNotBlank(dict.getDictName())) {
 
-            dictQueryWrapper.like("dic_name", dict.getDicName());
+            dictQueryWrapper.like("dict_name", dict.getDictName());
         }
 
 
@@ -72,16 +74,16 @@ public class DictServiceImpl implements DictService {
     }
 
     /**
-     * 根据dickName获取字典详情
+     * 根据dictKey获取字典详情
      *
-     * @param dickName
+     * @param dictKey
      * @return
      */
+    @Cacheable(cacheNames = "vboot::dict", key = "#dictKey", condition = "#dictKey!=null") // 根据字典key缓存数据
     @Override
-    public List<DictDetail> getDictDetailByDictName(String dickName) {
-        // todo 需要根据名称缓存下来
+    public List<DictDetail> getDictDetailByDictKey(String dictKey) {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
-        dictQueryWrapper.eq("dic_name", dickName);
+        dictQueryWrapper.eq("dict_key", dictKey);
         Dict dict = dictDao.selectOne(dictQueryWrapper);
         if (dict == null) {
             throw new VbootException(ExceptionEnums.DICT_KEY_NO_EXIST);
@@ -99,7 +101,7 @@ public class DictServiceImpl implements DictService {
     @Override
     public Dict save(Dict entity) {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
-        dictQueryWrapper.eq("dic_key", entity.getDicKey());
+        dictQueryWrapper.eq("dict_key", entity.getDictKey());
         Dict dict = dictDao.selectOne(dictQueryWrapper);
         if (dict != null) {
             throw new VbootException(ExceptionEnums.DICT_KEY_EXIST);
@@ -121,7 +123,7 @@ public class DictServiceImpl implements DictService {
     @Override
     public Dict update(Dict entity) {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
-        dictQueryWrapper.ne("id", entity.getId()).eq("dic_key", entity.getDicKey());
+        dictQueryWrapper.ne("id", entity.getId()).eq("dict_key", entity.getDictKey());
         Dict dict = dictDao.selectOne(dictQueryWrapper);
         if (dict != null) {
             throw new VbootException(ExceptionEnums.DICT_KEY_EXIST);
@@ -140,6 +142,7 @@ public class DictServiceImpl implements DictService {
      * @param idList
      */
     @Transactional
+    @CacheEvict(cacheNames = "vboot::dict",allEntries = true) // 删除这个key的缓存
     @Override
     public Integer delete(Collection<String> idList) {
         Integer num = 0;
@@ -154,6 +157,7 @@ public class DictServiceImpl implements DictService {
                 QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
                 dictDetailQueryWrapper.eq("dict_id", dictId);
                 dictDetailDao.delete(dictDetailQueryWrapper);
+
             }
             num = dictDao.deleteBatchIds(idList);
         }

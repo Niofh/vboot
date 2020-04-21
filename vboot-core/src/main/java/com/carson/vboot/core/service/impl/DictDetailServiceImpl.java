@@ -156,14 +156,13 @@ public class DictDetailServiceImpl implements DictDetailService {
      */
     @Caching(
             evict = {
-                    @CacheEvict(cacheNames = "vboot::dictDetail", allEntries = true) // 删除缓存,allEntries忽略指定key
+                    @CacheEvict(cacheNames = "{vboot::dictDetail,vboot::dict}", allEntries = true) // 删除缓存,allEntries忽略指定key
             }
     )
     @Override
     public Integer delete(Collection<String> idList) {
         return dictDetailDao.deleteBatchIds(idList);
     }
-
 
 
 }

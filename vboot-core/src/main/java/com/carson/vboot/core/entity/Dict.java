@@ -16,11 +16,11 @@ public class Dict  extends VbootBaseEntity {
 
     @ApiModelProperty(value = "字典名称")
     @NotBlank(message = "字典名称不能为空")
-    private String dicName;
+    private String dictName;
 
     @ApiModelProperty(value = "字典Key")
     @NotBlank(message = "字典Key不能为空")
-    private String dicKey;
+    private String dictKey;
 
 
 }

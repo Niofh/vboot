@@ -12,9 +12,9 @@ public interface DictService extends VbootService< Dict> {
     IPage<Dict> getDictByPage(PageBo pageBo, Dict dict);
 
     /**
-     * 根据dickName获取字典详情
-     * @param dickName
+     * 根据dickKey获取字典详情
+     * @param dictKey
      * @return
      */
-    List<DictDetail> getDictDetailByDictName(String dickName);
+    List<DictDetail> getDictDetailByDictKey(String dictKey);
 }
