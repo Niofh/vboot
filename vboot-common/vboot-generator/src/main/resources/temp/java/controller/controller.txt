@@ -22,7 +22,7 @@ import javax.validation.Valid;
 /**
  * @author oufuhua
  */
-@Api(tags = "代码生成")
+@Api(tags = "#{code.description}")
 @RestController
 @Slf4j
 @RequestMapping("/#{name}")

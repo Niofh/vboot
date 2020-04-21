@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container user">
+  <div class="app-container">
     <el-form ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" size="small">
     <%
      for(item in codeDetailList){

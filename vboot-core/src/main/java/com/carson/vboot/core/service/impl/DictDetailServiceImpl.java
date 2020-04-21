@@ -60,8 +60,8 @@ public class DictDetailServiceImpl implements DictDetailService {
         dictDetailQueryWrapper.orderByDesc("sort");
 
 
-        // 根据时间倒序
-        dictDetailQueryWrapper.orderByDesc(true, "create_time");
+        // 根据时间升序
+        dictDetailQueryWrapper.orderByAsc(true, "create_time");
         Page<DictDetail> dictDetailPage = dictDetailDao.selectPage(page, dictDetailQueryWrapper);
 
         return dictDetailPage;
@@ -88,7 +88,7 @@ public class DictDetailServiceImpl implements DictDetailService {
         dictDetailQueryWrapper.orderByDesc("sort");
 
         // 创建时间排序
-        dictDetailQueryWrapper.orderByDesc("create_time");
+        dictDetailQueryWrapper.orderByAsc("create_time");
         List<DictDetail> dictDetails = dictDetailDao.selectList(dictDetailQueryWrapper);
 
         return dictDetails;
