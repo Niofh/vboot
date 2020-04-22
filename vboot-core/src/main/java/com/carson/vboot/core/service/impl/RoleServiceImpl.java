@@ -1,8 +1,12 @@
 package com.carson.vboot.core.service.impl;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.base.VbootBaseDao;
+import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.config.security.permission.MySecurityMetadataSource;
@@ -52,6 +56,30 @@ public class RoleServiceImpl implements RoleService {
 
 
     /**
+     * 分页查询
+     *
+     * @param pageBo
+     * @param role
+     * @return
+     */
+    @Override
+    public IPage<Role> getRoleByPage(PageBo pageBo, Role role) {
+
+        Page<Role> page = new Page<>(pageBo.getPageIndex(), pageBo.getPageSize());
+        QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
+
+        if (StrUtil.isNotBlank(role.getName())) {
+            roleQueryWrapper.eq("name", role.getName());
+        }
+
+        // 根据时间倒序
+        roleQueryWrapper.orderByDesc(true, "create_time");
+        Page<Role> rolePage = roleDao.selectPage(page, roleQueryWrapper);
+
+        return rolePage;
+    }
+
+    /**
      * 根据ID获取实体类数据
      *
      * @param roleId
@@ -81,12 +109,12 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Caching(
-        put = {
-            @CachePut(cacheNames = "role", key = "#result.id", condition = "#result!=null") // 更新根据id的缓存
-        },
-        evict = {
-            @CacheEvict(cacheNames = {"vboot::roles"}, key = "'getall'"), // 删除所有角色
-        }
+            put = {
+                    @CachePut(cacheNames = "role", key = "#result.id", condition = "#result!=null") // 更新根据id的缓存
+            },
+            evict = {
+                    @CacheEvict(cacheNames = {"vboot::roles"}, key = "'getall'"), // 删除所有角色
+            }
     )
     @Override
     public Role update(Role role) {
@@ -102,7 +130,8 @@ public class RoleServiceImpl implements RoleService {
      *
      * @param idList
      */
-    @CacheEvict(cacheNames = {"user", "vboot::user", "user::role", "vboot::roles","role::permission","role::dep"}, allEntries = true) // 删除用户和用户关联表所有缓存
+    @CacheEvict(cacheNames = {"user", "vboot::user", "user::role", "vboot::roles", "role::permission", "role::dep"}, allEntries = true)
+    // 删除用户和用户关联表所有缓存
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
@@ -132,7 +161,7 @@ public class RoleServiceImpl implements RoleService {
      * @param roleId
      * @return
      */
-    @Cacheable(cacheNames = "role::permission",key = "#roleId")
+    @Cacheable(cacheNames = "role::permission", key = "#roleId")
     @Override
     public List<String> getPermissionByRoleId(String roleId) {
         QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
@@ -151,7 +180,7 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 通过角色id赋值权限
      */
-    @CacheEvict(cacheNames = "role::permission",key = "#roleId")
+    @CacheEvict(cacheNames = "role::permission", key = "#roleId")
     @Transactional
     @Override
     public void setPermissionByRoleId(String roleId, String[] permissionIds) {
@@ -184,7 +213,7 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 根据角色id获取部门id
      */
-    @Cacheable(cacheNames = "role::dep",key = "#roleId")
+    @Cacheable(cacheNames = "role::dep", key = "#roleId")
     @Override
     public List<String> getDepartmentByRoleId(String roleId) {
         Role role = this.getId(roleId);
@@ -210,7 +239,7 @@ public class RoleServiceImpl implements RoleService {
      * @param dataType 权限类型 CommonEnums.DATA_TYPE_CUSTOM
      * @param depIds
      */
-    @CacheEvict(cacheNames = "role::dep",key = "#roleId")
+    @CacheEvict(cacheNames = "role::dep", key = "#roleId")
     @Override
     public void setDepartmentByRoleId(String roleId, Integer dataType, String[] depIds) {
 

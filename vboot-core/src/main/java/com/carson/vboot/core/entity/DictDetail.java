@@ -25,7 +25,7 @@ public class DictDetail extends VbootBaseEntity {
 
     @ApiModelProperty(value = "字典值")
     @NotBlank(message = "字典值不能为空")
-    private String code;
+    private Integer code;
 
     @ApiModelProperty(value = "排序")
     private BigDecimal sort;

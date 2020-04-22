@@ -1,6 +1,8 @@
 package com.carson.vboot.core.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.carson.vboot.core.base.VbootService;
+import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.entity.Role;
 
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.List;
 
 public interface RoleService extends VbootService<Role> {
 
+    IPage<Role> getRoleByPage(PageBo pageBo, Role role);
 
     /**
      * 根据角色id获取菜单权限
