@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * created by Nicofh on 2020-03-08
@@ -43,13 +44,13 @@ public class UserController {
 
     @RequestMapping(value = "/getAllBase", method = RequestMethod.GET)
     @ApiOperation(value = "获取所有用户")
-    public Result<Object> getAll() {
+    public Result<List<User>> getAll() {
         return ResultUtil.data(userService.getAll());
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "根据Token获取用户信息")
-    public Result<Object> getUserInfo() {
+    public Result<User> getUserInfo() {
         User user = userService.getUserById(securityUtil.getCurrUser().getId());
         user.setPassword("");
         return ResultUtil.data(user);
@@ -58,7 +59,7 @@ public class UserController {
     @RequestMapping(value = "/getUser/{id}", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "通过userId获取用户")
-    public Result<Object> getUserById(@PathVariable String id) {
+    public Result<User> getUserById(@PathVariable String id) {
         return ResultUtil.data(userService.getUserById(id));
     }
 

@@ -91,7 +91,7 @@ public class SecurityUtil {
     public String getTokenAndSetAuthority(String username, List<String> list) {
 
         try {
-            UserVO  u = userService.findByUsername(username);
+            UserVO u = userService.findByUsername(username);
             if (CollUtil.isEmpty(list)) {
                 // 如果数组为空，那么就从数据库获取
 
@@ -119,7 +119,7 @@ public class SecurityUtil {
                 // redis
                 token = UUID.randomUUID().toString().replace("-", "");
 
-                TokenUser user = new TokenUser(u.getId(),username, list);
+                TokenUser user = new TokenUser(u.getId(), username, list);
                 // 不缓存权限
                 if (!tokenProperties.getStorePerms()) {
                     user.setPermissions(null);
@@ -133,7 +133,7 @@ public class SecurityUtil {
                         redisTemplate.delete(CommonConstant.TOKEN_PRE + oldToken);
                     }
                 }
-                log.info("tokenProperties.getTokenExpireTime() {}",tokenProperties.getTokenExpireTime());
+                log.info("tokenProperties.getTokenExpireTime() {}", tokenProperties.getTokenExpireTime());
                 // 保存token
                 redisTemplate.opsForValue().set(CommonConstant.USER_TOKEN + username, token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
 
@@ -159,8 +159,8 @@ public class SecurityUtil {
             }
 
             return token;
-        }catch (Exception e ){
-           throw  new VbootException(ExceptionEnums.SYS_ERROR);
+        } catch (Exception e) {
+            throw new VbootException(ExceptionEnums.SYS_ERROR);
         }
 
     }

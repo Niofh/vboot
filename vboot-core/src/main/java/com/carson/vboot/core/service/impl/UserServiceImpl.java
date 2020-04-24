@@ -370,12 +370,16 @@ public class UserServiceImpl implements UserService {
 
         if (!addFlag) {
             // addFlag===false代表是修改，先清空对应角色id
-            User userById = this.getUserById(userId);
-            // 设置他的角色
-            user.setRoleIds(userById.getRoleIds());
+            // User userById = this.getUserById(userId);
+
+           // 清空用户关联角色
             QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", userId);
             userRoleDao.delete(wrapper);
+
+            // 设置他的角色
+
+            return this.setRoles(user);
         } else {
             // 新加用户
             if (user.getPassword() != null) {
@@ -383,9 +387,13 @@ public class UserServiceImpl implements UserService {
                 String encode = new BCryptPasswordEncoder().encode(user.getPassword());
                 user.setPassword(encode);
             }
+            return this.setRoles(user);
         }
+    }
 
-
+    // 设置角色
+    @Transactional
+    public User setRoles(User user) {
         // 创建一个空数组
         List<String> roleList = new ArrayList<>();
 

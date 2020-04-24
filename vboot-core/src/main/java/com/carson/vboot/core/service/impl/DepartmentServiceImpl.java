@@ -256,13 +256,17 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         ArrayList<String> depIds = new ArrayList<>();
         QueryWrapper<Department> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id", depId);
+        // 不禁用
+        queryWrapper.eq("parent_id", depId).eq("status",CommonEnums.STATUS_NORMAL.getId());
 
         List<Department> departments = departmentDao.selectList(queryWrapper);
         if (CollUtil.isNotEmpty(departments)) {
             for (Department department : departments) {
+                // 不禁用
+                if (department.getStatus().equals(CommonEnums.STATUS_NORMAL.getId())) {
+                    depIds.add(department.getId());
+                }
 
-                depIds.add(department.getId());
             }
         }
         return depIds;
