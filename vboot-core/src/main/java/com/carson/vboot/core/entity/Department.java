@@ -35,6 +35,9 @@ public class Department extends VbootBaseEntity {
     @ApiModelProperty(value = "是否启用 0启用 -1禁用")
     private Integer status = CommonEnums.STATUS_NORMAL.getId();
 
+    @ApiModelProperty(value = "描述")
+    private String description;
+
     @TableField(exist=false)
     @ApiModelProperty(value = "父节点名称")
     private String parentTitle;

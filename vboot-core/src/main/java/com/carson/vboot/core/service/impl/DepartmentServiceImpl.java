@@ -60,13 +60,15 @@ public class DepartmentServiceImpl implements DepartmentService {
      *
      * @return
      */
-    @Cacheable(cacheNames = "vboot::dep",key = "'getall'")
+    @Cacheable(cacheNames = "vboot::dep", key = "'getall'")
     @Override
     public List<Department> getAll() {
-        List<Department> departments = departmentDao.selectList(null);
-        for (Department department : departments) {
+        QueryWrapper<Department> departmentQueryWrapper = new QueryWrapper<>();
+        departmentQueryWrapper.orderByDesc("sort");
+        List<Department> departments = departmentDao.selectList(departmentQueryWrapper);
+/*        for (Department department : departments) {
             this.getDepartmentHeader(department);
-        }
+        }*/
         return departments;
     }
 
@@ -107,7 +109,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @param department
      * @return
      */
-    @CacheEvict(cacheNames = "vboot::dep",key = "'getall'")
+    @CacheEvict(cacheNames = "vboot::dep", key = "'getall'")
     @Transactional
     @Override
     public Department save(Department department) {
@@ -115,7 +117,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             department.setId(null);
             // 添加新部门
             departmentDao.insert(department);
-            // 获取部门id
+/*            // 获取部门id
             String depId = department.getId();
             log.info("【获取部门id】 {}", depId);
 
@@ -145,7 +147,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                     departmentHeader.setUserId(userId);
                     departmentHeaderDao.insert(departmentHeader);
                 }
-            }
+            }*/
             return department;
         } catch (Exception e) {
             throw new VbootException(ExceptionEnums.ADD_ERROR);
@@ -159,7 +161,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      * @param department
      * @return
      */
-    @CacheEvict(cacheNames = "vboot::dep",key = "'getall'")
+    @CacheEvict(cacheNames = "vboot::dep", key = "'getall'")
     @Transactional
     @Override
     public Department update(Department department) {
@@ -169,7 +171,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             // 部门id
             String depId = department.getId();
             departmentDao.updateById(department);
-
+/*
             // 主负责人
             List<String> mainHeader = department.getMainHeader();
             // 次负责人
@@ -201,7 +203,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                     departmentHeader.setUserId(userId);
                     departmentHeaderDao.insert(departmentHeader);
                 }
-            }
+            }*/
 
             return department;
 
@@ -216,7 +218,7 @@ public class DepartmentServiceImpl implements DepartmentService {
      *
      * @param idList
      */
-    @CacheEvict(cacheNames = {"vboot::dep","role::dep"}, allEntries = true)
+    @CacheEvict(cacheNames = {"vboot::dep", "role::dep"}, allEntries = true)
     @Transactional
     @Override
     public Integer delete(Collection<String> idList) {
@@ -224,7 +226,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             if (CollUtil.isNotEmpty(idList)) {
                 // 删除部门
                 departmentDao.deleteBatchIds(idList);
-
+/*
                 for (String depId : idList) {
                     // 删除原来的部门主管
                     QueryWrapper<DepartmentHeader> queryWrapper = new QueryWrapper<>();
@@ -235,7 +237,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                     QueryWrapper<Department> departmentQueryWrapper = new QueryWrapper<>();
                     departmentQueryWrapper.eq("parent_id", depId);
                     departmentDao.delete(departmentQueryWrapper);
-                }
+                }*/
             }
             return 1;
         } catch (Exception e) {
@@ -245,6 +247,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     /**
      * 通过父部门id获取子部门id
+     *
      * @param
      * @return
      */

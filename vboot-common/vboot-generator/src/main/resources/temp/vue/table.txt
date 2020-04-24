@@ -65,7 +65,7 @@
           </p>
         <% } %>
           <p>
-            <el-checkbox label="createTime" checked>创建时间</el-checkbox>
+            <el-checkbox label="createTime" checked disable>创建时间</el-checkbox>
           </p>
         </el-checkbox-group>
         <el-button slot="reference" class="btn-default" size="small" icon="el-icon-edit">排版</el-button>
@@ -116,7 +116,6 @@
         v-if="showField('createTime')"
         prop="createTime"
         label="创建时间"
-        width="180"
         sortable
       />
       <el-table-column
