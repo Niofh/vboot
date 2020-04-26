@@ -4,12 +4,13 @@
 
     <select id="findByUserId" resultType="com.carson.vboot.core.entity.Permission">
       SELECT DISTINCT p.id, p.name, p.hidden, p.title, p.path, p.icon, p.type, p.component, p.level,
-        p.button_type, p.parent_id, p.sort, p.description, p.status, p.url
+        p.button_type, p.parent_id, p.sort, p.description, p.status, p.url,
+        p.del_flag as p_del_flag, ur.del_flag as ur_del_flag, rp.del_flag as rp_del_flag
       FROM t_user u
-      LEFT JOIN t_user_role ur ON u.id = ur.user_id
+      LEFT JOIN t_user_role ur  ON u.id = ur.user_id
       LEFT JOIN t_role_permission rp ON ur.role_id = rp.role_id
       LEFT JOIN t_permission p ON p.id = rp.permission_id
-      WHERE u.id = #{userId} AND p.status = 0
+      WHERE u.id = #{userId} and p.status = 0 and ur.del_flag = 0 and p.del_flag = 0 and rp.del_flag = 0
       ORDER BY p.sort ASC
     </select>
 </mapper>

@@ -314,9 +314,11 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(user, userVO);
 
         // 查询部门
-        if (null != userVO.getDepartmentId()) {
+        if (StrUtil.isNotBlank(userVO.getDepartmentId())) {
             Department department = departmentDao.selectById(userVO.getDepartmentId());
-            userVO.setDepartmentTitle(department.getTitle());
+            if (department != null) {
+                userVO.setDepartmentTitle(department.getTitle());
+            }
         }
 
         // 添加角色
@@ -342,6 +344,7 @@ public class UserServiceImpl implements UserService {
      * @param addFlag 是否是添加
      * @return
      */
+    // todo
     @Transactional
     public User commonUser(User user, Boolean addFlag) {
         // 获取用户id
@@ -370,15 +373,15 @@ public class UserServiceImpl implements UserService {
 
         if (!addFlag) {
             // addFlag===false代表是修改，先清空对应角色id
-            // User userById = this.getUserById(userId);
+            User userById = this.getUserById(userId);
 
-           // 清空用户关联角色
+            // 清空用户关联角色
             QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", userId);
             userRoleDao.delete(wrapper);
 
             // 设置他的角色
-
+            user.setPassword(userById.getPassword());
             return this.setRoles(user);
         } else {
             // 新加用户

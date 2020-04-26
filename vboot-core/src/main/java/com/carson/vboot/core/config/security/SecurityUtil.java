@@ -96,6 +96,9 @@ public class SecurityUtil {
                 // 如果数组为空，那么就从数据库获取
 
                 list = new ArrayList<>();
+
+                System.out.println(u.getPermissions());
+                System.out.println("=======================");
                 // 缓存权限
                 if (tokenProperties.getStorePerms()) {
                     for (Permission p : u.getPermissions()) {
@@ -105,9 +108,13 @@ public class SecurityUtil {
                             list.add(p.getTitle());
                         }
                     }
-                    for (Role r : u.getRoles()) {
-                        list.add(r.getName());
+                    if (CollUtil.isNotEmpty(u.getRoles())) {
+                        for (Role r : u.getRoles()) {
+                            list.add(r.getName());
+                        }
                     }
+
+
                 }
             }
 
