@@ -26,6 +26,7 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
  * @author Carson
  * 教程 https://www.cnblogs.com/wuyoucao/p/10863419.html
  * 开启注解模式 https://www.jianshu.com/p/41b7c3fb00e0
+ * springBoot+springSecurity 数据库动态管理用户、角色、权限 https://blog.csdn.net/u012373815/article/details/54633046
  */
 @Slf4j
 @Configuration
