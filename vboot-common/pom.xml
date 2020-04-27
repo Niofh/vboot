@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>vboot-common</artifactId>
-    <packaging>pom</packaging>
+    <packaging>pom</packaging> <!--是父模块，就要写成pom，不要写jar,不包含java代码-->
 
 
     <description>vboot公共组件模块</description>

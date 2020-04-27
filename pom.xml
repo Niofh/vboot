@@ -43,7 +43,7 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- Spring Boot -->
+            <!-- Spring Boot 引入依赖包 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>

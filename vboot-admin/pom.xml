@@ -100,6 +100,7 @@
     <build>
         <plugins>
             <plugin>
+                <!--加入这个配置，把依赖的包重新打一份-->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
