@@ -92,10 +92,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         registry.and()
                 // 表单登录方式
                 .formLogin()
-                // 登录页面，报错401，前端监听返回登录页面
+                // 如果没有登录，跳进这个方法，报错401，前端监听返回登录页面
                 .loginPage("/security/login/page")
                 .permitAll()
-                // 登录地址
+                // 登录接口api
                 .loginProcessingUrl("/security/vboot/login")
                 .permitAll() // 权限放开
                 // 登录成功处理类
@@ -108,6 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutUrl("/logout")
+                // 退出登录处理
                 .logoutSuccessHandler(myLogoutSuccessHandler)
                 .and()
                 .authorizeRequests()

@@ -13,6 +13,7 @@ import com.carson.vboot.core.config.security.SecurityUtil;
 import com.carson.vboot.core.dao.mapper.*;
 import com.carson.vboot.core.entity.*;
 import com.carson.vboot.core.exception.VbootException;
+import com.carson.vboot.core.service.PermissionService;
 import com.carson.vboot.core.service.RoleService;
 import com.carson.vboot.core.service.UserService;
 import com.carson.vboot.core.vo.UserVO;
@@ -68,6 +69,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private SecurityUtil securityUtil;
+
+    @Autowired
+    private PermissionService permissionService;
 
     @Override
     public IPage<User> getUserByPage(PageBo pageBo, User user) {
@@ -296,7 +300,9 @@ public class UserServiceImpl implements UserService {
     @Cacheable(cacheNames = "vboot::user", key = "#username") // 根据用户名查询缓存
     @Override
     public UserVO findByUsername(String username) {
-
+        if (StrUtil.isBlank(username)) {
+            throw new VbootException(ExceptionEnums.USER_NO_EXIST);
+        }
         // 查询用户
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.eq("username", username);
@@ -304,6 +310,17 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new VbootException(ExceptionEnums.USER_NO_EXIST);
         }
+
+        if (adminUserName.equals(username)) {
+            // 如果是admin,返回所有权限和菜单
+
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+
+            userVO.setPermissions(permissionService.getAll());
+            return userVO;
+        }
+
 
         // 查询用户角色表
         QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();

@@ -25,7 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/security")
 @Slf4j
-public class LoginController {
+public class SecurityController {
 
     @Autowired
     private PermissionDao permissionDao;
@@ -42,7 +42,6 @@ public class LoginController {
         Result<Object> result = ResultUtil.error(401, "您还未登录，请重新登录");
         return result;
     }
-
 
     @RequestMapping(value = "/swagger/login", method = RequestMethod.GET)
     @ApiOperation(value = "Swagger接口文档专用登录接口 方便测试")

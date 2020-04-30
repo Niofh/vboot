@@ -7,6 +7,7 @@ import com.carson.vboot.core.config.security.SecurityUtil;
 import com.carson.vboot.core.entity.User;
 import com.carson.vboot.core.service.UserService;
 import com.carson.vboot.core.vo.Result;
+import com.carson.vboot.core.vo.UserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "/getUser/{id}", method = RequestMethod.GET)
-    @ResponseBody
     @ApiOperation(value = "通过userId获取用户")
     public Result<User> getUserById(@PathVariable String id) {
         return ResultUtil.data(userService.getUserById(id));
@@ -65,14 +65,12 @@ public class UserController {
 
 
     @PostMapping("/saveBase")
-    @ResponseBody
     @ApiOperation(value = "添加用户")
     public Result<Object> insertUser(@Valid  User user) {
         return ResultUtil.data(userService.insertUser(user));
     }
 
     @PostMapping("/delByIds")
-    @ResponseBody
     @ApiOperation(value = "批量删除用户")
     public Result<Object> delete(String[] ids) {
         return ResultUtil.data(userService.delete(Arrays.asList(ids)));
@@ -80,11 +78,15 @@ public class UserController {
 
 
     @PostMapping("/updateBase")
-    @ResponseBody
     @ApiOperation(value = "更新用户")
     public Result<Object> updateUser(@Valid User user) {
         return ResultUtil.data(userService.updateUser(user));
     }
 
+    @GetMapping("/findMenuAndPerByUsername")
+    @ApiOperation(value = "根据用户名获取菜单和权限")
+    public Result<UserVO> findMenuAndPerByUsername(String username){
+       return  ResultUtil.data(userService.findByUsername(username));
+    }
 
 }
