@@ -59,6 +59,9 @@ public class UserServiceImpl implements UserService {
     private RoleService roleService;
 
     @Autowired
+    private PermissionService permissionService;
+
+    @Autowired
     private PermissionDao permissionDao;
 
     @Autowired
@@ -70,8 +73,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SecurityUtil securityUtil;
 
-    @Autowired
-    private PermissionService permissionService;
 
     @Override
     public IPage<User> getUserByPage(PageBo pageBo, User user) {
@@ -291,6 +292,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
     /**
      * 根据用户名查找用户
      *
@@ -311,15 +313,17 @@ public class UserServiceImpl implements UserService {
             throw new VbootException(ExceptionEnums.USER_NO_EXIST);
         }
 
+
+        UserVO userVO = new UserVO();
+
+        log.info("【adminUserName】 {}",adminUserName);
         if (adminUserName.equals(username)) {
-            // 如果是admin,返回所有权限和菜单
-
-            UserVO userVO = new UserVO();
             BeanUtils.copyProperties(user, userVO);
-
+            // admin设置所有权限
             userVO.setPermissions(permissionService.getAll());
             return userVO;
         }
+
 
 
         // 查询用户角色表
@@ -327,7 +331,7 @@ public class UserServiceImpl implements UserService {
         userRoleQueryWrapper.eq("user_id", user.getId());
         List<UserRole> userRoles = userRoleDao.selectList(userRoleQueryWrapper);
 
-        UserVO userVO = new UserVO();
+
         BeanUtils.copyProperties(user, userVO);
 
         // 查询部门
