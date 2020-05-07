@@ -40,6 +40,9 @@ public class Permission extends VbootBaseEntity {
     @ApiModelProperty(value = "前端组件")
     private String component;
 
+    @ApiModelProperty(value = "重定向")
+    private String redirect;
+
     @ApiModelProperty(value = "图标")
     private String icon;
 
