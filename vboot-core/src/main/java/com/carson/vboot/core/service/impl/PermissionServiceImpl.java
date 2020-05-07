@@ -43,7 +43,9 @@ public class PermissionServiceImpl implements PermissionService {
     @Cacheable(value = "vboot::permiss",key = "'getall'") // 缓存所有权限按钮
     @Override
     public List<Permission> getAll() {
-        return permissionDao.selectList(null);
+        QueryWrapper<Permission> permissionQueryWrapper = new QueryWrapper<>();
+        permissionQueryWrapper.orderByDesc("sort");
+        return permissionDao.selectList(permissionQueryWrapper);
     }
 
     @Cacheable(value = "vboot::permiss",key = "'getallbtn'") // 缓存所有权限按钮
@@ -62,7 +64,7 @@ public class PermissionServiceImpl implements PermissionService {
      * @param entity
      * @return
      */
-    @CacheEvict(cacheNames = "vboot::permiss",allEntries = true)
+    @CacheEvict(cacheNames = {"vboot::permiss","vboot::user","user","vboot::roles","roles","role::permission"},allEntries = true)
     @Override
     public Permission save(Permission entity) {
         int insert = permissionDao.insert(entity);
@@ -82,7 +84,7 @@ public class PermissionServiceImpl implements PermissionService {
      * @param entity
      * @return
      */
-    @CacheEvict(cacheNames = {"vboot::permiss"},allEntries = true)
+    @CacheEvict(cacheNames = {"vboot::permiss","vboot::user","user","vboot::roles","roles","role::permission"},allEntries = true)
     @Override
     public Permission update(Permission entity) {
         int num = permissionDao.updateById(entity);
