@@ -17,7 +17,11 @@ public class #{Name}  extends VbootBaseEntity {
 <% for(item in codeDetailList){ %>
     @ApiModelProperty(value = "#{item.chinaName}")
   <% if(item.required==1){  %>
+    <% if(item.javaType=='String'){  %>
     @NotBlank(message = "#{item.chinaName}不能为空")
+    <% }else{ %>
+      @NotNull(message = "#{item.chinaName}不能为空")
+    <% }  %>
   <% }  %>
     private #{item.javaType} #{item.name};
 

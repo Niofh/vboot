@@ -45,10 +45,8 @@ public class MessageServiceImpl implements MessageService {
         }
 
 
-        if (StrUtil.isNotBlank(message.getMsgType())) {
-
+        if (message.getMsgType()!=null) {
             messageQueryWrapper.eq("msg_type", message.getMsgType());
-
         }
 
 

@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @TableName("t_message")
@@ -23,8 +24,8 @@ public class Message extends VbootBaseEntity {
     private String content;
 
     @ApiModelProperty(value = "消息类型")
-    @NotBlank(message = "消息类型不能为空")
-    private String msgType;
+    @NotNull(message = "消息类型不能为空")
+    private Integer msgType;
 
     @ApiModelProperty(value = "新账号是否发送消息")
     private Integer createUserSend;
