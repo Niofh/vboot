@@ -110,7 +110,7 @@ public class CodeServiceImpl implements CodeService {
             throw new VbootException(ExceptionEnums.CODE_DETAIL_NO_EXIST);
         }
 
-        HashMap<String, Object> map = renderFiled(code, codeDetailList, false);
+        HashMap<String, Object> map = this.renderFiled(code, codeDetailList, false);
         return map;
     }
 
@@ -159,7 +159,7 @@ public class CodeServiceImpl implements CodeService {
         // api接口生成
         String api = this.commonFile(gt, FROM + "/vue/api.txt", path + TARGET + "/vue/" + name + ".js", createFile);
         String table = this.commonFile(gt, FROM + "/vue/table.txt", path + TARGET + "/vue/" + name + ".vue", createFile);
-        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", path + TARGET + "/vue/" + name + ".js", createFile);
+        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", path + TARGET + "/vue/" + name + "Dict.js", createFile);
 
         // mysql生成
         String mysql = this.commonFile(gt, FROM + "/mysql/sql.txt", path + TARGET + "/mysql/" + code.getTableName() + ".sql", createFile);

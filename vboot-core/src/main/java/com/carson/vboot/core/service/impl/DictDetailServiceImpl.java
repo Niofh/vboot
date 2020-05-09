@@ -103,7 +103,8 @@ public class DictDetailServiceImpl implements DictDetailService {
      */
     @Caching(
             evict = {
-                    @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
+                    @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null"), // 删除根据dictID的缓存
+                    @CacheEvict(cacheNames = {"vboot::dict"}, allEntries = true) // 删除缓存,allEntries忽略指定key
             }
     )
     @Override
@@ -130,7 +131,8 @@ public class DictDetailServiceImpl implements DictDetailService {
      */
     @Caching(
             evict = {
-                    @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null") // 删除根据dictID的缓存
+                    @CacheEvict(cacheNames = "vboot::dictDetail", key = "#result.dictId", condition = "#result!=null"),// 删除根据dictID的缓存
+                    @CacheEvict(cacheNames = "vboot::dict", allEntries = true) // 删除缓存,allEntries忽略指定key
             }
     )
     @Override
@@ -156,7 +158,7 @@ public class DictDetailServiceImpl implements DictDetailService {
      */
     @Caching(
             evict = {
-                    @CacheEvict(cacheNames = "{vboot::dictDetail,vboot::dict}", allEntries = true) // 删除缓存,allEntries忽略指定key
+                @CacheEvict(cacheNames = {"vboot::dictDetail,vboot::dict"}, allEntries = true) // 删除缓存,allEntries忽略指定key
             }
     )
     @Override

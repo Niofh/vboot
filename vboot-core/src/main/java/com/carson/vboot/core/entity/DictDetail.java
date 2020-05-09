@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
@@ -24,7 +25,7 @@ public class DictDetail extends VbootBaseEntity {
     private String name;
 
     @ApiModelProperty(value = "字典值")
-    @NotBlank(message = "字典值不能为空")
+    @NotNull(message = "字典值不能为空")
     private Integer code;
 
     @ApiModelProperty(value = "排序")

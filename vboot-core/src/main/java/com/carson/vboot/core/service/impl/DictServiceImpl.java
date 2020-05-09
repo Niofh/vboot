@@ -99,6 +99,7 @@ public class DictServiceImpl implements DictService {
      * @return
      */
     @Override
+    @CacheEvict(cacheNames = "vboot::dict",allEntries = true) // 删除这个key的缓存
     public Dict save(Dict entity) {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
         dictQueryWrapper.eq("dict_key", entity.getDictKey());
@@ -121,6 +122,7 @@ public class DictServiceImpl implements DictService {
      * @return
      */
     @Override
+    @CacheEvict(cacheNames = "vboot::dict",allEntries = true) // 删除这个key的缓存
     public Dict update(Dict entity) {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
         dictQueryWrapper.ne("id", entity.getId()).eq("dict_key", entity.getDictKey());
