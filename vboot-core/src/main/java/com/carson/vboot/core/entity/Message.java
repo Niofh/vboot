@@ -1,5 +1,6 @@
 package com.carson.vboot.core.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.carson.vboot.core.base.VbootBaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -8,6 +9,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @TableName("t_message")
@@ -30,5 +32,10 @@ public class Message extends VbootBaseEntity {
     @ApiModelProperty(value = "新账号是否发送消息")
     private Integer createUserSend;
 
+    @ApiModelProperty(value = "是否发送所有人 0不是，1是")
+    private Integer sendAll;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "发送用户id")
+    private List<String> userIdList;
 }
