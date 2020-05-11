@@ -113,13 +113,13 @@ public class MessageServiceImpl implements MessageService {
         List<String> userIdList = message.getUserIdList();
 
         if (message.getSendAll() == 0) {
+            UserVO currUser = securityUtil.getCurrUser();
             // 如果指定人员
             for (String userId : userIdList) {
                 UserDraft userDraft = new UserDraft();
                 userDraft.setMessageId(message.getId());
                 userDraft.setUserId(userId);
                 userDraft.setCreateTime(new Date());
-                UserVO currUser = securityUtil.getCurrUser();
                 userDraft.setCreateBy(currUser.getUsername());
                 log.info("【userDraft】", userDraft);
                 userDraftList.add(userDraft);
@@ -155,6 +155,7 @@ public class MessageServiceImpl implements MessageService {
 
         if (message.getSendAll() == 0) {
             if (CollUtil.isNotEmpty(userIdList)) {
+                UserVO currUser = securityUtil.getCurrUser();
 
                 // 如果指定人员
                 for (String userId : userIdList) {
@@ -165,7 +166,6 @@ public class MessageServiceImpl implements MessageService {
                     userDraft.setUserId(userId);
                     userDraft.setUpdateTime(date);
                     userDraft.setCreateTime(date);
-                    UserVO currUser = securityUtil.getCurrUser();
                     userDraft.setUpdateBy(currUser.getUsername());
                     userDraft.setCreateBy(currUser.getUsername());
                     userDraftList.add(userDraft);
