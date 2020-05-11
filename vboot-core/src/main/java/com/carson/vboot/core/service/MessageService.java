@@ -7,4 +7,11 @@ import com.carson.vboot.core.entity.Message;
 
 public interface MessageService extends VbootService<Message> {
     IPage<Message> getMessageByPage(PageBo pageBo, Message message);
+
+    /**
+     * 发送消息
+     * @param msgId 消息id
+     * @return
+     */
+    Integer sendMsg(String msgId);
 }

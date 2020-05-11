@@ -45,7 +45,8 @@ public enum CommonEnums {
 
 
     MESSAGE_STATUS_UNREAD(0, "未读"),
-    MESSAGE_STATUS_READ(1, "已读");
+    MESSAGE_STATUS_READ(1, "已读"),
+    MESSAGE_STATUS_DEL(2,"回收站");
 
 
     private Integer id;

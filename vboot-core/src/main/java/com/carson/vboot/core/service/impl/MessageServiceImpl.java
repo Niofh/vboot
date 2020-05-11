@@ -7,11 +7,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
+import com.carson.vboot.core.common.enums.CommonEnums;
+import com.carson.vboot.core.common.enums.ExceptionEnums;
 import com.carson.vboot.core.config.security.SecurityUtil;
 import com.carson.vboot.core.dao.mapper.MessageDao;
+import com.carson.vboot.core.dao.mapper.MessageSendDao;
 import com.carson.vboot.core.dao.mapper.UserDraftDao;
 import com.carson.vboot.core.entity.Message;
+import com.carson.vboot.core.entity.MessageSend;
+import com.carson.vboot.core.entity.User;
 import com.carson.vboot.core.entity.UserDraft;
+import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.service.MessageService;
 import com.carson.vboot.core.service.UserService;
 import com.carson.vboot.core.vo.UserVO;
@@ -34,6 +40,8 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private UserDraftDao userDraftDao;
 
+    @Autowired
+    private MessageSendDao messageSendDao;
     @Autowired
     private UserService userService;
 
@@ -72,6 +80,48 @@ public class MessageServiceImpl implements MessageService {
         Page<Message> messagePage = messageDao.selectPage(page, messageQueryWrapper);
 
         return messagePage;
+    }
+
+    @Transactional
+    @Override
+    public Integer sendMsg(String msgId) {
+
+        Message message = messageDao.selectById(msgId);
+        // todo 推送消息 rabbitmq+websocket
+
+        if (null == message) {
+            throw new VbootException(ExceptionEnums.DATA_NO_EXIST);
+        }
+        int num = 0;
+        if (message.getSendAll() == 1) {
+            // 所有人
+            UserVO currUser = securityUtil.getCurrUser();
+            List<MessageSend> messageSendList = new ArrayList<>();
+            List<User> userList = userService.getAll();
+            for (User user : userList) {
+                Date date = new Date();
+                // 创建草稿关联人
+                MessageSend messageSend = new MessageSend();
+                messageSend.setMessageId(message.getId());
+                messageSend.setUserId(user.getId());
+                messageSend.setUpdateTime(date);
+                messageSend.setCreateTime(date);
+                messageSend.setUpdateBy(currUser.getUsername());
+                messageSend.setCreateBy(currUser.getUsername());
+                messageSend.setStatus(CommonEnums.MESSAGE_STATUS_UNREAD.getId());
+                messageSendList.add(messageSend);
+            }
+            num = messageSendDao.insertList(messageSendList);
+        } else {
+            List<String> userIdList = message.getUserIdList();
+            for (String userId : userIdList) {
+                MessageSend messageSend = new MessageSend();
+                messageSend.setMessageId(msgId);
+                messageSend.setUserId(userId);
+                num = messageSendDao.insert(messageSend);
+            }
+        }
+        return num;
     }
 
     /**
@@ -121,7 +171,6 @@ public class MessageServiceImpl implements MessageService {
                 userDraft.setUserId(userId);
                 userDraft.setCreateTime(new Date());
                 userDraft.setCreateBy(currUser.getUsername());
-                log.info("【userDraft】", userDraft);
                 userDraftList.add(userDraft);
             }
             // 保存到草稿关联人
