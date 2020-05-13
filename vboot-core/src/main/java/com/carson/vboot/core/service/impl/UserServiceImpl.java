@@ -131,6 +131,15 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        // 排序字段
+        if(StrUtil.isNotBlank(pageBo.getOrder())){
+            if("asc".equals(pageBo.getOrder())){
+                userQueryWrapper.orderByAsc(pageBo.getSort());
+            }else{
+                userQueryWrapper.orderByDesc(pageBo.getSort());
+            }
+        }
+
         // 根据时间倒序
         userQueryWrapper.orderByDesc(true, "create_time");
 
