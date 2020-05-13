@@ -132,11 +132,12 @@ public class UserServiceImpl implements UserService {
         }
 
         // 排序字段
-        if(StrUtil.isNotBlank(pageBo.getOrder())){
-            if("asc".equals(pageBo.getOrder())){
-                userQueryWrapper.orderByAsc(pageBo.getSort());
-            }else{
-                userQueryWrapper.orderByDesc(pageBo.getSort());
+        if (StrUtil.isNotBlank(pageBo.getOrder())) {
+            String name = StrUtil.toUnderlineCase(pageBo.getSort());
+            if ("asc".equals(pageBo.getOrder())) {
+                userQueryWrapper.orderByAsc(name);
+            } else {
+                userQueryWrapper.orderByDesc(name);
             }
         }
 
@@ -301,7 +302,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     /**
      * 根据用户名查找用户
      *
@@ -325,14 +325,13 @@ public class UserServiceImpl implements UserService {
 
         UserVO userVO = new UserVO();
 
-        log.info("【adminUserName】 {}",adminUserName);
+        log.info("【adminUserName】 {}", adminUserName);
         if (adminUserName.equals(username)) {
             BeanUtils.copyProperties(user, userVO);
             // admin设置所有权限
             userVO.setPermissions(permissionService.getAll());
             return userVO;
         }
-
 
 
         // 查询用户角色表
