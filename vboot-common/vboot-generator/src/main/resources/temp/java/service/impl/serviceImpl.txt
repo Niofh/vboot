@@ -87,7 +87,14 @@ public class #{Name}ServiceImpl implements #{Name}Service {
 
         <% } %>
 
-
+       // 排序功能
+        if(StrUtil.isNotBlank(pageBo.getOrder())){
+            if("asc".equals(pageBo.getOrder())){
+                userQueryWrapper.orderByAsc(pageBo.getSort());
+            }else{
+                userQueryWrapper.orderByDesc(pageBo.getSort());
+            }
+        }
 
         // 根据时间倒序
         #{name}QueryWrapper.orderByDesc(true, "create_time");

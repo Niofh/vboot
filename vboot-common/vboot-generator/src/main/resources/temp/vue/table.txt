@@ -80,6 +80,7 @@
       stripe
       style="width: 100%"
       @selection-change="handleSelectionChange"
+      @sort-change="handleSortChange"
     >
       <el-table-column
         type="selection"
@@ -96,19 +97,17 @@
        prop="#{item.name}"
        label="#{item.chinaName}"
        width="150"
-       sortable
     >
       <template slot-scope="scope">
         {{ scope.row.#{item.name} | dictFilter(#{item.dictKey}DictList) }}
       </template>
-            </el-table-column>
+    </el-table-column>
     <% }else { %>
       <el-table-column
         v-if="showField('#{item.name}')"
         prop="#{item.name}"
         label="#{item.chinaName}"
         width="150"
-        sortable
       />
     <% } %>
    <% } %>
@@ -116,7 +115,7 @@
         v-if="showField('createTime')"
         prop="createTime"
         label="创建时间"
-        sortable
+        sortable="custom"
       />
       <el-table-column
         fixed="right"
@@ -332,6 +331,18 @@ export default {
     // 全选
     handleSelectionChange(tableItem) {
       this.multipleSelection = tableItem.map(item => item.id)
+    },
+    // 排序
+    handleSortChange({ column, prop, order }) {
+      console.log({ column, prop, order })
+      if (order) {
+        this.page.sort = prop
+        this.page.order = order === 'ascending' ? 'asc' : 'desc'
+      } else {
+        this.page.sort = ''
+        this.page.order = ''
+      }
+      this.getDataList()
     },
     // 重置表单
     handleResetFrom() {
