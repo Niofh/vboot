@@ -88,11 +88,12 @@ public class #{Name}ServiceImpl implements #{Name}Service {
         <% } %>
 
        // 排序功能
-        if(StrUtil.isNotBlank(pageBo.getOrder())){
-            if("asc".equals(pageBo.getOrder())){
-                userQueryWrapper.orderByAsc(pageBo.getSort());
-            }else{
-                userQueryWrapper.orderByDesc(pageBo.getSort());
+        if (StrUtil.isNotBlank(pageBo.getOrder())) {
+            String name = StrUtil.toUnderlineCase(pageBo.getSort());
+            if ("asc".equals(pageBo.getOrder())) {
+                userQueryWrapper.orderByAsc(name);
+            } else {
+                userQueryWrapper.orderByDesc(name);
             }
         }
 
