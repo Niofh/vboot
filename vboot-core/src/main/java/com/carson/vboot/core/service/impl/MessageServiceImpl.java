@@ -75,6 +75,14 @@ public class MessageServiceImpl implements MessageService {
             messageQueryWrapper.eq("msg_type", message.getMsgType());
         }
 
+        if (StrUtil.isNotBlank(pageBo.getOrder())) {
+            String name = StrUtil.toUnderlineCase(pageBo.getSort());
+            if ("asc".equals(pageBo.getOrder())) {
+                messageQueryWrapper.orderByAsc(name);
+            } else {
+                messageQueryWrapper.orderByDesc(name);
+            }
+        }
         // 根据时间倒序
         messageQueryWrapper.orderByDesc(true, "create_time");
         Page<Message> messagePage = messageDao.selectPage(page, messageQueryWrapper);

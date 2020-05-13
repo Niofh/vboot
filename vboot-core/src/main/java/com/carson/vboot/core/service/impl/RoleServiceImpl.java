@@ -72,6 +72,14 @@ public class RoleServiceImpl implements RoleService {
             roleQueryWrapper.eq("name", role.getName());
         }
 
+        if (StrUtil.isNotBlank(pageBo.getOrder())) {
+            String name = StrUtil.toUnderlineCase(pageBo.getSort());
+            if ("asc".equals(pageBo.getOrder())) {
+                roleQueryWrapper.orderByAsc(name);
+            } else {
+                roleQueryWrapper.orderByDesc(name);
+            }
+        }
         // 根据时间倒序
         roleQueryWrapper.orderByDesc(true, "create_time");
         Page<Role> rolePage = roleDao.selectPage(page, roleQueryWrapper);

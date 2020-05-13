@@ -65,7 +65,14 @@ public class DictServiceImpl implements DictService {
             dictQueryWrapper.like("dict_name", dict.getDictName());
         }
 
-
+        if (StrUtil.isNotBlank(pageBo.getOrder())) {
+            String name = StrUtil.toUnderlineCase(pageBo.getSort());
+            if ("asc".equals(pageBo.getOrder())) {
+                dictQueryWrapper.orderByAsc(name);
+            } else {
+                dictQueryWrapper.orderByDesc(name);
+            }
+        }
         // 根据时间倒序
         dictQueryWrapper.orderByDesc(true, "create_time");
         Page<Dict> dictPage = dictDao.selectPage(page, dictQueryWrapper);
