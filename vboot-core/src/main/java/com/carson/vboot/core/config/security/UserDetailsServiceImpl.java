@@ -42,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //            throw new VbootException(500, "登录错误次数超过限制，请" + timeRest + "分钟后再试");
 //        }
         // 查询当前用户是否存在
-        log.info("username {}", username);
+        log.info("登录username为： {}", username);
         UserVO user = userService.findByUsername(username);
 
         log.info("uservo {}", user);

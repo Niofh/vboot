@@ -2,7 +2,6 @@ package com.carson.vboot.core.config.security;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.enums.CommonEnums;
 import com.carson.vboot.core.entity.Permission;
 import com.carson.vboot.core.entity.Role;
@@ -76,7 +75,7 @@ public class SecurityUserDetails extends UserVO implements UserDetails {
 
 
     /**
-     * 是否禁用
+     * 账号是否冻结
      *
      * @return
      */
@@ -87,7 +86,7 @@ public class SecurityUserDetails extends UserVO implements UserDetails {
     }
 
     /**
-     * 是否启用
+     * 账户是否删除，删除了不能回复
      *
      * @return
      */
