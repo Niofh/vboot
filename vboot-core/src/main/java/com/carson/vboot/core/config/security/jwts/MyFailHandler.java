@@ -3,7 +3,6 @@ package com.carson.vboot.core.config.security.jwts;
 import cn.hutool.core.util.StrUtil;
 import com.carson.vboot.core.common.constant.CommonConstant;
 import com.carson.vboot.core.common.utils.ResponseUtil;
-import com.carson.vboot.core.exception.VbootException;
 import com.carson.vboot.core.properties.TokenProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Slf4j
-public class MyFailHandler extends SimpleUrlAuthenticationFailureHandler {
+public class MyFailHandler implements AuthenticationFailureHandler {
     @Autowired
     private TokenProperties tokenProperties;
 
