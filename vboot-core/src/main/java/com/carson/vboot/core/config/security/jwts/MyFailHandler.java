@@ -11,7 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Slf4j
-public class MyFailHandler implements AuthenticationFailureHandler {
+public class MyFailHandler extends SimpleUrlAuthenticationFailureHandler {
     @Autowired
     private TokenProperties tokenProperties;
 
