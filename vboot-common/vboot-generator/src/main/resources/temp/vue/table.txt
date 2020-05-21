@@ -404,7 +404,7 @@ export default {
     },
     // 查看数据
     lookModal(tableItem) {
-      getFunctionById(tableItem.id).then(res => {
+      get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
           this.form = res.result
         }
