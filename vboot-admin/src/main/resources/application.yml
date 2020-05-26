@@ -55,7 +55,7 @@ spring:
     # 超时时间 Duration类型 5秒
     timeout: 5s
     host: 39.108.113.143
-    password:
+    password: vboot123456
     # 数据库索引 默认0,如果多个项目，配置不同的database不会冲突
     database: 0
     port: 6379
