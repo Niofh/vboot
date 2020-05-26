@@ -39,9 +39,9 @@ const actions = {
             dictKey: '#{item.dictKey}'
           }).then(response => {
             if (response.code === 200) {
-              commit('SET_#{stringTool.toUpperCase(item.dictKey)}_DICT_LIST', response.result)
+              commit('SET_#{stringTool.toUpperCase(item.dictKey)}_DICT_LIST', response.data)
             }
-            resolve(response.result)
+            resolve(response.data)
           }).catch(() => {
             reject([])
           })
