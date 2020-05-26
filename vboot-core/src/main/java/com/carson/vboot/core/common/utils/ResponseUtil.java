@@ -51,11 +51,11 @@ public class ResponseUtil {
 
         Map<String, Object> resultMap = new HashMap<String, Object>(16);
         resultMap.put("success", flag);
-        resultMap.put("message", msg);
+        resultMap.put("msg", msg);
         resultMap.put("code", code);
         resultMap.put("timestamp", System.currentTimeMillis());
         if(data!=null){
-            resultMap.put("result", data);
+            resultMap.put("data", data);
         }
         return resultMap;
     }

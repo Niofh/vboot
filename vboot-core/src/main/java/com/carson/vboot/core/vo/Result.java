@@ -17,7 +17,7 @@ public class Result<T> {
     /**
      * 消息
      */
-    private String message;
+    private String msg;
 
     /**
      * 返回代码
@@ -32,5 +32,5 @@ public class Result<T> {
     /**
      * 结果对象
      */
-    private T result;
+    private T data;
 }
