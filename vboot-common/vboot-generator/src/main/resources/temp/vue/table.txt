@@ -214,7 +214,9 @@
                <% }  else if(item.formType==formEnum.DATE) { %>
                   <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}" />
+                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                     format="yyyy-MM-dd"
+                     value-format="yyyy-MM-dd" />
                    <el-form-item>
                   </el-col>
                <% }  else if(item.formType==formEnum.RADIO){ %>
@@ -301,7 +303,10 @@
                           <% }  else if(item.formType==formEnum.DATE) { %>
                              <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                                <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}" />
+                                <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                                   format="yyyy-MM-dd"
+                                   value-format="yyyy-MM-dd"
+                                 />
                               <el-form-item>
                              </el-col>
                           <% }  else if(item.formType==formEnum.RADIO){ %>
