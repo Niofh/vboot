@@ -230,7 +230,7 @@
                   <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                       <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                         <el-checkbox-group v-model="form.#{item.name}">
-                           <el-checkbox label="单纯品牌曝光" name="#{item.name}"></el-checkbox>
+                           <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
                         </el-checkbox-group>
                       </el-form-item>
                   </el-col>
@@ -266,23 +266,74 @@
           @closed="resetForm('ruleForm')"
         >
 
-          <el-form ref="ruleForm" :model="form" :label-width="formLabelWidth" size="small">
+          <el-form ref="ruleForm" :model="form" :label-width="formLabelWidth" disabled size="small">
 
-            <el-row :gutter="5">
-              <el-form-item v-show="false" prop="id" label="id" />
+                   <el-row :gutter="5">
+                       <el-form-item v-show="false" prop="id" label="id" />
+                    <%
+                         for(item in codeDetailList){
+                    %>
+                          <%
+                            if(item.formType==formEnum.INPUT){
+                          %>
+                            <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
+                              <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                              </el-form-item>
+                            </el-col>
+                          <% }else if(item.formType==formEnum.TEXTAREA){ %>
+                             <el-col :span="24">
+                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                 <el-input v-model="form.#{item.name}" type="textarea" />
+                               </el-form-item>
+                             </el-col>
+                          <% }else if(item.formType==formEnum.SELECT){ %>
+                             <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
+                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                <el-select v-model="form.#{item.name}" placeholder="请选择#{item.chinaName}">
+                                  <el-option label="请选择#{item.chinaName}" value=""></el-option>
+                                    <% if(item.dictKey!='') {%>
+                                  <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                                    <% }%>
+                                </el-select>
+                               </el-form-item>
+                             </el-col>
+                          <% }  else if(item.formType==formEnum.DATE) { %>
+                             <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
+                              <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}" />
+                              <el-form-item>
+                             </el-col>
+                          <% }  else if(item.formType==formEnum.RADIO){ %>
+                             <el-col :span="12" style="height: 51px">
+                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                    <el-radio-group v-model="form.#{item.name}" >
+                                       <el-radio :label="1">1</el-radio>
+                                       <el-radio :label="0">0</el-radio>
+                                     </el-radio-group>
+                                 <el-form-item>
+                             </el-col>
+                          <% }  else if(item.formType==formEnum.CHECKBOX) { %>
+                             <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
+                                 <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                   <el-checkbox-group v-model="form.#{item.name}">
+                                      <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
+                                   </el-checkbox-group>
+                                 </el-form-item>
+                             </el-col>
 
-               <%
-                   for(item in codeDetailList){
-               %>
-                     <el-col :span="12">
-                          <el-form-item label="#{item.chinaName}：" prop="#{item.name}">
-                            {{ form.#{item.name} }}
-                          </el-form-item>
-                    </el-col>
-              <% } %>
+                          <% } else if(item.formType==formEnum.INPUTNUMBER){ %>
+                             <el-col :span="12">
+                                 <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                      <el-input-number v-model="form.#{item.name}"  :step="0.1" :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
+                                 </el-form-item>
+                             </el-col>
 
+                          <% } %>
 
-            </el-row>
+                    <% } %>
+
+                   </el-row>
           </el-form>
         </el-dialog>
   </div>
