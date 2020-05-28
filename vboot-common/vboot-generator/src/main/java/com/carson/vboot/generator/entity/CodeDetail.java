@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 
 /**
  * @author oufuhua
@@ -55,6 +56,6 @@ public class CodeDetail extends VbootBaseEntity {
     private String dictKey;
 
     @ApiModelProperty(value = "排序号")
-    private String num;
+    private BigDecimal num;
 
 }
