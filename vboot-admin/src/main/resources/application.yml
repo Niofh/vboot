@@ -18,7 +18,7 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://39.108.113.143:3306/vboot?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://120.78.180.240:3306/vboot?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: root
     type: com.alibaba.druid.pool.DruidDataSource
@@ -54,7 +54,7 @@ spring:
   redis:
     # 超时时间 Duration类型 5秒
     timeout: 5s
-    host: 39.108.113.143
+    host: 120.78.180.240
     password: vboot123456
     # 数据库索引 默认0,如果多个项目，配置不同的database不会冲突
     database: 0
