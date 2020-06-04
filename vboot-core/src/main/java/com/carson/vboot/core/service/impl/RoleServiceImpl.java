@@ -188,7 +188,12 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 通过角色id赋值权限
      */
-    @CacheEvict(cacheNames = "role::permission", key = "#roleId")
+    @Caching(
+            evict = {
+                    @CacheEvict(cacheNames = "vboot::user",allEntries = true),// 删除用户所有数据
+                    @CacheEvict(cacheNames = "role::permission", key = "#roleId")
+            }
+    )
     @Transactional
     @Override
     public void setPermissionByRoleId(String roleId, String[] permissionIds) {
@@ -197,14 +202,14 @@ public class RoleServiceImpl implements RoleService {
         if (role == null) {
             throw new VbootException(ExceptionEnums.ROLE_NO_EXIST);
         }
-        // 删除以前的角色
+        // 删除以前的角色关联的权限
         QueryWrapper<RolePermission> rolePermissionQueryWrapper = new QueryWrapper<>();
         rolePermissionQueryWrapper.eq("role_id", role.getId());
         rolePermissionDao.delete(rolePermissionQueryWrapper);
 
 
         if (ArrayUtil.isNotEmpty(permissionIds)) {
-            // 新增新的角色
+            // 新增新的角色关联的权限
             for (String permissionId : permissionIds) {
                 RolePermission rolePermission = new RolePermission();
                 rolePermission.setRoleId(roleId);
