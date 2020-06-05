@@ -15,7 +15,7 @@
                      placeholder="选择#{item.chinaName}">
                </el-date-picker>
             <% } else { %>
-               <el-select v-model="searchForm.#{item.name}" placeholder="#{item.chinaName}">
+               <el-select v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
                      <% if(item.dictKey!='') {%>
                         <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                     <% }%>
@@ -203,8 +203,7 @@
                <% }else if(item.formType==formEnum.SELECT){ %>
                   <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-select v-model="form.#{item.name}" placeholder="请选择#{item.chinaName}">
-                       <el-option label="请选择#{item.chinaName}" value=""></el-option>
+                     <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
                          <% if(item.dictKey!='') {%>
                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                          <% }%>
@@ -292,8 +291,7 @@
                           <% }else if(item.formType==formEnum.SELECT){ %>
                              <el-col :span="12" style="height: 51px;margin-bottom: 0px;">
                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                                <el-select v-model="form.#{item.name}" placeholder="请选择#{item.chinaName}">
-                                  <el-option label="请选择#{item.chinaName}" value=""></el-option>
+                                <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
                                     <% if(item.dictKey!='') {%>
                                   <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                                     <% }%>
@@ -537,12 +535,6 @@ export default {
             this.$message({
               type: 'success',
               message: '删除成功!'
-            })
-          }
-          else {
-            this.$message({
-              type: 'error',
-              message: res.message
             })
           }
         })

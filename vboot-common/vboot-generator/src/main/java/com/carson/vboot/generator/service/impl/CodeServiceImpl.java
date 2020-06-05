@@ -84,6 +84,7 @@ public class CodeServiceImpl implements CodeService {
         }
 
         HashMap<String, Object> stringObjectHashMap = renderFiled(code, codeDetailList, true);
+        log.info("【文件地址】：{}",stringObjectHashMap);
         return (String) stringObjectHashMap.get("path");
     }
 
