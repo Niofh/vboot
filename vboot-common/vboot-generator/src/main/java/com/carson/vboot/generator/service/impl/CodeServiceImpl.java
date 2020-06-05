@@ -30,6 +30,7 @@ import org.springframework.util.ClassUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +161,10 @@ public class CodeServiceImpl implements CodeService {
         gt.setSharedVars(shared);
 
         HashMap<String, Object> result = new HashMap<>();
+        String str = FROM + "/vue/api.txt"+path + TARGET + "/vue/" + name + ".js";
         // api接口生成
+        URL url = getClass().getClassLoader().getResource(str);
+        log.info("【url】 {}",url.getPath());
         String api = this.commonFile(gt, FROM + "/vue/api.txt", path + TARGET + "/vue/" + name + ".js", createFile);
         String table = this.commonFile(gt, FROM + "/vue/table.txt", path + TARGET + "/vue/" + name + ".vue", createFile);
         String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", path + TARGET + "/vue/" + name + "Dict.js", createFile);
