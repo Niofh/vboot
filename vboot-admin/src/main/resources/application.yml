@@ -16,6 +16,8 @@ server:
 
 
 spring:
+  resources:
+   static-locations: file:/
   datasource:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://120.78.180.240:3307/vboot?useUnicode=true&characterEncoding=utf-8&useSSL=false

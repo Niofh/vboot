@@ -127,6 +127,7 @@ public class CodeServiceImpl implements CodeService {
 
         // 获取当前class资源路径
         String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+
         StringTool stringTool = new StringTool();
         String name = stringTool.lineToHump(code.getName()); // 下划线转驼峰
         String Name = name.substring(0, 1).toUpperCase() + name.substring(1);
