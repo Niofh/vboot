@@ -14,7 +14,7 @@ echo "==================git pull======================"
 git pull
 
 echo "==================打jar包======================"
-mvn clear
+mvn clean
 mvn package -Dmaven.test.skip=true
 
 echo "==================删除镜像和容器======================"
