@@ -186,9 +186,9 @@ public class CodeServiceImpl implements CodeService {
         String osName = System.getProperties().getProperty("os.name");
         String path = "";
         if ("Linux".equals(osName)) {
-            path = new File(linuxPath,TARGET).getAbsolutePath();
+            path = new File(linuxPath, TARGET).getAbsolutePath();
         } else {
-            path = new File(winPath,TARGET).getAbsolutePath();
+            path = new File(winPath, TARGET).getAbsolutePath();
         }
         result.put("path", path); // 文件路径
         result.put("api", api);
@@ -215,20 +215,21 @@ public class CodeServiceImpl implements CodeService {
         // 模板渲染
         String data = t.render();
         String path = "";
+        String parentPath = ""; // 上一级目录地址
         if (createFile) {
             String osName = System.getProperties().getProperty("os.name");
 
             if ("Linux".equals(osName)) {
                 path = new File(linuxPath, target).getAbsolutePath();
             } else {
-                path = new File(winPath, target).getAbsolutePath();
+                path = new File(winPath, target).getAbsolutePath().replaceAll("\\\\","/");
             }
-
-
+            log.info(path);
             File file = new File(path);
-
+            // 先创建目录
             if (!file.exists()) {
                 try {
+                    // 创建文件名称
                     file.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -239,6 +240,15 @@ public class CodeServiceImpl implements CodeService {
         }
 
         return data;
+    }
+
+    public static void main(String[] args) {
+        File file = new File("H:/vboot-render/customer/vue/customer.txt");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
