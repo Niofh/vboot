@@ -25,8 +25,8 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ClassUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +42,12 @@ public class CodeServiceImpl implements CodeService {
 
     @Autowired
     private CodeDetailDao codeDetailDao;
+
+    @Value("${code.winPath}")
+    private String winPath;
+
+    @Value("${code.linuxPath}")
+    private String linuxPath;
 
     @Override
     public VbootBaseDao<Code> getBaseDao() {
@@ -84,7 +90,7 @@ public class CodeServiceImpl implements CodeService {
         }
 
         HashMap<String, Object> stringObjectHashMap = renderFiled(code, codeDetailList, true);
-        log.info("【文件地址】：{}",(String) stringObjectHashMap.get("path"));
+        log.info("【文件地址】：{}", (String) stringObjectHashMap.get("path"));
         return (String) stringObjectHashMap.get("path");
     }
 
@@ -125,18 +131,12 @@ public class CodeServiceImpl implements CodeService {
      */
     private HashMap<String, Object> renderFiled(Code code, List<CodeDetail> codeDetailList, Boolean createFile) {
 
-        // 获取当前class资源路径
-        String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-
         StringTool stringTool = new StringTool();
         String name = stringTool.lineToHump(code.getName()); // 下划线转驼峰
         String Name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
         String FROM = Constant.FROM_PATH;
         String TARGET = Constant.TARGET_PATH + "/" + name;
-        log.info("【path】 {}",path);
-        log.info("【FROM】 {}",FROM);
-        log.info("【TARGET】 {}",TARGET);
 
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/");
         Configuration cfg = null;
@@ -160,28 +160,37 @@ public class CodeServiceImpl implements CodeService {
         gt.setSharedVars(shared);
 
         HashMap<String, Object> result = new HashMap<>();
-        String str = FROM + "/vue/api.txt"+path + TARGET + "/vue/" + name + ".js";
+
         // api接口生成
-        String api = this.commonFile(gt, FROM + "/vue/api.txt", path + TARGET + "/vue/" + name + ".js", createFile);
-        String table = this.commonFile(gt, FROM + "/vue/table.txt", path + TARGET + "/vue/" + name + ".vue", createFile);
-        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", path + TARGET + "/vue/" + name + "Dict.js", createFile);
+        String api = this.commonFile(gt, FROM + "/vue/api.txt", TARGET + "/vue/" + name + ".js", createFile);
+        String table = this.commonFile(gt, FROM + "/vue/table.txt", TARGET + "/vue/" + name + ".vue", createFile);
+        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", TARGET + "/vue/" + name + "Dict.js", createFile);
 
         // mysql生成
-        String mysql = this.commonFile(gt, FROM + "/mysql/sql.txt", path + TARGET + "/mysql/" + code.getTableName() + ".sql", createFile);
+        String mysql = this.commonFile(gt, FROM + "/mysql/sql.txt", TARGET + "/mysql/" + code.getTableName() + ".sql", createFile);
 
         // entity生成
-        String entity = this.commonFile(gt, FROM + "/java/entity/entity.txt", path + TARGET + "/java/entity/" + Name + ".java", createFile);
+        String entity = this.commonFile(gt, FROM + "/java/entity/entity.txt", TARGET + "/java/entity/" + Name + ".java", createFile);
         // mapper生成
-        String mapper = this.commonFile(gt, FROM + "/java/dao/mapper/mapper.txt", path + TARGET + "/java/dao/mapper/" + Name + "Dao.java", createFile);
+        String mapper = this.commonFile(gt, FROM + "/java/dao/mapper/mapper.txt", TARGET + "/java/dao/mapper/" + Name + "Dao.java", createFile);
 
         // service
-        String service = this.commonFile(gt, FROM + "/java/service/service.txt", path + TARGET + "/java/service/" + Name + "Service.java", createFile);
-        String serviceImpl = this.commonFile(gt, FROM + "/java/service/impl/serviceImpl.txt", path + TARGET + "/java/service/impl/" + Name + "ServiceImpl.java", createFile);
+        String service = this.commonFile(gt, FROM + "/java/service/service.txt", TARGET + "/java/service/" + Name + "Service.java", createFile);
+        String serviceImpl = this.commonFile(gt, FROM + "/java/service/impl/serviceImpl.txt", TARGET + "/java/service/impl/" + Name + "ServiceImpl.java", createFile);
 
         // controller
-        String controller = this.commonFile(gt, FROM + "/java/controller/controller.txt", path + TARGET + "/java/controller/" + Name + "Controller.java", createFile);
+        String controller = this.commonFile(gt, FROM + "/java/controller/controller.txt", TARGET + "/java/controller/" + Name + "Controller.java", createFile);
 
-        result.put("path", path + TARGET);
+
+        // 判断环境
+        String osName = System.getProperties().getProperty("os.name");
+        String path = "";
+        if ("Linux".equals(osName)) {
+            path = new File(linuxPath,TARGET).getAbsolutePath();
+        } else {
+            path = new File(winPath,TARGET).getAbsolutePath();
+        }
+        result.put("path", path); // 文件路径
         result.put("api", api);
         result.put("vuexDict", vuexDict);
         result.put("table", table);
@@ -191,7 +200,6 @@ public class CodeServiceImpl implements CodeService {
         result.put("service", service);
         result.put("serviceImpl", serviceImpl);
         result.put("controller", controller);
-
         return result;
     }
 
@@ -206,14 +214,31 @@ public class CodeServiceImpl implements CodeService {
         Template t = gt.getTemplate(from);
         // 模板渲染
         String data = t.render();
-
+        String path = "";
         if (createFile) {
-            File file = new File(target);
+            String osName = System.getProperties().getProperty("os.name");
+
+            if ("Linux".equals(osName)) {
+                path = new File(linuxPath, target).getAbsolutePath();
+            } else {
+                path = new File(winPath, target).getAbsolutePath();
+            }
+
+
+            File file = new File(path);
+
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             // 文件写入
-            log.info("文件路径 {}",file.getPath());
             FileUtil.writeBytes(data.getBytes(), file.getPath());
         }
 
         return data;
     }
+
 }
