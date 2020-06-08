@@ -193,4 +193,4 @@ logging:
 # 代码文件写入地址
 code:
   winPath:   H:\
-  linuxPath: /root
+  linuxPath: /usr/local/java/vboot/
