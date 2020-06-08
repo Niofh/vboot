@@ -227,10 +227,14 @@ public class CodeServiceImpl implements CodeService {
             log.info(path);
             File file = new File(path);
             // 先创建目录
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            log.info("parentFile {}",file.getParentFile());
             if (!file.exists()) {
                 try {
                     // 创建文件名称
-                    file.createNewFile();
+                    boolean newFile = file.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
