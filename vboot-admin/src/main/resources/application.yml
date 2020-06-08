@@ -190,7 +190,7 @@ logging:
           generator:
             dao: DEBUG
 
-# 代码文件写入地址
+# 代码文件生成存放地址
 code:
   winPath:   H:\
-  linuxPath: /usr/local/java/vboot/
+  linuxPath: /usr/local/java/vboot/vboot/vboot-admin/target/classes
