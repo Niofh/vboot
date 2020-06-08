@@ -193,4 +193,4 @@ logging:
 # 代码文件生成存放地址
 code:
   winPath:   H:\
-  linuxPath: /usr/local/java/vboot/vboot/vboot-admin/target/classes
+  linuxPath: /usr/local/java/vboot
