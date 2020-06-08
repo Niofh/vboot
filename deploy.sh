@@ -38,5 +38,9 @@ echo "==================启动容器======================"
 docker run -d -p 8081:8081 --name vboot1.0.0 vboot:1.0.0
 docker update --restart=always vboot1.0.0
 
+# 查看日志最后10行信息
+docker logs -f --tail=10 vboot1.0.0
+
+
 
 
