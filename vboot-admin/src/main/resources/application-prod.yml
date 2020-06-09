@@ -1,0 +1,4 @@
+# 生产环境
+# 代码文件生成存放地址
+code:
+  logPath: /usr/local/java/vboot/logs #日志存放路径

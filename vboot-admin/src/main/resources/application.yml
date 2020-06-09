@@ -1,10 +1,3 @@
-# 项目名称
-appName: vboot
-
-vboot:
-  adminUserName: admin  # 一个管理系统只有一个admin账号，也是最高权限
-
-
 server:
   servlet:
     context-path: /
@@ -104,16 +97,39 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
       update-strategy: IGNORED # 所有字段都更新和插入
 
+
+# logback配置
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    # 打印sql语句
+    com:
+      carson:
+        vboot:
+          core:
+            dao: DEBUG
+          generator:
+            dao: DEBUG
+
+
+# =============下面是自定义全局变量==================
+
+# 项目名称
+appName: vboot
+
+vboot:
+  adminUserName: admin  # 一个管理系统只有一个admin账号，也是最高权限
+
+
 # redis配置
 redis:
   unit: day
   time: 15
 
 
-
 # token交互方式
 token:
-  # 默认为true，token将存入redis，并具有单点登录功能 设为false使用JWT交互
+  # 默认为true，token将存入redis，并具有单点登录功能 设为false使用JWT交互，（JWT没有实现）
   redis: true
   # 是否开启单设备登陆 仅当token交互方式为redis时生效
   sdl: true
@@ -179,18 +195,9 @@ swagger:
   email: 598220654@qq.com
 
 
-# 配置打印sql语句
-logging:
-  level:
-    com:
-      carson:
-        vboot:
-          core:
-            dao: DEBUG
-          generator:
-            dao: DEBUG
 
 # 代码文件生成存放地址
 code:
-  winPath:   H:\
+  winPath:   H:/
   linuxPath: /usr/local/java/vboot
+  logPath: D:/vboot/logs #日志存放路径
