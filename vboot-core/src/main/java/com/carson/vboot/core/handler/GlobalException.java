@@ -57,7 +57,8 @@ public class GlobalException {
             return ResultUtil.error(400, msg);
         }
         else {
-            log.error("【系统异常】 {}", e);
+            // 日志不要打印e.printStackTrace()，不然内存增大，文件增大，线程阻塞导致锁死
+            log.error("【系统异常】：", e);
             return ResultUtil.error(500, "系统异常："+e.getMessage());
         }
 
