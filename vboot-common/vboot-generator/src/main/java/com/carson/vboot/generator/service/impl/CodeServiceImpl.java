@@ -215,7 +215,6 @@ public class CodeServiceImpl implements CodeService {
         // 模板渲染
         String data = t.render();
         String path = "";
-        String parentPath = ""; // 上一级目录地址
         if (createFile) {
             String osName = System.getProperties().getProperty("os.name");
 
@@ -227,42 +226,22 @@ public class CodeServiceImpl implements CodeService {
             File file = new File(path);
             // 先创建目录,不然linux没有目录直接会失败
             if (!file.getParentFile().exists()) {
-                boolean mkdirs = file.getParentFile().mkdirs();
-                if(mkdirs){
-                    log.info("【创建文件夹成功】：{}",file.getAbsolutePath());
-                }else{
-                    log.error("【创建文件夹失败】：{}",file.getAbsolutePath());
-                }
+                file.getParentFile().mkdirs();
             }
             if (!file.exists()) {
                 try {
                     // 创建文件名称
-                    boolean newFile = file.createNewFile();
-                    if(newFile){
-                        log.info("【创建文件成功】：{}",file.getAbsolutePath());
-                    }else{
-                        log.error("【创建文件失败】：{}",file.getAbsolutePath());
-                    }
+                    file.createNewFile();
+
                 } catch (IOException e) {
-                    log.error("【生成文件失败】：{}",file.getAbsolutePath());
                     e.printStackTrace();
                 }
             }
-            log.info("【文件写入成功】：{}",file.getAbsolutePath());
             // 文件写入
             FileUtil.writeBytes(data.getBytes(), file.getPath());
         }
 
         return data;
-    }
-
-    public static void main(String[] args) {
-        File file = new File("H:/vboot-render/customer/vue/customer.txt");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }
