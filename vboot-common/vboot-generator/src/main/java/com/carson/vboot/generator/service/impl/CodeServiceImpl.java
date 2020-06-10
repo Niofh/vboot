@@ -234,9 +234,11 @@ public class CodeServiceImpl implements CodeService {
                     // 创建文件名称
                     boolean newFile = file.createNewFile();
                 } catch (IOException e) {
+                    log.error("【生成文件失败】：{}",file.getAbsolutePath());
                     e.printStackTrace();
                 }
             }
+            log.info("【文件写入成功】：{}",file.getAbsolutePath());
             // 文件写入
             FileUtil.writeBytes(data.getBytes(), file.getPath());
         }
