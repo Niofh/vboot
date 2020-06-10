@@ -37,7 +37,7 @@
     <!-- 2.1 level为 DEBUG 日志，时间滚动输出  -->
     <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${logging.path}/web_debug.log</file>
+        <file>${logging.path}/vboot_debug.log</file>
         <!--日志文档输出格式-->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
@@ -64,7 +64,7 @@
     <!-- 2.2 level为 INFO 日志，时间滚动输出  -->
     <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${logging.path}/web_info.log</file>
+        <file>${logging.path}/vboot_info.log</file>
         <!--日志文档输出格式-->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
@@ -91,7 +91,7 @@
     <!-- 2.3 level为 WARN 日志，时间滚动输出  -->
     <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${logging.path}/web_warn.log</file>
+        <file>${logging.path}/vboot_warn.log</file>
         <!--日志文档输出格式-->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
@@ -117,7 +117,7 @@
     <!-- 2.4 level为 ERROR 日志，时间滚动输出  -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${logging.path}/web_error.log</file>
+        <file>${logging.path}/vboot_error.log</file>
         <!--日志文档输出格式-->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
