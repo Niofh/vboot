@@ -159,7 +159,7 @@
       <el-pagination
         background
         layout="total ,sizes, prev, pager, next, jumper"
-        :current-page="page.pageIndex"
+        :current-page="page.pageNum"
         :page-size="page.pageSize"
         :total="page.total"
         :page-sizes="pageSizeList"
@@ -348,7 +348,6 @@ import formMixin from '@/mixins/formMixin'
 import {get#{Name}ById, #{name}DelByIdsApi, #{name}SaveBaseApi, #{name}UpdateBaseApi, get#{Name}ByPageApi } from '@/api/#{name}'
 import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
-import { mapState } from 'vuex'
 export default {
   name: '#{Name}',
   mixins: [tableMixin, formMixin],
@@ -363,8 +362,8 @@ export default {
       <% }%>
     <% } %>
         date: '',
-        createDate: '',
-        endDate: ''
+        startTime: '',
+        endTime: ''
       },
       checkFieldList: [], // 选中的字段
       multipleSelection: [],
@@ -407,35 +406,17 @@ export default {
       CommonEnum: CommonEnum,
     }
   },
-  computed: {
-
-    ...mapState({
-   <% for(item in codeDetailList){%>
-     <% if(item.dictKey!=''){%>
-      #{item.dictKey}DictList: state => state.dict.#{item.dictKey}DictList,
-     <%}%>
-    <%}%>
-    })
-  },
   watch: {
     'searchForm.date'(val) {
       const startAndTime = commonUtil.getStartAndTime(val)
-      this.searchForm.createDate = startAndTime[0]
-      this.searchForm.endDate = startAndTime[1]
+      this.searchForm.startTime = startAndTime[0]
+      this.searchForm.endTime = startAndTime[1]
     }
   },
   created() {
-    this.getDict()
     this.getDataList()
   },
   methods: {
-   getDict(){
-    <% for(item in codeDetailList){%>
-      <% if(item.dictKey!=''){%>
-        this.$store.dispatch('dict/get#{stringTool.capitalize(item.dictKey)}DictList')
-      <%}%>
-    <%}%>
-   },
     // 判断是否存在排版里面
     showField(name) {
       return this.checkFieldList.indexOf(name) > -1
@@ -447,8 +428,8 @@ export default {
 
     // 重置表单
     handleResetFrom() {
-      this.searchForm.createDate = ''
-      this.searchForm.endDate = ''
+      this.searchForm.startTime = ''
+      this.searchForm.endTime = ''
       this.resetForm('searchForm')
       this.handleReset()
 
@@ -456,12 +437,11 @@ export default {
     // 分页
     getDataList() {
       this.dataListLoading = true
-      const params = { ...this.page, ...this.searchForm }
-      delete params.date
+      const params = { ...this.page, filters: this.searchForm }
       get#{Name}ByPageApi(params).then(res => {
         this.dataListLoading = false
         if (res.code === this.$code) {
-          this.dataList = res.data.records
+          this.dataList = res.data.content
           this.page.total = res.data.total
         }
       })

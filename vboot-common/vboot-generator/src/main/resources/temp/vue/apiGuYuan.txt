@@ -1,0 +1,54 @@
+
+import request from '@/utils/request'
+
+// 分页
+export function get#{Name}ByPageApi(data) {
+  return request({
+    url: '/t#{Name}/findPage',
+    method: 'post',
+    data
+  })
+}
+
+// 根据id获取信息
+export function get#{Name}ById(id) {
+  return request({
+    url: '/t#{Name}/findById',
+    method: 'get',
+    params:{ id }
+  })
+}
+
+// 根据id保存数据
+export function #{name}SaveBaseApi(data) {
+  return request({
+     url: '/t#{Name}/save',
+     method: 'post',
+     data
+   })
+}
+
+// 根据id修改数据
+export function #{name}UpdateBaseApi(data) {
+  return request({
+     url: '/t#{Name}/save',
+     method: 'post',
+     data
+   })
+}
+
+// 根据id删除数据(可以传递多个id)
+export function #{name}DelByIdsApi(data) {
+  return request({
+    url: '/t#{Name}/delete',
+    method: 'post',
+    data
+  })
+}
+// 获取所有数据
+export function get#{Name}AllBaseApi() {
+  return request({
+    url: '/t#{Name}/findAll#{Name}',
+    method: 'get'
+  })
+}

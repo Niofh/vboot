@@ -166,6 +166,12 @@ public class CodeServiceImpl implements CodeService {
         String table = this.commonFile(gt, FROM + "/vue/table.txt", TARGET + "/vue/" + name + ".vue", createFile);
         String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", TARGET + "/vue/" + name + "Dict.js", createFile);
 
+
+        // 固远特殊版本
+        String apiGuYuan = this.commonFile(gt, FROM + "/vue/apiGuYuan.txt", TARGET + "/vue/guyuan" + name + ".js", createFile);
+        String tableGuYuan = this.commonFile(gt, FROM + "/vue/tableGuYuan.txt", TARGET + "/vue/guyuan" + name + ".vue", createFile);
+
+
         // mysql生成
         String mysql = this.commonFile(gt, FROM + "/mysql/sql.txt", TARGET + "/mysql/" + code.getTableName() + ".sql", createFile);
 
@@ -200,6 +206,8 @@ public class CodeServiceImpl implements CodeService {
         result.put("service", service);
         result.put("serviceImpl", serviceImpl);
         result.put("controller", controller);
+        result.put("apiGuYuan", apiGuYuan);
+        result.put("tableGuYuan", tableGuYuan);
         return result;
     }
 
