@@ -227,12 +227,22 @@ public class CodeServiceImpl implements CodeService {
             File file = new File(path);
             // 先创建目录,不然linux没有目录直接会失败
             if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
+                boolean mkdirs = file.getParentFile().mkdirs();
+                if(mkdirs){
+                    log.info("【创建文件夹成功】：{}",file.getAbsolutePath());
+                }else{
+                    log.error("【创建文件夹失败】：{}",file.getAbsolutePath());
+                }
             }
             if (!file.exists()) {
                 try {
                     // 创建文件名称
                     boolean newFile = file.createNewFile();
+                    if(newFile){
+                        log.info("【创建文件成功】：{}",file.getAbsolutePath());
+                    }else{
+                        log.error("【创建文件失败】：{}",file.getAbsolutePath());
+                    }
                 } catch (IOException e) {
                     log.error("【生成文件失败】：{}",file.getAbsolutePath());
                     e.printStackTrace();
