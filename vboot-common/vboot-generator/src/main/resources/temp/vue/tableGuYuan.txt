@@ -264,10 +264,10 @@
           :close-on-click-modal="false"
           :title="'查看数据'"
           :visible.sync="dialogFormVisibleLook"
-          @closed="resetForm('ruleForm')"
+          @closed="resetForm('ruleFormLook')"
         >
 
-          <el-form ref="ruleForm" :model="form" :label-width="formLabelWidth" disabled size="small">
+          <el-form ref="ruleFormLook" :model="form" :label-width="formLabelWidth" disabled size="small">
 
                    <el-row :gutter="5">
                        <el-form-item v-show="false" prop="id" label="id" />
@@ -498,18 +498,20 @@ export default {
     },
     // 删除
     del#{Name}ByIds(id) {
-      let ids = this.multipleSelection.toString()
+     let ids = this.multipleSelection
+      let ids = this.multipleSelection
       if (ids.length === 0) {
-        ids = id
+        ids = [id]
       }
+      const records = ids.map(item => {
+        return { id: item }
+      })
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        #{name}DelByIdsApi({
-          ids: ids
-        }).then(res => {
+        #{name}DelByIdsApi(records).then(res => {
           if (res.code === this.$code) {
             this.getDataList()
             this.$message({
