@@ -140,6 +140,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!--minio jdk-->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -60,12 +60,10 @@ spring:
         max-wait: -1ms
         max-idle: 10
         min-idle: 1
-
-
   # 文件大小上传配置
   servlet:
     multipart:
-      max-file-size: 5MB
+      max-file-size: 5MB   #最大5MB
       max-request-size: 5MB
   # 时间处理
   jackson:
@@ -201,3 +199,10 @@ code:
   winPath:   H:/
   linuxPath: /usr/local/java/vboot
   logPath: D:/vboot/logs #日志存放路径
+
+# minio配置
+minio:
+  url: http://120.78.180.240:9000
+  accessKey: minioadmin
+  secretKey: minioadmin123456
+  bucket: vboot
