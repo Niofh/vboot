@@ -175,6 +175,7 @@ ignored:
   - /test/**
   - /code/fileDownLoad
   - /user/findMenuAndPerByUsername   #根据用户名获取权限和菜单
+  - /file/downloadFile   #下载
   # 限流及黑名单不拦截的路径
   limitUrls:
   - /**/*.js

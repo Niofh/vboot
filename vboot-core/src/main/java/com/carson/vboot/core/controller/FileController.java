@@ -6,14 +6,14 @@ import com.carson.vboot.core.common.utils.MinioUtils;
 import com.carson.vboot.core.common.utils.ResultUtil;
 import com.carson.vboot.core.vo.FileVo;
 import com.carson.vboot.core.vo.Result;
+import io.minio.errors.InvalidEndpointException;
+import io.minio.errors.InvalidPortException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +75,18 @@ public class FileController {
         }
 
         return ResultUtil.data(list);
+    }
+
+    @GetMapping("/downloadFile")
+    public void downloadFile(String fileName, HttpServletResponse httpServletResponse) {
+        try {
+            MinioUtils.downloadFile(httpServletResponse, fileName, url, accessKey, secretKey, bucket);
+        } catch (InvalidPortException e) {
+            e.printStackTrace();
+        } catch (InvalidEndpointException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
