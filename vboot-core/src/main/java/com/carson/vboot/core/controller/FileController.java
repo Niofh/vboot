@@ -1,14 +1,16 @@
 package com.carson.vboot.core.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.carson.vboot.core.common.enums.FileEnums;
 import com.carson.vboot.core.common.utils.FileUtil;
 import com.carson.vboot.core.common.utils.MinioUtils;
 import com.carson.vboot.core.common.utils.ResultUtil;
+import com.carson.vboot.core.entity.File;
+import com.carson.vboot.core.service.FileService;
 import com.carson.vboot.core.vo.FileVo;
 import com.carson.vboot.core.vo.Result;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,9 @@ public class FileController {
     @Value("${minio.bucket}")
     private String bucket;
 
+    @Autowired
+    private FileService fileService;
+
 
     //上传文件到minio服务器
     @PostMapping("/upload")
@@ -43,9 +48,11 @@ public class FileController {
         String fileName = FileUtil.fileRename(file.getOriginalFilename());
         String fileUrl = MinioUtils.uploadFile(file, fileName, url, accessKey, secretKey, bucket);
         if (StrUtil.isNotBlank(fileUrl)) {
-            FileVo fileVo = new FileVo();
-            fileVo.setUrl(fileUrl);
-            return ResultUtil.data(fileVo);
+            File file1 = new File();
+            file1.setUrl(fileUrl);
+            file1.setType(FileEnums.MINIO.getId());
+            fileService.save(file1);
+            return ResultUtil.data(file1);
         } else {
             return ResultUtil.error("上传失败");
         }
@@ -81,12 +88,9 @@ public class FileController {
     public void downloadFile(String fileName, HttpServletResponse httpServletResponse) {
         try {
             MinioUtils.downloadFile(httpServletResponse, fileName, url, accessKey, secretKey, bucket);
-        } catch (InvalidPortException e) {
-            e.printStackTrace();
-        } catch (InvalidEndpointException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
 }

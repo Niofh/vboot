@@ -49,8 +49,9 @@ public class MinioUtils {
      * @param accessKey
      * @param secretKey
      * @param bucket
+     * @return String
      */
-    public static void downloadFile(HttpServletResponse httpResponse, String fileName, String url, String accessKey, String secretKey, String bucket) throws InvalidPortException, InvalidEndpointException {
+    public static String downloadFile(HttpServletResponse httpResponse, String fileName, String url, String accessKey, String secretKey, String bucket) throws InvalidPortException, InvalidEndpointException {
         MinioClient minioClient = new MinioClient(url, accessKey, secretKey);
         try (InputStream ism = new BufferedInputStream(minioClient.getObject(bucket, fileName))) {
             // 调用statObject()来判断对象是否存在。
@@ -71,8 +72,10 @@ public class MinioUtils {
                 osm.write(buf, 0, length);
             }
             osm.close();
+            return "下载成功";
         } catch (Exception ex) {
             ex.printStackTrace();
+            return "下载失败";
         }
     }
 
