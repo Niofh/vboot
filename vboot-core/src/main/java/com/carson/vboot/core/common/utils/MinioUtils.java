@@ -1,6 +1,7 @@
 package com.carson.vboot.core.common.utils;
 
 import io.minio.MinioClient;
+import io.minio.ObjectStat;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
 import io.minio.errors.MinioException;
@@ -57,7 +58,7 @@ public class MinioUtils {
             // 调用statObject()来判断对象是否存在。
             // 如果不存在, statObject()抛出异常,
             // 否则则代表对象存在
-            minioClient.statObject(bucket, fileName);
+            ObjectStat file = minioClient.statObject(bucket, fileName);
             byte buf[] = new byte[1024];
             int length = 0;
             httpResponse.reset();
@@ -67,6 +68,7 @@ public class MinioUtils {
             httpResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
             httpResponse.setContentType("application/x-msdownload");
             httpResponse.setCharacterEncoding("utf-8");
+            httpResponse.setHeader("Content-Length", ""+file.length());
             OutputStream osm = new BufferedOutputStream(httpResponse.getOutputStream());
             while ((length = ism.read(buf)) > 0) {
                 osm.write(buf, 0, length);
