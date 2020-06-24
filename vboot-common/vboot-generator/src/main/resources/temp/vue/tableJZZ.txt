@@ -1,0 +1,511 @@
+<template>
+  <div class="app-container">
+    <el-form ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" size="small">
+    <%
+     for(item in codeDetailList){
+    %>
+      <% if(item.search!=null) {%>
+        <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+           <% if(item.formType==formEnum.INPUT){%>
+              <el-input v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}" />
+           <% } else if(item.formType==formEnum.DATE){ %>
+                <el-date-picker
+                     v-model="searchForm.#{item.name}"
+                     type="date"
+                     placeholder="选择#{item.chinaName}">
+               </el-date-picker>
+            <% } else { %>
+               <el-select v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
+                     <% if(item.dictKey!='') {%>
+                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                    <% }%>
+               </el-select>
+           <% } %>
+       </el-form-item>
+      <% }%>
+    <% } %>
+      <el-form-item label="创建时间" prop="date">
+        <el-date-picker
+          v-model="searchForm.date"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button icon="el-icon-search" type="primary" @click="handleSearch">查询</el-button>
+        <el-button icon="el-icon-refresh-right" type="success" @click="handleResetFrom">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <div class="btns-wrap">
+      <el-button type="primary" size="small" icon="el-icon-plus" @click="openModal(CommonEnum.ADD.id)">新增</el-button>
+      <el-button
+        :disabled="multipleSelection.length===0"
+        type="danger"
+        size="small"
+        icon="el-icon-delete"
+        @click="del#{Name}ByIds"
+      >删除
+      </el-button>
+      <el-button class="btn-default" size="small" icon="el-icon-refresh-left" @click="handleRefresh">刷新</el-button>
+    </div>
+    <el-table
+      ref="table"
+      v-loading="dataListLoading"
+      :data="dataList"
+      max-height="650"
+      stripe
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+      @sort-change="handleSortChange"
+    >
+      <el-table-column
+        type="selection"
+        width="55"
+      />
+  <%
+     for(item in codeDetailList){
+  %>
+    <%
+      if(item.dictKey!=''){
+    %>
+    <el-table-column
+       prop="#{item.name}"
+       label="#{item.chinaName}"
+       width="150"
+    >
+      <template slot-scope="scope">
+        {{ scope.row.#{item.name} | dictFilter(#{item.dictKey}DictList) }}
+      </template>
+    </el-table-column>
+    <% }else { %>
+      <el-table-column
+        prop="#{item.name}"
+        label="#{item.chinaName}"
+        width="150"
+      />
+    <% } %>
+   <% } %>
+      <el-table-column
+        prop="createTime"
+        label="创建时间"
+        sortable="custom"
+        width="180"
+      />
+      <el-table-column
+          prop="createBy"
+          label="创建人"
+          sortable="custom"
+          width="150"
+        />
+        <el-table-column
+          prop="updateBy"
+          label="更新人"
+          sortable="custom"
+          width="150"
+        />
+         <el-table-column
+          prop="updateTime"
+          label="更新时间"
+          sortable="custom"
+          width="180"
+        />
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="openEditModal(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="del#{Name}ByIds(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="lookModal(scope.row)">查看</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <div class="pagination-warp">
+      <el-pagination
+        background
+        layout="total ,sizes, prev, pager, next, jumper"
+        :current-page="page.pageNum"
+        :page-size="page.pageSize"
+        :total="page.total"
+        :page-sizes="pageSizeList"
+        style="float:right;"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+      />
+    </div>
+
+    <el-dialog
+      :modal-append-to-body="false"
+      width="700px"
+      top="5vh"
+      :close-on-click-modal="false"
+      :title="dialogTitle+'#{code.description}'"
+      :visible.sync="dialogFormVisible"
+      @closed="resetForm('ruleForm')"
+    >
+
+      <el-form ref="ruleForm" :model="form" :rules="rules" :label-width="formLabelWidth" size="small">
+
+        <el-row :gutter="5">
+            <el-form-item v-show="false" prop="id" label="id" />
+         <%
+              for(item in codeDetailList){
+         %>
+               <%
+                 if(item.formType==formEnum.INPUT){
+               %>
+                 <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                   <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                   </el-form-item>
+                 </el-col>
+               <% }else if(item.formType==formEnum.TEXTAREA){ %>
+                  <el-col :span="24">
+                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                      <el-input v-model="form.#{item.name}" type="textarea" />
+                    </el-form-item>
+                  </el-col>
+               <% }else if(item.formType==formEnum.SELECT){ %>
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
+                         <% if(item.dictKey!='') {%>
+                       <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                         <% }%>
+                     </el-select>
+                    </el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.DATE) { %>
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                   <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                     format="yyyy-MM-dd"
+                     value-format="yyyy-MM-dd" />
+                   <el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.RADIO){ %>
+                  <el-col :span="12" style="height: 51px">
+                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                         <el-radio-group v-model="form.#{item.name}" >
+                            <el-radio :label="1">1</el-radio>
+                            <el-radio :label="0">0</el-radio>
+                          </el-radio-group>
+                      <el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.CHECKBOX) { %>
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                      <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                        <el-checkbox-group v-model="form.#{item.name}">
+                           <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
+                        </el-checkbox-group>
+                      </el-form-item>
+                  </el-col>
+
+               <% } else if(item.formType==formEnum.INPUTNUMBER){ %>
+                  <el-col :span="12">
+                      <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                           <el-input-number v-model="form.#{item.name}"  :step="0.1" :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
+                      </el-form-item>
+                  </el-col>
+
+               <% } %>
+
+         <% } %>
+
+        </el-row>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" :loading="loading" @click="handleConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
+
+      <!--查看-->
+        <el-dialog
+          :modal-append-to-body="false"
+          width="700px"
+          top="5vh"
+          :close-on-click-modal="false"
+          :title="'查看数据'"
+          :visible.sync="dialogFormVisibleLook"
+          @closed="resetForm('ruleFormLook')"
+        >
+
+          <el-form ref="ruleFormLook" :model="form" :label-width="formLabelWidth" disabled size="small">
+
+                   <el-row :gutter="5">
+                       <el-form-item v-show="false" prop="id" label="id" />
+                    <%
+                         for(item in codeDetailList){
+                    %>
+                          <%
+                            if(item.formType==formEnum.INPUT){
+                          %>
+                            <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                              <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                              </el-form-item>
+                            </el-col>
+                          <% }else if(item.formType==formEnum.TEXTAREA){ %>
+                             <el-col :span="24">
+                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                 <el-input v-model="form.#{item.name}" type="textarea" />
+                               </el-form-item>
+                             </el-col>
+                          <% }else if(item.formType==formEnum.SELECT){ %>
+                             <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
+                                    <% if(item.dictKey!='') {%>
+                                  <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                                    <% }%>
+                                </el-select>
+                               </el-form-item>
+                             </el-col>
+                          <% }  else if(item.formType==formEnum.DATE) { %>
+                             <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                              <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                                   format="yyyy-MM-dd"
+                                   value-format="yyyy-MM-dd"
+                                 />
+                              <el-form-item>
+                             </el-col>
+                          <% }  else if(item.formType==formEnum.RADIO){ %>
+                             <el-col :span="12" style="height: 51px">
+                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                    <el-radio-group v-model="form.#{item.name}" >
+                                       <el-radio :label="1">1</el-radio>
+                                       <el-radio :label="0">0</el-radio>
+                                     </el-radio-group>
+                                 <el-form-item>
+                             </el-col>
+                          <% }  else if(item.formType==formEnum.CHECKBOX) { %>
+                             <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                                 <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                   <el-checkbox-group v-model="form.#{item.name}">
+                                      <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
+                                   </el-checkbox-group>
+                                 </el-form-item>
+                             </el-col>
+
+                          <% } else if(item.formType==formEnum.INPUTNUMBER){ %>
+                             <el-col :span="12">
+                                 <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                                      <el-input-number v-model="form.#{item.name}"  :step="0.1" :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
+                                 </el-form-item>
+                             </el-col>
+
+                          <% } %>
+
+                    <% } %>
+
+                   </el-row>
+          </el-form>
+        </el-dialog>
+  </div>
+</template>
+
+<script>
+import tableMixin from '@/mixins/tableMixin'
+import formMixin from '@/mixins/formMixin'
+import commonUtil from '@/utils/common'
+import CommonEnum from '@/enum/CommonEnum'
+export default {
+  name: '#{Name}',
+  mixins: [tableMixin, formMixin],
+  data() {
+    return {
+      searchForm: {
+    <%
+     for(item in codeDetailList){
+    %>
+      <% if(item.search != null) {%>
+        #{item.name}:'',
+      <% }%>
+    <% } %>
+        date: '',
+        startTime: '',
+        endTime: ''
+      },
+      multipleSelection: [],
+      form: {
+        id:'',
+      <%
+      for(item in codeDetailList){
+      %>
+        <% if(item.formType == formEnum.CHECKBOX){ %>
+            #{item.name}:[],
+        <% } else {%>
+           #{item.name}:'',
+        <% } %>
+      <% } %>
+      },
+      rules: {
+  <%
+    for(item in codeDetailList){
+       if(item.required==1){
+
+  %>
+         #{item.name}: [
+            <%
+              if(item.formType==formEnum.SELECT || item.formType==formEnum.DATE){
+
+            %>
+                { required: true, message: '请选择#{item.chinaName}', trigger: 'change' },
+            <% }else{ %>
+            { required: true, message: '这是必填项', trigger: 'blur' },
+            <% } %>
+         ],
+    <% } %>
+  <% } %>
+      },
+      dialogFormVisible: false,
+      dialogFormVisibleLook: false,
+      formLabelWidth: '120px',
+      dialogType: CommonEnum.ADD.id,
+      dialogTitle: CommonEnum.ADD.value,
+      CommonEnum: CommonEnum,
+    }
+  },
+  watch: {
+    'searchForm.date'(val) {
+      const startAndTime = commonUtil.getStartAndTime(val)
+      this.searchForm.startTime = startAndTime[0]
+      this.searchForm.endTime = startAndTime[1]
+    }
+  },
+  created() {
+    this.getDataList()
+  },
+  methods: {
+    // 全选
+    handleSelectionChange(tableItem) {
+      this.multipleSelection = tableItem.map(item => item.id)
+    },
+
+    // 重置表单
+    handleResetFrom() {
+      this.searchForm.startTime = ''
+      this.searchForm.endTime = ''
+      this.resetForm('searchForm')
+      this.handleReset()
+
+    },
+    // 分页
+    getDataList() {
+      this.dataListLoading = true
+      const params = { ...this.page, filters: this.searchForm }
+      his.$api.#{name}.get#{Name}ByPageApi(params).then(res => {
+        this.dataListLoading = false
+        if (res.code === this.$code) {
+          this.dataList = res.data.content
+          this.page.total = res.data.total
+        }
+      })
+    },
+    // 打开弹出框
+    openModal(type) {
+      this.dialogFormVisible = true
+      this.dialogType = type
+      this.dialogTitle = type === CommonEnum.ADD.id ? CommonEnum.ADD.value : CommonEnum.UPDATE.value
+    },
+    // 修改弹出框
+    openEditModal(tableItem) {
+      his.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
+        if (res.code === this.$code) {
+          this.form = res.data
+        }
+      })
+      this.openModal(CommonEnum.UPDATE.id)
+    },
+    // 查看数据
+    lookModal(tableItem) {
+      his.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
+        if (res.code === this.$code) {
+          this.form = res.data
+        }
+      })
+      this.dialogFormVisibleLook = true
+    },
+    // 添加
+    save#{Name}Base() {
+      this.loading = true
+      his.$api.#{name}.#{name}SaveBaseApi(this.form).then(res => {
+        if (res.code === this.$code) {
+          this.getDataList()
+          this.closeModal()
+          this.$message.success('添加成功')
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    // 更新
+    update#{Name}Base() {
+      this.loading = true
+      his.$api.#{name}.#{name}UpdateBaseApi(this.form).then(res => {
+        if (res.code === this.$code) {
+          this.getDataList()
+          this.closeModal()
+          this.$message.success('更新成功')
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    // 删除
+    del#{Name}ByIds(id) {
+     let ids = this.multipleSelection
+      let ids = this.multipleSelection
+      if (ids.length === 0) {
+        ids = [id]
+      }
+      const records = ids.map(item => {
+        return { id: item }
+      })
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        his.$api.#{name}.#{name}DelByIdsApi(records).then(res => {
+          if (res.code === this.$code) {
+            this.getDataList()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          }
+        })
+      })
+    },
+    // 提交数据
+    handleConfirm() {
+      this.$refs['ruleForm'].validate((valid) => {
+        if (valid) {
+          if (this.dialogType === CommonEnum.ADD.id) {
+            this.$api.#{name}.save#{Name}Base()
+          } else {
+            his.$api.#{name}.update#{Name}Base()
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+
+</style>

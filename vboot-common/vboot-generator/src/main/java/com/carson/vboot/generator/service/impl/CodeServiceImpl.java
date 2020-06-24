@@ -170,6 +170,7 @@ public class CodeServiceImpl implements CodeService {
         // 固远特殊版本
         String apiGuYuan = this.commonFile(gt, FROM + "/vue/apiGuYuan.txt", TARGET + "/vue/guyuan" + name + ".js", createFile);
         String tableGuYuan = this.commonFile(gt, FROM + "/vue/tableGuYuan.txt", TARGET + "/vue/guyuan" + name + ".vue", createFile);
+        String tableJZZ = this.commonFile(gt, FROM + "/vue/tableJZZ.txt", TARGET + "/vue/guyuanJZZ" + name + ".vue", createFile);
 
 
         // mysql生成
@@ -208,6 +209,7 @@ public class CodeServiceImpl implements CodeService {
         result.put("controller", controller);
         result.put("apiGuYuan", apiGuYuan);
         result.put("tableGuYuan", tableGuYuan);
+        result.put("tableJZZ", tableJZZ);
         return result;
     }
 
