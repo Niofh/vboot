@@ -67,6 +67,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
         Boolean notValid = StrUtil.isBlank(header) || (!tokenProperties.getRedis() && !header.startsWith(CommonConstant.TOKEN_SPLIT));
         if (notValid) {
+            // 将处理好的请求传给下个过滤器
             chain.doFilter(request, response);
             return;
         }
