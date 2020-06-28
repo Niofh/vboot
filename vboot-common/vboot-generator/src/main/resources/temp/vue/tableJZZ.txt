@@ -108,7 +108,7 @@
           width="150"
         />
          <el-table-column
-          prop="updateTime"
+          prop="lastUpdateTime"
           label="更新时间"
           sortable="custom"
           width="180"
