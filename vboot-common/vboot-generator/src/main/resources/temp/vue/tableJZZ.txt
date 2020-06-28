@@ -160,7 +160,7 @@
                <%
                  if(item.formType==formEnum.INPUT){
                %>
-                 <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                 <el-col :span="12" class="my-el-col-item">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-input v-model="form.#{item.name}"  autocomplete="off" placeholder="请填写#{item.chinaName}" />
                    </el-form-item>
@@ -172,7 +172,7 @@
                     </el-form-item>
                   </el-col>
                <% }else if(item.formType==formEnum.SELECT){ %>
-                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                  <el-col :span="12" class="my-el-col-item">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
                          <% if(item.dictKey!='') {%>
@@ -182,7 +182,7 @@
                     </el-form-item>
                   </el-col>
                <% }  else if(item.formType==formEnum.DATE) { %>
-                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                  <el-col :span="12" class="my-el-col-item">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-date-picker type="date" placeholder="请选择#{item.chinaName}" v-model="form.#{item.name}"
                      format="yyyy-MM-dd"
@@ -199,7 +199,7 @@
                       <el-form-item>
                   </el-col>
                <% }  else if(item.formType==formEnum.CHECKBOX) { %>
-                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                  <el-col :span="12" class="my-el-col-item">
                       <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                         <el-checkbox-group v-model="form.#{item.name}">
                            <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
@@ -248,7 +248,7 @@
                           <%
                             if(item.formType==formEnum.INPUT){
                           %>
-                            <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                            <el-col :span="12" class="my-el-col-item">
                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                                 <el-input v-model="form.#{item.name}"  autocomplete="off" placeholder="请填写#{item.chinaName}" />
                               </el-form-item>
@@ -260,7 +260,7 @@
                                </el-form-item>
                              </el-col>
                           <% }else if(item.formType==formEnum.SELECT){ %>
-                             <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                             <el-col :span="12" class="my-el-col-item">
                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                                 <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
                                     <% if(item.dictKey!='') {%>
@@ -270,7 +270,7 @@
                                </el-form-item>
                              </el-col>
                           <% }  else if(item.formType==formEnum.DATE) { %>
-                             <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                             <el-col :span="12" class="my-el-col-item">
                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                                 <el-date-picker type="date" placeholder="选择#{item.chinaName}" v-model="form.#{item.name}"
                                    format="yyyy-MM-dd"
@@ -288,7 +288,7 @@
                                  <el-form-item>
                              </el-col>
                           <% }  else if(item.formType==formEnum.CHECKBOX) { %>
-                             <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                             <el-col :span="12" class="my-el-col-item">
                                  <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                                    <el-checkbox-group v-model="form.#{item.name}">
                                       <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
