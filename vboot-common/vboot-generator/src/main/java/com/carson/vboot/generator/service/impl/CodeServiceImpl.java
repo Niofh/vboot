@@ -150,7 +150,10 @@ public class CodeServiceImpl implements CodeService {
 
         // 如果name是下划线的，转换为驼峰
         for (CodeDetail codeDetail : codeDetailList) {
-            codeDetail.setName(stringTool.lineToHump(codeDetail.getName()));
+            String codeDetailName = codeDetail.getName();
+            if (StrUtil.indexOf(codeDetailName, '-') > -1) {
+                codeDetail.setName(stringTool.lineToHump(codeDetailName));
+            }
         }
 
         // 设置共享变量
@@ -235,7 +238,7 @@ public class CodeServiceImpl implements CodeService {
             if ("Linux".equals(osName)) {
                 path = new File(linuxPath, target).getAbsolutePath();
             } else {
-                path = new File(winPath, target).getAbsolutePath().replaceAll("\\\\","/");
+                path = new File(winPath, target).getAbsolutePath().replaceAll("\\\\", "/");
             }
             File file = new File(path);
             // 先创建目录,不然linux没有目录直接会失败
