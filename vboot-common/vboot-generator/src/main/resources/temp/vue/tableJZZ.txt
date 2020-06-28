@@ -92,25 +92,25 @@
       <el-table-column
         prop="createTime"
         label="创建时间"
-        sortable="custom"
+        sortable
         width="180"
       />
       <el-table-column
           prop="createBy"
           label="创建人"
-          sortable="custom"
+          sortable
           width="150"
         />
         <el-table-column
           prop="updateBy"
           label="更新人"
-          sortable="custom"
+          sortable
           width="150"
         />
          <el-table-column
           prop="lastUpdateTime"
           label="更新时间"
-          sortable="custom"
+          sortable
           width="180"
         />
       <el-table-column
