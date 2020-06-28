@@ -58,9 +58,9 @@
       :data="dataList"
       max-height="650"
       stripe
-      style="width: 100%"
+      border
+      style="width: 100%;margin-top: 20px"
       @selection-change="handleSelectionChange"
-      @sort-change="handleSortChange"
     >
       <el-table-column
         type="selection"
