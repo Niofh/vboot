@@ -151,7 +151,7 @@ public class CodeServiceImpl implements CodeService {
         // 如果name是下划线的，转换为驼峰
         for (CodeDetail codeDetail : codeDetailList) {
             String codeDetailName = codeDetail.getName();
-            if (StrUtil.indexOf(codeDetailName, '-') > -1) {
+            if (StrUtil.indexOf(codeDetailName, '_') > -1) {
                 codeDetail.setName(stringTool.lineToHump(codeDetailName));
             }
         }
