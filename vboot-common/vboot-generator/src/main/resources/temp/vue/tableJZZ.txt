@@ -162,13 +162,13 @@
                %>
                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                     <el-input v-model="form.#{item.name}"  autocomplete="off" placeholder="请填写#{item.chinaName}" />
                    </el-form-item>
                  </el-col>
                <% }else if(item.formType==formEnum.TEXTAREA){ %>
                   <el-col :span="24">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                      <el-input v-model="form.#{item.name}" type="textarea" />
+                      <el-input v-model="form.#{item.name}" type="textarea" placeholder="请填写#{item.chinaName}" />
                     </el-form-item>
                   </el-col>
                <% }else if(item.formType==formEnum.SELECT){ %>
@@ -184,7 +184,7 @@
                <% }  else if(item.formType==formEnum.DATE) { %>
                   <el-col :span="12" style="height: 51px;margin-bottom: 0">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                     <el-date-picker type="date" placeholder="请选择#{item.chinaName}" v-model="form.#{item.name}"
                      format="yyyy-MM-dd"
                      value-format="yyyy-MM-dd" />
                    <el-form-item>
@@ -250,13 +250,13 @@
                           %>
                             <el-col :span="12" style="height: 51px;margin-bottom: 0">
                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                                <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                                <el-input v-model="form.#{item.name}"  autocomplete="off" placeholder="请填写#{item.chinaName}" />
                               </el-form-item>
                             </el-col>
                           <% }else if(item.formType==formEnum.TEXTAREA){ %>
                              <el-col :span="24">
                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                                 <el-input v-model="form.#{item.name}" type="textarea" />
+                                 <el-input v-model="form.#{item.name}" type="textarea" placeholder="请填写#{item.chinaName}" />
                                </el-form-item>
                              </el-col>
                           <% }else if(item.formType==formEnum.SELECT){ %>
@@ -272,7 +272,7 @@
                           <% }  else if(item.formType==formEnum.DATE) { %>
                              <el-col :span="12" style="height: 51px;margin-bottom: 0">
                               <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                                <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                                <el-date-picker type="date" placeholder="选择#{item.chinaName}" v-model="form.#{item.name}"
                                    format="yyyy-MM-dd"
                                    value-format="yyyy-MM-dd"
                                  />
