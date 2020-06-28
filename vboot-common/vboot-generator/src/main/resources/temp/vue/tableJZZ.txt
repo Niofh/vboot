@@ -403,7 +403,7 @@ export default {
     getDataList() {
       this.dataListLoading = true
       const params = { ...this.page, filters: this.searchForm }
-      his.$api.#{name}.get#{Name}ByPageApi(params).then(res => {
+      this.$api.#{name}.get#{Name}ByPageApi(params).then(res => {
         this.dataListLoading = false
         if (res.code === this.$code) {
           this.dataList = res.data.content
@@ -419,7 +419,7 @@ export default {
     },
     // 修改弹出框
     openEditModal(tableItem) {
-      his.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
+      this.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
           this.form = res.data
         }
@@ -428,7 +428,7 @@ export default {
     },
     // 查看数据
     lookModal(tableItem) {
-      his.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
+      this.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
           this.form = res.data
         }
@@ -438,7 +438,7 @@ export default {
     // 添加
     save#{Name}Base() {
       this.loading = true
-      his.$api.#{name}.#{name}SaveBaseApi(this.form).then(res => {
+      this.$api.#{name}.#{name}SaveBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
           this.getDataList()
           this.closeModal()
@@ -451,7 +451,7 @@ export default {
     // 更新
     update#{Name}Base() {
       this.loading = true
-      his.$api.#{name}.#{name}UpdateBaseApi(this.form).then(res => {
+      this.$api.#{name}.#{name}UpdateBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
           this.getDataList()
           this.closeModal()
@@ -464,7 +464,6 @@ export default {
     // 删除
     del#{Name}ByIds(id) {
      let ids = this.multipleSelection
-      let ids = this.multipleSelection
       if (ids.length === 0) {
         ids = [id]
       }
@@ -476,7 +475,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        his.$api.#{name}.#{name}DelByIdsApi(records).then(res => {
+        this.$api.#{name}.#{name}DelByIdsApi(records).then(res => {
           if (res.code === this.$code) {
             this.getDataList()
             this.$message({
@@ -494,7 +493,7 @@ export default {
           if (this.dialogType === CommonEnum.ADD.id) {
             this.$api.#{name}.save#{Name}Base()
           } else {
-            his.$api.#{name}.update#{Name}Base()
+            this.$api.#{name}.update#{Name}Base()
           }
         } else {
           console.log('error submit!!')

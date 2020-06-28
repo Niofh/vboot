@@ -45,6 +45,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         log.info("登录username为： {}", username);
         UserVO user = userService.findByUsername(username);
 
+        // todo 在这里增加查询会员的用户？？？
+
         log.info("uservo {}", user);
 
         return new SecurityUserDetails(user);
