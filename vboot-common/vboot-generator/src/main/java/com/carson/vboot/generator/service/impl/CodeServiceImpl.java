@@ -148,6 +148,10 @@ public class CodeServiceImpl implements CodeService {
 
         GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
 
+        // 如果name是下划线的，转换为驼峰
+        for (CodeDetail codeDetail : codeDetailList) {
+            codeDetail.setName(stringTool.lineToHump(codeDetail.getName()));
+        }
 
         // 设置共享变量
         Map<String, Object> shared = new HashMap<String, Object>();
