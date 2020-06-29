@@ -71,6 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider();
         // 自定义用户和密码
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(new BCryptPasswordEncoder()); // 加密方法
@@ -83,6 +84,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.cors().and().csrf().disable()  // 允许跨域,csrf 关闭跨站请求
                 .authorizeRequests();
+
+
 
 
         // 除配置文件忽略路径其它所有请求都需经过认证和授权
@@ -129,6 +132,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 添加JWT认证过滤器
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), tokenProperties, redisTemplate, securityUtil));
 
+
+       /* UsernamePasswordAuthenticationFilter类的attemptAuthentication方法，主要获取request传递的参数；
+        UsernamePasswordAuthenticationToken类，主要用于增加认证所用到的额外参数；
+        DaoAuthenticationProvider类的retrieveUser方法，主要把UsernamePasswordAuthenticationToken扩展类的额外参数传递给UserDetailsService；
+        UserDetailsService实现类的loadUserByUsername方法。主用使用额外参数及账号、密码等多个参数进行验证。*/
     }
 
 

@@ -28,12 +28,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     /**
      * 如果用户是null，会报异常，失败处理器FailHandler会返回对应信息
      *
-     * @param username
+     * @param  name 接受是字符串
      * @return
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 //        String flagKey = "loginFailFlag:" + username;
 //        String value = redisTemplate.opsForValue().get(flagKey);
 //        Long timeRest = redisTemplate.getExpire(flagKey, TimeUnit.MINUTES);
@@ -41,9 +41,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //            //超过限制次数
 //            throw new VbootException(500, "登录错误次数超过限制，请" + timeRest + "分钟后再试");
 //        }
+         // name 可以存放用户名+什么端登录
+
         // 查询当前用户是否存在
-        log.info("登录username为： {}", username);
-        UserVO user = userService.findByUsername(username);
+        log.info("登录username为： {}", name);
+        UserVO user = userService.findByUsername(name);
 
         // todo 在这里增加查询会员的用户？？？
 
