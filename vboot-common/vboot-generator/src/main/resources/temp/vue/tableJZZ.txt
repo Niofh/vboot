@@ -491,9 +491,9 @@ export default {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           if (this.dialogType === CommonEnum.ADD.id) {
-            this.$api.#{name}.save#{Name}Base()
+            this.save#{Name}Base()
           } else {
-            this.$api.#{name}.update#{Name}Base()
+            this.update#{Name}Base()
           }
         } else {
           console.log('error submit!!')

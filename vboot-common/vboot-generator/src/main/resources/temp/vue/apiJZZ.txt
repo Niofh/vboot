@@ -1,0 +1,53 @@
+
+import axios from '@/utils/axios'
+
+// 分页
+export function get#{Name}ByPageApi(data) {
+  return axios({
+    url: '/#{name}/get#{Name}ByPage',
+    method: 'get',
+    params: data
+  })
+}
+
+// 根据id获取信息
+export function get#{Name}ById(id) {
+  return axios({
+    url: '/#{name}/get/'+id,
+    method: 'get'
+  })
+}
+
+// 根据id保存数据
+export function #{name}SaveBaseApi(data) {
+  return axios({
+    url: '/#{name}/saveBase',
+    method: 'post',
+    data
+  })
+}
+
+// 根据id修改数据
+export function #{name}UpdateBaseApi(data) {
+  return axios({
+    url: '/#{name}/updateBase',
+    method: 'post',
+    data
+  })
+}
+
+// 根据id删除数据(可以传递多个id)
+export function #{name}DelByIdsApi(data) {
+  return axios({
+    url: '/#{name}/delByIds',
+    method: 'post',
+    data
+  })
+}
+// 获取所有数据
+export function get#{Name}AllBaseApi() {
+  return axios({
+    url: '/#{name}/getAllBase',
+    method: 'get'
+  })
+}
