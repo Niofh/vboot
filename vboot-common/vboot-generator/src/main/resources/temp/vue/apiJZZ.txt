@@ -5,16 +5,19 @@ import axios from '@/utils/axios'
 export function get#{Name}ByPageApi(data) {
   return axios({
     url: '/#{name}/get#{Name}ByPage',
-    method: 'get',
-    params: data
+    method: 'post',
+    data
   })
 }
 
 // 根据id获取信息
 export function get#{Name}ById(id) {
   return axios({
-    url: '/#{name}/get/'+id,
-    method: 'get'
+    url: '/#{name}/get,
+    method: 'get',
+    params: {
+      id
+    }
   })
 }
 
