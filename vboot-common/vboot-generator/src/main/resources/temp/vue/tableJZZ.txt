@@ -356,7 +356,7 @@
                                      <el-upload
                                        multiple
                                        list-type="picture-card"
-                                       class="avatar-uploader"
+                                       class="avatar-uploader-look"
                                        :action="uploadUrl"
                                        :accept="acceptUploadImg"
                                        :headers="uploadHeaders"
@@ -388,7 +388,6 @@
                                        :limit="5"
                                        :on-exceed="handleExceed"
                                      >
-                                       <el-button size="small" type="primary">点击上传附件</el-button>
                                      </el-upload>
                                    </el-form-item>
                                  </el-col>
@@ -521,6 +520,9 @@ export default {
       this.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
           this.form = res.data
+          // todo 上传文件字段转换数组
+          this.fileList = this.getElUploadFileData(res.data.attachmentUrl)
+          this.imgList = this.getElUploadFileData(res.data.imgUrl)
         }
       })
       this.openModal(CommonEnum.UPDATE.id)
