@@ -12,7 +12,8 @@ public enum FormEnum {
     DATE(4, "日期框","DATE"),
     RADIO(5, "单选框","RADIO"),
     CHECKBOX(6, "多选框","CHECKBOX"),
-    INPUTNUMBER(7, "计数器","INPUTNUMBER");
+    INPUTNUMBER(7, "计数器","INPUTNUMBER"),
+    UPLOAD(8, "上传文件","UPLOAD");
     private Integer id;
     private String name;
     private String alias;

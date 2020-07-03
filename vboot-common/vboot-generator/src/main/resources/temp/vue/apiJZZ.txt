@@ -4,7 +4,7 @@ import axios from '@/utils/axios'
 // 分页
 export function get#{Name}ByPageApi(data) {
   return axios({
-    url: '/#{name}/get#{Name}ByPage',
+    url: '/#t{Name}/get#{Name}ByPage',
     method: 'post',
     data
   })
@@ -13,7 +13,7 @@ export function get#{Name}ByPageApi(data) {
 // 根据id获取信息
 export function get#{Name}ById(id) {
   return axios({
-    url: '/#{name}/get,
+    url: '/#t{Name}/findById,
     method: 'get',
     params: {
       id
@@ -24,7 +24,7 @@ export function get#{Name}ById(id) {
 // 根据id保存数据
 export function #{name}SaveBaseApi(data) {
   return axios({
-    url: '/#{name}/saveBase',
+    url: '/#t{Name}/saveBase',
     method: 'post',
     data
   })
@@ -33,7 +33,7 @@ export function #{name}SaveBaseApi(data) {
 // 根据id修改数据
 export function #{name}UpdateBaseApi(data) {
   return axios({
-    url: '/#{name}/updateBase',
+    url: '/#t{Name}/updateBase',
     method: 'post',
     data
   })
@@ -42,7 +42,7 @@ export function #{name}UpdateBaseApi(data) {
 // 根据id删除数据(可以传递多个id)
 export function #{name}DelByIdsApi(data) {
   return axios({
-    url: '/#{name}/delByIds',
+    url: '/#t{Name}/delByIds',
     method: 'post',
     data
   })
@@ -50,7 +50,7 @@ export function #{name}DelByIdsApi(data) {
 // 获取所有数据
 export function get#{Name}AllBaseApi() {
   return axios({
-    url: '/#{name}/getAllBase',
+    url: '/#t{Name}/getAllBase',
     method: 'get'
   })
 }

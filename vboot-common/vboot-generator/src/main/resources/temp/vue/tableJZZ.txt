@@ -126,6 +126,7 @@
       />
     </div>
 
+    <!--添加-->
     <el-dialog
       :modal-append-to-body="false"
       width="700px"
@@ -203,6 +204,52 @@
                   </el-col>
 
                <% } %>
+               <% } else if(item.formType==formEnum.UPLOAD){ %>
+                        <el-col :span="24">
+                         <el-form-item label="图片：" prop="imgList">
+                           <el-upload
+                             ref="imgListUpload"
+                             multiple
+                             list-type="picture-card"
+                             class="avatar-uploader"
+                             :action="uploadUrl"
+                             :accept="acceptUploadImg"
+                             :headers="uploadHeaders"
+                             :on-error="handleUploadError"
+                             :before-upload="beforeUpload"
+                             :on-preview="handlePreviewFile"
+                             :file-list="imgList"
+                             :limit="5"
+                             :on-exceed="handleExceed"
+                           >
+                             <i class="el-icon-plus" />
+                           </el-upload>
+                         </el-form-item>
+                       </el-col>
+                       <el-col :span="24">
+                         <el-form-item label="附件：" prop="fileList">
+                           <el-upload
+                             ref="fileListUpload"
+                             class="upload-demo"
+                             multiple
+                             :action="uploadUrl"
+                             :headers="uploadHeaders"
+                             :accept="acceptUploadFile"
+                             :before-remove="beforeRemove"
+                             :before-upload="beforeUpload"
+                             :on-error="handleUploadError"
+                             :file-list="fileList"
+                             :on-preview="handlePreviewFile"
+                             :on-remove="handleRemoveFile"
+                             :limit="5"
+                             :on-exceed="handleExceed"
+                           >
+                             <el-button size="small" type="primary">点击上传附件</el-button>
+                           </el-upload>
+                         </el-form-item>
+                       </el-col>
+
+              <% } %>
 
          <% } %>
 
@@ -255,7 +302,7 @@
                           <% }else if(item.formType==formEnum.TEXTAREA){ %>
                              <el-col :span="24">
                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                                 <el-input v-model="form.#{item.name}" type="textarea" placeholder="请填写#{item.chinaName}" />
+                                 <el-input v-model="form.#{item.name}" type="textarea" placeholder="请填写#{item.chinaName}" maxlength="500" show-word-limit :autosize="{ minRows: 5,maxRows: 10}" />
                                </el-form-item>
                              </el-col>
                           <% }else if(item.formType==formEnum.SELECT){ %>
@@ -303,6 +350,50 @@
                              </el-col>
 
                           <% } %>
+                             <% } else if(item.formType==formEnum.UPLOAD){ %>
+                                  <el-col :span="24">
+                                   <el-form-item label="图片：" prop="imgList">
+                                     <el-upload
+                                       multiple
+                                       list-type="picture-card"
+                                       class="avatar-uploader"
+                                       :action="uploadUrl"
+                                       :accept="acceptUploadImg"
+                                       :headers="uploadHeaders"
+                                       :on-error="handleUploadError"
+                                       :before-upload="beforeUpload"
+                                       :on-preview="handlePreviewFile"
+                                       :file-list="imgList"
+                                       :limit="5"
+                                       :on-exceed="handleExceed"
+                                     >
+                                       <i class="el-icon-plus" />
+                                     </el-upload>
+                                   </el-form-item>
+                                 </el-col>
+                                 <el-col :span="24">
+                                   <el-form-item label="附件：" prop="fileList">
+                                     <el-upload
+                                       class="upload-demo"
+                                       multiple
+                                       :action="uploadUrl"
+                                       :headers="uploadHeaders"
+                                       :accept="acceptUploadFile"
+                                       :before-remove="beforeRemove"
+                                       :before-upload="beforeUpload"
+                                       :on-error="handleUploadError"
+                                       :file-list="fileList"
+                                       :on-preview="handlePreviewFile"
+                                       :on-remove="handleRemoveFile"
+                                       :limit="5"
+                                       :on-exceed="handleExceed"
+                                     >
+                                       <el-button size="small" type="primary">点击上传附件</el-button>
+                                     </el-upload>
+                                   </el-form-item>
+                                 </el-col>
+
+                        <% } %>
 
                     <% } %>
 
@@ -317,6 +408,14 @@ import tableMixin from '@/mixins/tableMixin'
 import formMixin from '@/mixins/formMixin'
 import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
+
+<%
+  if(item.formType==formEnum.UPLOAD){
+%>
+    import uploadMixin from '@/mixins/uploadMixin'
+
+<% } %>
+
 export default {
   name: '#{Name}',
   mixins: [tableMixin, formMixin],
@@ -492,6 +591,9 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
           }).then(() => {
+          // 多个文件处理
+          this.form.imgUrl = this.handleChangeFileData('imgListUpload')
+          this.form.groupId = this.handleChangeFileData('fileListUpload')
             if (this.dialogType === CommonEnum.ADD.id) {
                 this.save#{Name}Base()
              } else {
