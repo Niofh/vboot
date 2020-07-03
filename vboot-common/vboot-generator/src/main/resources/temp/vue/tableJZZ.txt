@@ -248,10 +248,7 @@
                            </el-upload>
                          </el-form-item>
                        </el-col>
-
-              <% } %>
-
-         <% } %>
+            <% } %>
 
         </el-row>
 
@@ -391,8 +388,6 @@
                                      </el-upload>
                                    </el-form-item>
                                  </el-col>
-
-                        <% } %>
 
                     <% } %>
 
