@@ -69,11 +69,13 @@
   <%
      for(item in codeDetailList){
   %>
+    <% if(item.tableSite==1){%>
       <el-table-column
         prop="#{item.name}"
         label="#{item.chinaName}"
         width="150"
       />
+    <% } %>
    <% } %>
       <el-table-column
         prop="createTime"
@@ -611,7 +613,6 @@ export default {
                   <% break; %>
               <% }%>
             <% } %>
-          this.form.groupId = this.handleChangeFileData('fileListUpload')
             if (this.dialogType === CommonEnum.ADD.id) {
                 this.save#{Name}Base()
              } else {
