@@ -15,7 +15,7 @@
                      placeholder="选择#{item.chinaName}">
                </el-date-picker>
             <% } else { %>
-               <el-select v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
+               <el-select filterable v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
                      <% if(item.dictKey!='') {%>
                         <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                     <% }%>
@@ -163,7 +163,7 @@
                <% }else if(item.formType==formEnum.SELECT){ %>
                   <el-col :span="12" class="my-el-col-item">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
+                     <el-select v-model="form.#{item.name}" filterable clearable placeholder="请选择#{item.chinaName}">
                          <% if(item.dictKey!='') {%>
                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                          <% }%>
@@ -305,7 +305,7 @@
                           <% }else if(item.formType==formEnum.SELECT){ %>
                              <el-col :span="12" class="my-el-col-item">
                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                                <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
+                                <el-select v-model="form.#{item.name}" filterable clearable placeholder="请选择#{item.chinaName}">
                                     <% if(item.dictKey!='') {%>
                                   <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                                     <% }%>
