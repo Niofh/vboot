@@ -403,10 +403,12 @@ import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
 
 <%
-  if(item.formType==formEnum.UPLOAD){
+ for(item in codeDetailList){
 %>
-    import uploadMixin from '@/mixins/uploadMixin'
-
+  <% if(item.formType==formEnum.UPLOAD) {%>
+     import uploadMixin from '@/mixins/uploadMixin'
+     <% break; %>;
+  <% }%>
 <% } %>
 
 export default {
@@ -514,9 +516,19 @@ export default {
       this.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
           this.form = res.data
-          // todo 上传文件字段转换数组
-          this.fileList = this.getElUploadFileData(res.data.#{item.name})
-          this.imgList = this.getElUploadFileData(res.data.imgUrl)
+
+          <%
+           for(item in codeDetailList){
+          %>
+            <% if(item.formType==formEnum.UPLOAD) {%>
+               //上传文件字段转换数组
+               this.imgList = this.getElUploadFileData(res.data.imgUrl)
+               this.fileList = this.getElUploadFileData(res.data.#{item.name})
+               <% break; %>
+            <% }%>
+          <% } %>
+
+
         }
       })
       this.openModal(CommonEnum.UPDATE.id)
@@ -587,8 +599,18 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
           }).then(() => {
-          // 多个文件处理
-          this.form.imgUrl = this.handleChangeFileData('imgListUpload')
+
+
+           <%
+             for(item in codeDetailList){
+            %>
+              <% if(item.formType==formEnum.UPLOAD) {%>
+                    // 多个文件处理
+                 this.form.imgUrl = this.handleChangeFileData('imgListUpload')
+                 this.form.#{item.name} = this.handleChangeFileData('fileListUpload')
+                  <% break; %>
+              <% }%>
+            <% } %>
           this.form.groupId = this.handleChangeFileData('fileListUpload')
             if (this.dialogType === CommonEnum.ADD.id) {
                 this.save#{Name}Base()
