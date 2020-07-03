@@ -203,7 +203,6 @@
                       </el-form-item>
                   </el-col>
 
-               <% } %>
                <% } else if(item.formType==formEnum.UPLOAD){ %>
                         <el-col :span="24">
                          <el-form-item label="图片：" prop="imgList">
@@ -248,6 +247,7 @@
                            </el-upload>
                          </el-form-item>
                        </el-col>
+              <% } %>
             <% } %>
 
         </el-row>
@@ -346,8 +346,7 @@
                                  </el-form-item>
                              </el-col>
 
-                          <% } %>
-                             <% } else if(item.formType==formEnum.UPLOAD){ %>
+                         <% } else if(item.formType==formEnum.UPLOAD){ %>
                                   <el-col :span="24">
                                    <el-form-item label="图片：" prop="imgList">
                                      <el-upload
@@ -388,7 +387,7 @@
                                      </el-upload>
                                    </el-form-item>
                                  </el-col>
-
+                        <% } %>
                     <% } %>
 
                    </el-row>
