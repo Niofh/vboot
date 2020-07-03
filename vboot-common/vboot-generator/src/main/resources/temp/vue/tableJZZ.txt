@@ -226,7 +226,7 @@
                          </el-form-item>
                        </el-col>
                        <el-col :span="24">
-                         <el-form-item label="附件：" prop="fileList">
+                         <el-form-item label="附件：" prop="#{item.name}">
                            <el-upload
                              ref="fileListUpload"
                              class="upload-demo"
@@ -348,7 +348,7 @@
 
                          <% } else if(item.formType==formEnum.UPLOAD){ %>
                                   <el-col :span="24">
-                                   <el-form-item label="图片：" prop="imgList">
+                                   <el-form-item label="图片：" prop="imgUrl">
                                      <el-upload
                                        multiple
                                        list-type="picture-card"
@@ -368,7 +368,7 @@
                                    </el-form-item>
                                  </el-col>
                                  <el-col :span="24">
-                                   <el-form-item label="附件：" prop="fileList">
+                                   <el-form-item label="附件：" prop="#{item.name}">
                                      <el-upload
                                        class="upload-demo"
                                        multiple
@@ -515,7 +515,7 @@ export default {
         if (res.code === this.$code) {
           this.form = res.data
           // todo 上传文件字段转换数组
-          this.fileList = this.getElUploadFileData(res.data.attachmentUrl)
+          this.fileList = this.getElUploadFileData(res.data.#{item.name})
           this.imgList = this.getElUploadFileData(res.data.imgUrl)
         }
       })
