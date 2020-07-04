@@ -4,7 +4,7 @@ import axios from '@/http/axios'
 // 分页
 export function get#{Name}ByPageApi(data) {
   return axios({
-    url: '/t#{Name}/get#{Name}ByPage',
+    url: '/t#{Name}/findPage',
     method: 'post',
     data
   })
@@ -13,7 +13,7 @@ export function get#{Name}ByPageApi(data) {
 // 根据id获取信息
 export function get#{Name}ById(id) {
   return axios({
-    url: '/t#{Name}/findById,
+    url: '/t#{Name}/findById',
     method: 'get',
     params: {
       id

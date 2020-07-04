@@ -503,7 +503,7 @@ export default {
         this.dataListLoading = false
         if (res.code === this.$code) {
           this.dataList = res.data.content
-          this.page.total = res.data.total
+          this.page.total = res.data.totalSize
         }
       })
     },
