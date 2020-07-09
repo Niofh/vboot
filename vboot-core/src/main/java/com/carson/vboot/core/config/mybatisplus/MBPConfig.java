@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * created by Nicofh on 2020-03-08
  * mybatis全局配置
  * 配置分页地址 https://mp.baomidou.com/guide/page.html
+ * mybatisPlus自定义sql和xml https://blog.csdn.net/weixin_42657363/article/details/106842082
  */
 @EnableTransactionManagement
 @Configuration

@@ -12,6 +12,11 @@
 ### git代码规范
 [git代码规范](https://blog.csdn.net/ligang2585116/article/details/80284819)
 
+
+### mybatisplus
+[mybatisPlus自定义sql和xml](https://blog.csdn.net/weixin_42657363/article/details/106842082)
+
+
 feat：新增功能；
 fix：修复bug；
 docs：修改文档；
