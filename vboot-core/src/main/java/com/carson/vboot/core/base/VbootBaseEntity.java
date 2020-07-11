@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.carson.vboot.core.common.enums.CommonEnums;
-import com.carson.vboot.core.common.utils.SnowFlakeUtil;
+import com.carson.vboot.core.common.utils.IdGeneratorSnowflake;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -21,7 +21,7 @@ public class VbootBaseEntity implements Serializable {
 
     @ApiModelProperty(value = "唯一标识,默认雪花id")
     @TableId
-    private String id = String.valueOf(SnowFlakeUtil.getFlowIdInstance().nextId());
+    private String id = String.valueOf(new IdGeneratorSnowflake().snowflakeId());
 
 
     @ApiModelProperty(value = "创建人")
