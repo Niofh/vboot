@@ -1,12 +1,16 @@
+
+# UNIQUE INDEX  XXX(XXX) 唯一索引写法
+# INDEX XXX(XXX) 加索引写法
+
 CREATE TABLE `#{code["tableName"]}`  (
-  `id` varchar(255)  NOT NULL COMMENT '代码主键',
+  `id` bigint(20) NOT NULL COMMENT '代码主键',
 <% for(item in codeDetailList){%>
-  `#{stringTool.humpToLine(item.name)}` #{item.nameType}  DEFAULT NULL COMMENT '#{item.description}',
+  `#{stringTool.humpToLine(item.name)}` #{item.nameType}  NOT NULL COMMENT '#{item.description}',
 <% } %>
   `create_time` datetime(0)  DEFAULT NULL COMMENT '创建时间',
   `create_by` varchar(255)   DEFAULT NULL COMMENT '创建用户名',
   `update_time` datetime(0)  DEFAULT NULL COMMENT '更新时间',
   `update_by` varchar(255)   DEFAULT NULL COMMENT '更新用户名',
-  `del_flag` tinyint(4)  DEFAULT 0 COMMENT '删除标记 0是未删除，1是已删除',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '#{code["description"]}';
+  `del_flag` tinyint(1)  DEFAULT 0 COMMENT '删除标记 0是未删除，1是已删除',
+  PRIMARY KEY (`id`),
+) COMMENT = '#{code["description"]}';
