@@ -1,0 +1,85 @@
+spring:
+  redis:
+    timeout: 5s
+    host: 120.78.180.240
+    port: 6379
+    password: vboot123456
+
+
+  rabbitmq:
+    host: 120.78.180.240
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /  # 每个VirtualHost相当月一个相对独立的RabbitMQ服务器，每个VirtualHost之间是相互隔离的。exchange、queue、message不能互通
+    #确认消息已发送到交换机(Exchange)
+    publisher-confirm-type: correlated
+    #确认消息已发送到队列(Queue)
+    publisher-returns: true
+    listener:
+      simple:
+        concurrency: 5
+        max-concurrency: 15
+        prefetch: 10
+
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://120.78.180.240:3307/miaosha?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    logSlowSql: true
+    # Druid StatViewServlet配置
+    druid:
+      stat-view-servlet:
+        # 默认true 内置监控页面首页/druid/index.html
+        enabled: true
+        url-pattern: /druid/*
+        # 允许清空统计数据
+        reset-enable: true
+        login-username: root
+        login-password: root
+        # IP白名单 多个逗号分隔
+        allow:
+        # IP黑名单
+        deny:
+      filter:
+        stat:
+          # 开启监控sql
+          enabled: true
+          # 显示并标注慢sql 默认当超过3秒显示
+          log-slow-sql: true
+          slow-sql-millis: 3000
+          merge-sql: true
+        # 防SQL注入过滤
+        wall:
+          config:
+            # 允许多条sql同时执行
+            multi-statement-allow: true
+
+
+# MBP配置文件
+mybatis-plus:
+  mapper-locations: classpath*:dao/mapper/*.xml
+  global-config:
+    db-config:
+      logic-delete-field: del_flag  #全局逻辑删除字段值 3.3.0开始支持，详情看下面。
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+      update-strategy: IGNORED # 所有字段都更新和插入
+
+
+
+# logback配置
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    # 打印sql语句
+    com:
+      example:
+        redisdemo:
+            dao: DEBUG
+
+
+code:
+  logPath: C:\Users\oufuhua\Desktop\redisdemo\logs #日志存放路径
