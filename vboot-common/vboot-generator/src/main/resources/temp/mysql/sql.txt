@@ -4,8 +4,12 @@
 
 CREATE TABLE `#{code["tableName"]}`  (
   `id` bigint(20) NOT NULL COMMENT '代码主键',
-<% for(item in codeDetailList){%>
+<% for(item in codeDetailList){ %>
+   <% if(item.required==1){ %>
   `#{stringTool.humpToLine(item.name)}` #{item.nameType}  NOT NULL COMMENT '#{item.description}',
+   <% }else{ %>
+  `#{stringTool.humpToLine(item.name)}` #{item.nameType}  COMMENT '#{item.description}',
+   <% } %>
 <% } %>
   `create_time` datetime(0)  DEFAULT NULL COMMENT '创建时间',
   `create_by` varchar(255)   DEFAULT NULL COMMENT '创建用户名',
