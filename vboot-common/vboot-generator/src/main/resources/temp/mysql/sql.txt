@@ -1,9 +1,9 @@
 
-# UNIQUE INDEX  XXX(XXX) 唯一索引写法
-# INDEX XXX(XXX) 加索引写法
+
+# 主键索引名为 pk_字段名;唯一索引名为 uk_字段名;普通索引名则为 idx_字段名
 
 CREATE TABLE `#{code["tableName"]}`  (
-  `id` bigint(20) NOT NULL COMMENT '代码主键',
+  `id` bigint(20) unsigned  NOT NULL COMMENT '序号',
 <% for(item in codeDetailList){ %>
    <% if(item.required==1){ %>
   `#{stringTool.humpToLine(item.name)}` #{item.nameType}  NOT NULL COMMENT '#{item.description}',
@@ -11,10 +11,10 @@ CREATE TABLE `#{code["tableName"]}`  (
   `#{stringTool.humpToLine(item.name)}` #{item.nameType}  COMMENT '#{item.description}',
    <% } %>
 <% } %>
-  `create_time` datetime(0)  DEFAULT NULL COMMENT '创建时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `create_by` varchar(255)   DEFAULT NULL COMMENT '创建用户名',
-  `update_time` datetime(0)  DEFAULT NULL COMMENT '更新时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  DEFAULT NULL COMMENT '更新时间',
   `update_by` varchar(255)   DEFAULT NULL COMMENT '更新用户名',
-  `del_flag` tinyint(1)  DEFAULT 0 COMMENT '删除标记 0是未删除，1是已删除',
+  `del_flag` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '删除标记 0是未删除，1是已删除',
   PRIMARY KEY (`id`),
 ) COMMENT = '#{code["description"]}';
