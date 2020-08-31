@@ -1,0 +1,547 @@
+<template>
+  <page-header-wrapper>
+    <a-card :bordered="false">
+      <div class="table-page-search-wrapper">
+        <!-- 查询 -->
+        <a-form-model :model="searchForm" layout="inline" ref="searchForm">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <%
+                  for(item in codeDetailList){
+             %>
+               <% if(item.search!=null) {%>
+                 <a-form-model-item label="#{item.chinaName}" prop="#{item.name}">
+                    <% if(item.formType==formEnum.INPUT){%>
+                       <a-input v-model="searchForm.#{item.name}" allowClear placeholder="#{item.chinaName}" />
+                    <% } else if(item.formType==formEnum.DATE){ %>
+                         <a-date-picker v-model:value="searchForm.#{item.name}"  />
+                     <% } else { %>
+                     <a-select v-model="searchForm.#{item.name}" allowClear show-search>
+                       <a-select-option value="jack" >
+                         Jack
+                       </a-select-option>
+                        <a-select-option value="lucy">
+                               Lucy
+                         </a-select-option>
+                     </a-select>
+                    <% } %>
+                </a-form-model-item>
+               <% }%>
+           <% }%>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-model-item label="时间">
+                <a-range-picker style="width: 100%;" valueFormat="YYYY-MM-DD" v-model="searchForm.date" allowClear />
+              </a-form-model-item>
+            </a-col>
+            <template v-if="advanced">
+
+            </template>
+            <a-col :md="!advanced && 8 || 24" :sm="24">
+              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
+                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button style="margin-left: 8px" @click="handleResetFrom">重置</a-button>
+                <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? '收起' : '展开' }}
+                  <a-icon :type="advanced ? 'up' : 'down'"/>
+                </a> -->
+              </span>
+            </a-col>
+          </a-row>
+        </a-form-model>
+      </div>
+
+      <!-- 新增按钮 -->
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="openModal(CommonEnum.ADD.id)">新建</a-button>
+      </div>
+
+      <!-- 表格组件 -->
+      <STable
+        ref="table"
+        size="default"
+        :rowKey="(record) => record.id"
+        :loading="loading"
+        :columns="columns"
+        :data="loadData"
+        showPagination="auto"
+        :scroll="{ x:1300,y:800 }"
+      >
+        <span slot="serial" slot-scope="text, record, index">
+          {{ index + 1 }}
+        </span>
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <a @click="handleEdit(record)">修改</a>
+            <a-divider type="vertical" />
+            <a @click="handleDelete(record)">删除</a>
+            <a-divider type="vertical" />
+            <a @click="lookModal(record)">查看</a>
+          </template>
+        </span>
+      </STable>
+
+      <!-- 新增修改弹出框 -->
+      <a-drawer
+        :keyboard="false"
+        :maskClosable="false"
+        :title="dialogTitle"
+        :width="720"
+        :visible="visible"
+        :body-style="{ paddingBottom: '80px' }"
+        @close="handleCancel"
+      >
+        <a-form-model
+          ref="ruleForm"
+          :model="form"
+          :rules="rules"
+          layout="vertical"
+        >
+          <a-row :gutter="5">
+           <el-form-item v-show="false" prop="id" label="id" />
+            <%
+                 for(item in codeDetailList){
+            %>
+                  <%
+                    if(item.formType==formEnum.INPUT){
+                  %>
+                    <a-col :span="12">
+                      <a-form-model-item label="#{item.chinaName}" prop="#{item.name}">
+                        <a-input v-model="form.#{item.name}" placeholder="请输入#{item.chinaName}"/>
+                      </a-form-model-item>
+                    </a-col>
+                  <% }else if(item.formType==formEnum.TEXTAREA){ %>
+                     <a-col :span="12">
+                      <a-form-model-item label="#{item.chinaName}" prop="#{item.name}">
+                           <a-input v-model="form.#{item.name}" placeholder="请输入#{item.chinaName}" type="textarea" />
+                      </a-form-model-item>
+                     </el-col>
+                  <% }else if(item.formType==formEnum.SELECT){ %>
+                     <a-col :span="12">
+                       <a-form-model-item label="#{item.chinaName}" prop="#{item.name}">
+                         <a-select v-model="form.#{item.name}" allowClear show-search placeholder="请选择#{item.chinaName}">
+                           <a-select-option value="jack" >
+                             Jack
+                           </a-select-option>
+                         </a-select>
+                       </a-form-model-item>
+                     </a-col>
+                  <% }  else if(item.formType==formEnum.DATE) { %>
+                    <a-col :span="12">
+                       <a-form-model-item label="#{item.chinaName}" prop="#{item.name}">
+                          <a-date-picker
+                                 v-model="form.#{item.name}"
+                                 show-time
+                                 type="date"
+                                 placeholder="placeholder="请选择#{item.chinaName}"
+                                 style="width: 100%;"
+                           />
+                       </a-form-model-item>
+                     </a-col>
+                  <% }  else if(item.formType==formEnum.RADIO){ %>
+                        <a-col :span="12">
+                            <a-form-model-item label="#{item.chinaName}" prop="#{item.name}">
+
+                             <a-radio-group v-model="form.#{item.name}">
+                                     <a-radio value="1">
+                                       Sponsor
+                                     </a-radio>
+                                     <a-radio value="2">
+                                       Venue
+                                     </a-radio>
+                                   </a-radio-group>
+                        </a-form-model-item>
+                  <% }  else if(item.formType==formEnum.CHECKBOX) { %>
+                      <a-col :span="12">
+                            <a-form-model-item label="#{item.chinaName}" prop="#{item.name}">
+                               <a-checkbox-group v-model="form.#{item.name}">
+                                   <a-checkbox value="1" name="type">
+                                     Online
+                                   </a-checkbox>
+                                   <a-checkbox value="2" name="type">
+                                     Promotion
+                                   </a-checkbox>
+                                   <a-checkbox value="3" name="type">
+                                     Offline
+                                    </a-checkbox>
+                             </a-checkbox-group>
+                        </a-form-model-item>
+                  <% } else if(item.formType==formEnum.INPUTNUMBER){ %>
+                     <el-col :span="12">
+                         <a-form-item label="#{item.chinaName}" prop="#{item.name}">
+                              <a-input-number style="width:100%" v-model="form.#{item.name}"  :step="0.1" :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
+                         </a-form-item>
+                     </el-col>
+
+                  <% } %>
+
+            <% } %>
+
+            <a-col :span="24">
+              <a-form-model-item label="上传图片">
+                <a-upload
+                  ref="imgListUpload"
+                  multiple
+                  list-type="picture-card"
+                  class="avatar-uploader"
+                  :accept="acceptUploadImg"
+                  :headers="uploadHeaders"
+                  :action="uploadUrl"
+                  :before-upload="beforeUpload"
+                  @preview="handlePreview"
+                  @change="handleChangeImg"
+                  :file-list="imgList"
+                  :remove="beforeRemove"
+                >
+                  <div v-if="imgList.length < 5">
+                    <a-icon type="plus" />
+                  </div>
+                </a-upload>
+                <a-modal :visible="previewVisible" :footer="null" @cancel="previewVisible=false">
+                  <img alt="example" style="width: 100%" :src="previewImage" />
+                </a-modal>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="24">
+              <a-form-model-item label="上传附件">
+                <a-upload
+                  ref="fileListUpload"
+                  class="upload-demo"
+                  multiple
+                  :action="uploadUrl"
+                  :headers="uploadHeaders"
+                  :accept="acceptUploadFile"
+                  :before-remove="beforeRemove"
+                  :before-upload="beforeUpload"
+                  @change="handleChangeFile"
+                  @preview="handlePreviewFile"
+                  :file-list="fileList"
+                  :remove="beforeRemove"
+                >
+                  <a-button> <a-icon type="upload" /> 上传附件 </a-button>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </a-form-model>
+        <div class="form-button-style">
+          <a-popconfirm
+            title="确定放弃编辑？"
+            ok-text="确定"
+            cancel-text="取消"
+            @confirm="handleCancel"
+          >
+            <a-button class="form-cancel">
+              取 消
+            </a-button>
+          </a-popconfirm>
+          <a-popconfirm
+            title="是否提交数据？"
+            ok-text="确定"
+            cancel-text="取消"
+            @confirm="handleConfirm"
+          >
+            <a-button type="primary">
+              确 认
+            </a-button>
+          </a-popconfirm>
+        </div>
+      </a-drawer>
+
+
+
+      <!-- 查看数据 -->
+      <a-drawer
+        :keyboard="false"
+        :maskClosable="false"
+        :width="810"
+        :visible="visibleLook"
+        :body-style="{ paddingBottom: '80px' }"
+        @close="handleCancelLook"
+      >
+        <a-descriptions title="查看详情" bordered>
+
+        <%
+            for(item in codeDetailList){
+        %>
+
+            <a-descriptions-item label="#{item.chinaName}" :span="1.5">
+                 {{ form.#{item.name} }}
+              </a-descriptions-item>
+        <% } %>
+
+
+
+          <a-descriptions-item label="创建时间" :span="1.5">
+            {{ form.createTime }}
+          </a-descriptions-item>
+          <a-descriptions-item label="更新时间" :span="1.5">
+            {{ form.lastUpdateTime }}
+          </a-descriptions-item>
+          <a-descriptions-item label="图片" :span="3">
+            <a-upload
+              list-type="picture-card"
+              class="avatar-uploader-look"
+              @preview="handlePreview"
+              :file-list="imgList"
+            />
+            <a-modal :visible="previewVisible" :footer="null" @cancel="previewVisible=false">
+              <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
+          </a-descriptions-item>
+          <a-descriptions-item label="附件" :span="3">
+            <div v-for="(item,index) in fileList" :key="index" style="margin-bottom:8px">
+              <a @click="handleDownFile(item.url)" >
+                <span>{{ item.name }}</span>
+              </a>
+            </div>
+          </a-descriptions-item>
+        </a-descriptions>
+        <div class="form-button-style">
+          <a-button class="form-cancel" @click="visibleLook=false">
+            取 消
+          </a-button>
+        </div>
+      </a-drawer>
+    </a-card>
+  </page-header-wrapper>
+</template>
+
+<script>
+import { STable } from '@/components/index.js'
+import CommonEnum from '@/utils/enum/CommonEnum'
+import uploadMixin from '@/mixins/uploadMixin'
+import * as apiController from '@/api/#{name}'
+const columns = [
+  {
+    title: '序号',
+    scopedSlots: { customRender: 'serial' },
+    width: 80
+  },
+
+<%
+    for(item in codeDetailList){
+%>
+    {
+        title: '#{item.chinaName}',
+        dataIndex: '#{item.name}',
+        width: 150
+    },
+<% } %>
+  {
+    title: '创建时间',
+    dataIndex: 'createTime',
+    sorter: true,
+    width: 150
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'lastUpdateTime',
+    sorter: true,
+    width: 150
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    width: '150px',
+    fixed: 'right',
+    scopedSlots: { customRender: 'action' }
+  }
+]
+
+export default {
+  name: '#{Name}',
+  components: {
+    STable
+  },
+  mixins: [uploadMixin],
+  data() {
+    return {
+      columns,
+      visible: false, // 新增修改弹框
+      visibleLook: false, // 查看详情弹框
+      loading: false, // 加载数据
+      // 查询参数
+      searchForm: {
+    <%
+       for(item in codeDetailList){
+    %>
+      <% if(item.search != null) {%>
+       #{item.name}:'',
+       <% }%>
+    <% } %>
+
+        date: [],
+        startTime: '',
+        endTime: ''
+
+      },
+      // 新增修改表单
+      form: {
+      <%
+      for(item in codeDetailList){
+      %>
+        <% if(item.formType == formEnum.CHECKBOX){ %>
+            #{item.name}:[],
+        <% } else {%>
+           #{item.name}:'',
+        <% } %>
+      <% } %>
+        img: '',
+        imageUrl: ''
+      },
+      // 高级搜索 展开/关闭
+      advanced: false,
+      // 加载数据方法 必须为 Promise 对象
+      loadData: parameter => {
+        const params = Object.assign(parameter)
+        this.searchForm.startTime = this.searchForm.date[0]
+        this.searchForm.endTime = this.searchForm.date[1]
+        params.filters = this.searchForm
+        return apiController.get#{Name}ByPageApi(params).then(res => {
+          return res.data
+        })
+      },
+
+      dialogType: CommonEnum.ADD.id,
+      dialogTitle: CommonEnum.ADD.value,
+      CommonEnum: CommonEnum
+      // 数据校验
+      rules: {
+    <%
+    for(item in codeDetailList){
+       if(item.required==1){
+    %>
+     #{item.name}: [
+        <%
+          if(item.formType==formEnum.SELECT || item.formType==formEnum.DATE){
+
+        %>
+            { required: true, message: '请选择#{item.chinaName}', trigger: 'change' },
+        <% }else{ %>
+        { required: true, message: '这是必填项', trigger: 'blur' },
+        <% } %>
+     ],
+    <% } %>
+    <% } %>
+    },
+  },
+    methods: {
+      // 新增弹框
+      openModal(type) {
+        this.dialogType = type
+        this.dialogTitle = type === CommonEnum.ADD.id ? CommonEnum.ADD.value : CommonEnum.UPDATE.value
+        this.visible = true
+      },
+      // 修改弹框
+      handleEdit(record) {
+        this.openModal(CommonEnum.UPDATE.id)
+        apiController.get#{Name}ById(record.id).then(res => {
+          if (res.code === this.$code) {
+            this.form = res.data
+            this.imgList = this.getElUploadFileData(this.form.imgUrl)
+            this.fileList = this.getElUploadFileData(this.form.attachmentUrl)
+          }
+        })
+      },
+      // 添加
+      addForm() {
+        this.loading = true
+        delete this.form.planStatus
+        apiController.#{name}SaveBaseApi(this.form).then(res => {
+          if (res.code === this.$code) {
+            this.$refs.table.refresh(true)
+            this.$message.success('添加成功')
+            this.handleCancel() // 清空表单
+          }
+        }).finally(() => {
+          this.loading = false
+        })
+      },
+      // 修改
+      updateForm() {
+        this.loading = true
+        apiController.#{name}UpdateBaseApi(this.form).then(res => {
+          if (res.code === this.$code) {
+            this.$refs.table.refresh(true)
+            this.$message.success('修改成功')
+            this.handleCancel() // 清空表单
+          }
+        }).finally(() => {
+          this.loading = false
+        })
+      },
+      // 查看
+      lookModal(record) {
+        this.loading = true
+        this.visibleLook = true
+        apiController.get#{Name}ById(record.id).then(res => {
+          if (res.code === this.$code) {
+            this.form = res.data
+            this.imgList = this.getElUploadFileData(this.form.imgUrl)
+            this.fileList = this.getElUploadFileData(this.form.attachmentUrl)
+          }
+        })
+      },
+      // 提交确认
+      handleConfirm() {
+        this.$refs.ruleForm.validate(valid => {
+          if (valid) {
+            this.form.imgUrl = this.handleChangeFileData('imgListUpload')
+            this.form.attachmentUrl = this.handleChangeFileData('fileListUpload')
+            if (this.dialogType === CommonEnum.ADD.id) {
+              this.addForm()
+            } else {
+              this.updateForm()
+            }
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      // 新增修改关闭清空
+      handleCancel() {
+        this.visible = false
+        this.imgList = []
+        this.fileList = []
+        this.$refs.ruleForm.resetFields()
+      },
+      // 关闭查看详情清空
+      handleCancelLook() {
+        this.visibleLook = false
+        this.form = {}
+      },
+      // 查询参数重置
+      handleResetFrom() {
+        this.$refs.searchForm.resetFields()
+        this.searchForm.date = []
+        this.searchForm.startTime = ''
+        this.searchForm.endTime = ''
+        this.$refs.table.refresh(true)
+      },
+      // 删除数据
+      handleDelete(record) {
+        this.$confirm({
+          title: '删除操作',
+          content: '此操作将永久删除该数据, 是否继续?',
+          okText: '确定',
+          okType: 'danger',
+          cancelText: '取消',
+          onOk:()=>{
+            apiController.#{name}DelByIdsApi({ id: record.id }).then(res => {
+              if (res.code === this.$code) {
+                this.$refs.table.refresh()
+                this.$message.success('删除成功！')
+              }
+            })
+          }
+        })
+      },
+      // 展开查询框
+      toggleAdvanced() {
+        this.advanced = !this.advanced
+      }
+    }
+}
+</script>

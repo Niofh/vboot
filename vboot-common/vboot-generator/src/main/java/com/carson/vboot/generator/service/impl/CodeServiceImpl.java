@@ -180,6 +180,9 @@ public class CodeServiceImpl implements CodeService {
         String tableJZZ = this.commonFile(gt, FROM + "/vue/tableJZZ.txt", TARGET + "/vue/guyuanJZZ" + name + ".vue", createFile);
         String apiJZZ = this.commonFile(gt, FROM + "/vue/apiJZZ.txt", TARGET + "/vue/guyuanJZZ" + name + ".js", createFile);
 
+        // antd
+
+        String tableAntd = this.commonFile(gt, FROM + "/vue/antd.txt", TARGET + "/vue/antd" + name + ".vue", createFile);
 
         // mysql生成
         String mysql = this.commonFile(gt, FROM + "/mysql/sql.txt", TARGET + "/mysql/" + code.getTableName() + ".sql", createFile);
@@ -219,6 +222,7 @@ public class CodeServiceImpl implements CodeService {
         result.put("tableGuYuan", tableGuYuan);
         result.put("tableJZZ", tableJZZ);
         result.put("apiJZZ", apiJZZ);
+        result.put("tableAntd", tableAntd);
         return result;
     }
 

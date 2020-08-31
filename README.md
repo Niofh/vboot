@@ -17,6 +17,9 @@
 [mybatisPlus自定义sql和xml](https://blog.csdn.net/weixin_42657363/article/details/106842082)
 
 
+### 文档
+http://localhost:8081/doc.html
+
 feat：新增功能；
 fix：修复bug；
 docs：修改文档；
