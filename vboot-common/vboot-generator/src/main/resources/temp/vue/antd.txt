@@ -405,7 +405,7 @@ export default {
 
       dialogType: CommonEnum.ADD.id,
       dialogTitle: CommonEnum.ADD.value,
-      CommonEnum: CommonEnum
+      CommonEnum: CommonEnum,
       // 数据校验
       rules: {
     <%
@@ -425,6 +425,7 @@ export default {
     <% } %>
     <% } %>
     },
+    }
   },
     methods: {
       // 新增弹框
