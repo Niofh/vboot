@@ -98,7 +98,7 @@
           layout="vertical"
         >
           <a-row :gutter="5">
-           <el-form-item v-show="false" prop="id" label="id" />
+           <a-form-model-item v-show="false" prop="id" label="id" />
             <%
                  for(item in codeDetailList){
             %>
