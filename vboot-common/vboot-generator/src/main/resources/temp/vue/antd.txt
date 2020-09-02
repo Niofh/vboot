@@ -298,7 +298,7 @@
           </a-descriptions-item>
         </a-descriptions>
         <div class="form-button-style">
-          <a-button class="form-cancel" @click="visibleLook=false">
+          <a-button class="form-cancel" @click="handleCancelLook">
             取 消
           </a-button>
         </div>
