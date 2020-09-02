@@ -266,7 +266,7 @@
         %>
 
             <a-descriptions-item label="#{item.chinaName}" :span="1.5">
-                 {{ form.#{item.name} }}
+                 {{ formLook.#{item.name} }}
               </a-descriptions-item>
         <% } %>
 
@@ -382,13 +382,11 @@ export default {
       for(item in codeDetailList){
       %>
         <% if(item.formType == formEnum.CHECKBOX){ %>
-            #{item.name}:[],
+            #{item.name}:[],  // #{item.chinaName}
         <% } else {%>
-           #{item.name}:'',
+           #{item.name}:'', // #{item.chinaName}
         <% } %>
       <% } %>
-        img: '',
-        imageUrl: ''
       },
       // 高级搜索 展开/关闭
       advanced: false,
@@ -402,6 +400,8 @@ export default {
           return res.data
         })
       },
+      // 查看表单数据
+      formLook: {},
 
       dialogType: CommonEnum.ADD.id,
       dialogTitle: CommonEnum.ADD.value,
@@ -478,9 +478,9 @@ export default {
         this.visibleLook = true
         apiController.get#{Name}ById(record.id).then(res => {
           if (res.code === this.$code) {
-            this.form = res.data
-            this.imgList = this.getElUploadFileData(this.form.imgUrl)
-            this.fileList = this.getElUploadFileData(this.form.attachmentUrl)
+            this.formLook = res.data
+            this.imgList = this.getElUploadFileData(this.formLook.imgUrl)
+            this.fileList = this.getElUploadFileData(this.formLook.attachmentUrl)
           }
         })
       },
@@ -511,7 +511,9 @@ export default {
       // 关闭查看详情清空
       handleCancelLook() {
         this.visibleLook = false
-        this.form = {}
+        this.imgList = []
+        this.fileList = []
+        this.formLook = {}
       },
       // 查询参数重置
       handleResetFrom() {
