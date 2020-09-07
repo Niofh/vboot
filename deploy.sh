@@ -26,6 +26,11 @@ echo "==================构建docker镜像======================"
 docker build -t vboot:1.0.0 .
 
 
+# "==================设置中国时间======================"
+RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo "Asia/Shanghai" > /etc/timezone
+
+
 echo "================暂停止5s，因为要打包========================="
 for i in {1..5}
 do

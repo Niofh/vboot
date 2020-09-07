@@ -1,8 +1,7 @@
 <!--
  * @description: #{description}页面
- * @Author: #{userName}
- * @Date: #{dateTime}
- * @copyright: GuYuan All Rights Reserved
+ * @author: #{userName}
+ * @since: #{dateTime}
  * @company: 固远（深圳）信息技术有限公司
 -->
 <template>
@@ -320,7 +319,7 @@
 import { STable } from '@/components/index.js'
 import CommonEnum from '@/utils/enum/CommonEnum'
 import uploadMixin from '@/mixins/uploadMixin'
-import * as apiController from '@/api/#{name}'
+import * as apiController from '@/api/#{name}/#{name}'
 const columns = [
   {
     title: '序号',
