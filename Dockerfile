@@ -5,7 +5,11 @@ FROM java:8
 MAINTAINER OUFUHUA
 
 
-#
+# "==================设置中国时间======================"
+RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo "Asia/Shanghai" > /etc/timezone
+
+
 # # 解压和复制
 ADD ./vboot-admin/target/vboot-admin-1.0.0-SNAPSHOT.jar  /vboot-admin-1.0.0-SNAPSHOT.jar
 #
