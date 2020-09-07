@@ -1,3 +1,10 @@
+<!--
+ * @description: #{description}页面
+ * @Author: #{userName}
+ * @Date: #{dateTime}
+ * @copyright: GuYuan All Rights Reserved
+ * @company: 固远（深圳）信息技术有限公司
+-->
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
@@ -60,11 +67,13 @@
       <STable
         ref="table"
         size="default"
-        :rowKey="(record) => record.id"
+        :row-key="(record) => record.id"
         :loading="loading"
         :columns="columns"
         :data="loadData"
-        showPagination="auto"
+        :alert="options.alert"
+        :row-selection="options.rowSelection"
+        show-pagination="auto"
         :scroll="{ x:1300,y:800 }"
       >
         <span slot="serial" slot-scope="text, record, index">
@@ -367,7 +376,7 @@ export default {
        for(item in codeDetailList){
     %>
       <% if(item.search != null) {%>
-       #{item.name}:'',
+       #{item.name}:'',   // #{item.chinaName}
        <% }%>
     <% } %>
 
@@ -388,6 +397,17 @@ export default {
         <% } %>
       <% } %>
       },
+        // 展示选择表格多少行
+        options: {
+          alert: { show: false, clear: () => { this.selectedRowKeys = [] } },
+          rowSelection: {
+            selectedRowKeys: this.selectedRowKeys,
+            onChange: this.onSelectChange
+          }
+        },
+        selectedRowKeys: [],
+        selectedRows: [],
+        optionAlertShow: false,
       // 高级搜索 展开/关闭
       advanced: false,
       // 加载数据方法 必须为 Promise 对象
@@ -428,13 +448,23 @@ export default {
     }
   },
     methods: {
-      // 新增弹框
+      /**
+        * @description: 打开新增弹窗
+        * @author: #{userName}
+        * @param  {CommonEnum} type   CommonEnum.ADD.id/CommonEnum.UPDATE.id
+        * @return
+      */
       openModal(type) {
         this.dialogType = type
         this.dialogTitle = type === CommonEnum.ADD.id ? CommonEnum.ADD.value : CommonEnum.UPDATE.value
         this.visible = true
       },
-      // 修改弹框
+    /**
+       * @description: 修改方法
+       * @author: #{userName}
+       * @param {Object} record  表格行的信息
+       * @return
+       */
       handleEdit(record) {
         this.openModal(CommonEnum.UPDATE.id)
         apiController.get#{Name}ById(record.id).then(res => {
@@ -445,7 +475,12 @@ export default {
           }
         })
       },
-      // 添加
+      /**
+         * @description: 新增方法
+         * @author:  #{userName}
+         * @param
+         * @return
+         */
       addForm() {
         this.loading = true
         delete this.form.planStatus
@@ -459,7 +494,12 @@ export default {
           this.loading = false
         })
       },
-      // 修改
+      /**
+         * @description: 修改接口
+         * @author: #{userName}
+         * @param
+         * @return
+         */
       updateForm() {
         this.loading = true
         apiController.#{name}UpdateBaseApi(this.form).then(res => {
@@ -472,7 +512,12 @@ export default {
           this.loading = false
         })
       },
-      // 查看
+      /**
+         * @description:查看仓库信息
+         * @author: #{userName}
+         * @param {Object} record.id 仓库id
+         * @return {Object} object
+         */
       lookModal(record) {
         this.loading = true
         this.visibleLook = true
@@ -484,7 +529,12 @@ export default {
           }
         })
       },
-      // 提交确认
+       /**
+           * @description: 提交信息
+           * @author: #{userName}
+           * @param
+           * @return
+           */
       handleConfirm() {
         this.$refs.ruleForm.validate(valid => {
           if (valid) {
@@ -501,21 +551,36 @@ export default {
           }
         })
       },
-      // 新增修改关闭清空
+      /**
+       * @description: 关闭新增和修改时清空方法
+       * @author: #{userName}
+       * @param
+       * @return
+       */
       handleCancel() {
         this.visible = false
         this.imgList = []
         this.fileList = []
         this.$refs.ruleForm.resetFields()
       },
-      // 关闭查看详情清空
+       /**
+        * @description: 重置表格参数方法
+        * @author: #{userName}
+        * @param
+        * @return
+        */
       handleCancelLook() {
         this.visibleLook = false
         this.imgList = []
         this.fileList = []
         this.formLook = {}
       },
-      // 查询参数重置
+      /**
+       * @description: 重置表格参数方法
+       * @author: #{userName}
+       * @param
+       * @return
+       */
       handleResetFrom() {
         this.$refs.searchForm.resetFields()
         this.searchForm.date = []
@@ -523,7 +588,12 @@ export default {
         this.searchForm.endTime = ''
         this.$refs.table.refresh(true)
       },
-      // 删除数据
+      /**
+       * @description: 删除方法
+       * @author: #{userName}
+       * @param   {Object} record 表格行的信息
+       * @return
+       */
       handleDelete(record) {
         this.$confirm({
           title: '删除操作',
@@ -541,9 +611,25 @@ export default {
           }
         })
       },
-      // 展开查询框
+      /**
+       * @description: 展开查询框方法
+       * @author: #{userName}
+       * @param
+       * @return
+       */
       toggleAdvanced() {
         this.advanced = !this.advanced
+      },
+      /**
+       * @description: 选择表格时候触发方法
+       * @author: #{userName}
+       * @param  {Object} selectedRowKeys  选中行key
+       * @param  {Object} selectedRows     选中行信息
+       * @return
+       */
+      onSelectChange(selectedRowKeys, selectedRows) {
+        this.selectedRowKeys = selectedRowKeys
+        this.selectedRows = selectedRows
       }
     }
 }

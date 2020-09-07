@@ -26,10 +26,14 @@ import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,11 +163,16 @@ public class CodeServiceImpl implements CodeService {
         // 设置共享变量
         Map<String, Object> shared = new HashMap<String, Object>();
         shared.put("name", name);
+        shared.put("description", code.getDescription());
         shared.put("Name", Name);
         shared.put("code", code);
         shared.put("codeDetailList", codeDetailList);
         shared.put("formEnum", FormEnum.getObject());
         shared.put("sqlEnum", SqlEnum.getObject());
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        shared.put("userName", user.getUsername());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        shared.put("dateTime", simpleDateFormat.format(new Date()));
         gt.setSharedVars(shared);
 
         HashMap<String, Object> result = new HashMap<>();
