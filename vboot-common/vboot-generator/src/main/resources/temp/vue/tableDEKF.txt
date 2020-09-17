@@ -421,6 +421,7 @@ export default {
     <% } %>
   <% } %>
       },
+      formLook: {},
       dialogFormVisible: false,
       dialogFormVisibleLook: false,
       formLabelWidth: '120px',
@@ -513,7 +514,12 @@ export default {
     lookModal(tableItem) {
       this.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
-          this.form = res.data
+          this.formLook = res.data
+
+          <% if(isUpload) {%>
+            this.imgList = this.getElUploadFileData(res.data.imgUrl)
+            this.fileList = this.getElUploadFileData(res.data.accessoryId)
+          <% } %>
         }
       })
       this.dialogFormVisibleLook = true
