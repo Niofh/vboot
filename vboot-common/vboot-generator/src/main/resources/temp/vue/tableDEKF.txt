@@ -350,7 +350,9 @@
 <script>
 
 
-#{ isUpload? import uploadMixin from '@/mixins/uploadMixin'}
+<% #{ isUpload? import uploadMixin from '@/mixins/uploadMixin'} %>
+
+
 import tableMixin from '@/mixins/tableMixin'
 import formMixin from '@/mixins/formMixin'
 import {get#{Name}ById, #{name}DelByIdsApi, #{name}SaveBaseApi, #{name}UpdateBaseApi, get#{Name}ByPageApi } from '@/api/#{name}'
@@ -358,7 +360,7 @@ import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
 export default {
   name: '#{Name}',
-  mixins: [tableMixin, formMixin, #{ isUpload? uploadMixin }],
+  mixins: [tableMixin, formMixin, <% #{ isUpload? uploadMixin } %>],
   data() {
     return {
       searchForm: {
