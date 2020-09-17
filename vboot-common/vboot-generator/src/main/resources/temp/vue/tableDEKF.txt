@@ -290,54 +290,54 @@
 
         <%
             if(isUpload){
+        %>
+               <el-col :span="24">
+                  <el-divider />
+                </el-col>
 
-                   <el-col :span="24">
-                      <el-divider />
-                    </el-col>
-
-                    <el-col :span="24">
-                      <el-form-item label="图片：" prop="imgUrl">
-                        <el-upload
-                          multiple
-                          list-type="picture-card"
-                          class="avatar-uploader-look"
-                          :action="uploadUrl"
-                          :accept="acceptUploadImg"
-                          :headers="uploadHeaders"
-                          :on-error="handleUploadError"
-                          :before-upload="beforeUpload"
-                          :on-preview="handlePreviewFile"
-                          :file-list="imgList"
-                          :limit="5"
-                          :on-exceed="handleExceed"
-                        >
-                          <i class="el-icon-plus" />
-                        </el-upload>
-                      </el-form-item>
-                    </el-col>
+                <el-col :span="24">
+                  <el-form-item label="图片：" prop="imgUrl">
+                    <el-upload
+                      multiple
+                      list-type="picture-card"
+                      class="avatar-uploader-look"
+                      :action="uploadUrl"
+                      :accept="acceptUploadImg"
+                      :headers="uploadHeaders"
+                      :on-error="handleUploadError"
+                      :before-upload="beforeUpload"
+                      :on-preview="handlePreviewFile"
+                      :file-list="imgList"
+                      :limit="5"
+                      :on-exceed="handleExceed"
+                    >
+                      <i class="el-icon-plus" />
+                    </el-upload>
+                  </el-form-item>
+                </el-col>
 
 
-                    <el-col :span="24">
-                      <el-form-item label="附件：" prop="accessoryId">
-                        <el-upload
-                          class="upload-demo"
-                          multiple
-                          :action="uploadUrl"
-                          :headers="uploadHeaders"
-                          :accept="acceptUploadFile"
-                          :before-remove="beforeRemove"
-                          :before-upload="beforeUpload"
-                          :on-error="handleUploadError"
-                          :file-list="fileList"
-                          :on-preview="handlePreviewFile"
-                          :on-remove="handleRemoveFile"
-                          :limit="5"
-                          :on-exceed="handleExceed"
-                        />
-                      </el-form-item>
-                    </el-col>
+                <el-col :span="24">
+                  <el-form-item label="附件：" prop="accessoryId">
+                    <el-upload
+                      class="upload-demo"
+                      multiple
+                      :action="uploadUrl"
+                      :headers="uploadHeaders"
+                      :accept="acceptUploadFile"
+                      :before-remove="beforeRemove"
+                      :before-upload="beforeUpload"
+                      :on-error="handleUploadError"
+                      :file-list="fileList"
+                      :on-preview="handlePreviewFile"
+                      :on-remove="handleRemoveFile"
+                      :limit="5"
+                      :on-exceed="handleExceed"
+                    />
+                  </el-form-item>
+                </el-col>
 
-              }%>
+             <% } %>
 
 
                 </el-row>
