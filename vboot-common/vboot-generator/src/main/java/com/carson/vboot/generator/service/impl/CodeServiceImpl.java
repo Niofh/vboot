@@ -93,6 +93,8 @@ public class CodeServiceImpl implements CodeService {
             throw new VbootException(ExceptionEnums.CODE_DETAIL_NO_EXIST);
         }
 
+
+
         HashMap<String, Object> stringObjectHashMap = renderFiled(code, codeDetailList, true);
         log.info("【文件地址】：{}", (String) stringObjectHashMap.get("path"));
         return (String) stringObjectHashMap.get("path");
@@ -151,6 +153,7 @@ public class CodeServiceImpl implements CodeService {
         }
 
         GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
+        boolean isUpload = false;  // 是否有上传
 
         // 如果name是下划线的，转换为驼峰
         for (CodeDetail codeDetail : codeDetailList) {
@@ -158,7 +161,11 @@ public class CodeServiceImpl implements CodeService {
             if (StrUtil.indexOf(codeDetailName, '_') > -1) {
                 codeDetail.setName(stringTool.lineToHump(codeDetailName));
             }
+            if (codeDetail.getFormType().equals(FormEnum.UPLOAD.getId())) {
+                isUpload = true;
+            }
         }
+
 
         // 设置共享变量
         Map<String, Object> shared = new HashMap<String, Object>();
@@ -169,6 +176,8 @@ public class CodeServiceImpl implements CodeService {
         shared.put("codeDetailList", codeDetailList);
         shared.put("formEnum", FormEnum.getObject());
         shared.put("sqlEnum", SqlEnum.getObject());
+        shared.put("isUpload",isUpload);
+
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         shared.put("userName", user.getUsername());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -188,6 +197,9 @@ public class CodeServiceImpl implements CodeService {
         String tableGuYuan = this.commonFile(gt, FROM + "/vue/tableGuYuan.txt", TARGET + "/vue/guyuan" + name + ".vue", createFile);
         String tableJZZ = this.commonFile(gt, FROM + "/vue/tableJZZ.txt", TARGET + "/vue/guyuanJZZ" + name + ".vue", createFile);
         String apiJZZ = this.commonFile(gt, FROM + "/vue/apiJZZ.txt", TARGET + "/vue/guyuanJZZ" + name + ".js", createFile);
+
+        // 迪尔空分
+        String tableDEKF = this.commonFile(gt, FROM + "/vue/tableDEKF.txt", TARGET + "/vue/tableDEKF" + name + ".vue", createFile);
 
         // antd
 
@@ -232,6 +244,7 @@ public class CodeServiceImpl implements CodeService {
         result.put("tableJZZ", tableJZZ);
         result.put("apiJZZ", apiJZZ);
         result.put("tableAntd", tableAntd);
+        result.put("tableDEKF", tableDEKF);
         return result;
     }
 

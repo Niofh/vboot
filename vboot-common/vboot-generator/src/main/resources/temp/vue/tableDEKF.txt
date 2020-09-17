@@ -1,0 +1,589 @@
+<!--
+ * @description: #{description}页面
+ * @author: #{userName}
+ * @since: #{dateTime}
+ * @company: 固远（深圳）信息技术有限公司
+-->
+<template>
+  <div class="app-container">
+    <el-form ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" size="small">
+    <%
+     for(item in codeDetailList){
+    %>
+      <% if(item.search!=null) {%>
+        <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+           <% if(item.formType==formEnum.INPUT){%>
+              <el-input v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}" />
+           <% } else if(item.formType==formEnum.DATE){ %>
+                <el-date-picker
+                     v-model="searchForm.#{item.name}"
+                     type="date"
+                     placeholder="选择#{item.chinaName}">
+               </el-date-picker>
+            <% } else { %>
+               <el-select v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
+                     <% if(item.dictKey!='') {%>
+                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                    <% }%>
+               </el-select>
+           <% } %>
+       </el-form-item>
+      <% }%>
+    <% } %>
+      <el-form-item label="创建时间" prop="date">
+        <el-date-picker
+          v-model="searchForm.date"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button icon="el-icon-search" type="primary" @click="handleSearch">查询</el-button>
+        <el-button icon="el-icon-refresh-right" type="success" @click="handleResetFrom">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <div class="btns-wrap">
+      <el-button type="primary" size="small" icon="el-icon-plus" @click="openModal(CommonEnum.ADD.id)">新增</el-button>
+      <el-button
+        :disabled="multipleSelection.length===0"
+        type="danger"
+        size="small"
+        icon="el-icon-delete"
+        @click="del#{Name}ByIds"
+      >删除
+      </el-button>
+      <el-button class="btn-default" size="small" icon="el-icon-refresh-left" @click="handleRefresh">刷新</el-button>
+      <el-popover
+        placement="right"
+        trigger="click"
+      >
+        <!--排版-->
+        <el-checkbox-group v-model="checkFieldList">
+        <%
+          for(item in codeDetailList){
+        %>
+          <p>
+             <el-checkbox label="#{item.name}" checked>#{item.chinaName}</el-checkbox>
+          </p>
+        <% } %>
+          <p>
+            <el-checkbox label="createTime" checked >创建时间</el-checkbox>
+          </p>
+          <p> <el-checkbox label="createBy" checked >创建人</el-checkbox></p>
+          <p> <el-checkbox label="updateBy" checked >更新人</el-checkbox></p>
+          <p> <el-checkbox label="updateTime" checked >更新时间</el-checkbox></p>
+        </el-checkbox-group>
+        <el-button slot="reference" class="btn-default" size="small" icon="el-icon-edit">排版</el-button>
+      </el-popover>
+
+    </div>
+
+    <el-table
+      ref="table"
+      v-loading="dataListLoading"
+      :data="dataList"
+      max-height="650"
+      stripe
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+      @sort-change="handleSortChange"
+    >
+      <el-table-column
+        type="selection"
+        width="55"
+      />
+  <%
+     for(item in codeDetailList){
+  %>
+    <%
+      if(item.dictKey!=''){
+    %>
+    <el-table-column
+       v-if="showField('#{item.name}')"
+       prop="#{item.name}"
+       label="#{item.chinaName}"
+       width="150"
+    >
+      <template slot-scope="scope">
+        {{ scope.row.#{item.name} | dictFilter(#{item.dictKey}DictList) }}
+      </template>
+    </el-table-column>
+    <% }else { %>
+      <el-table-column
+        v-if="showField('#{item.name}')"
+        prop="#{item.name}"
+        label="#{item.chinaName}"
+        width="150"
+      />
+    <% } %>
+   <% } %>
+      <el-table-column
+        v-if="showField('createTime')"
+        prop="createTime"
+        label="创建时间"
+        sortable="custom"
+        width="180"
+      />
+      <el-table-column
+        v-if="showField('createBy')"
+          prop="createBy"
+          label="创建人"
+          sortable="custom"
+          width="150"
+        />
+        <el-table-column
+          v-if="showField('updateBy')"
+          prop="updateBy"
+          label="更新人"
+          sortable="custom"
+          width="150"
+        />
+         <el-table-column
+         v-if="showField('updateTime')"
+          prop="updateTime"
+          label="更新时间"
+          sortable="custom"
+          width="180"
+        />
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="openEditModal(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="del#{Name}ByIds(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="lookModal(scope.row)">查看</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <div class="pagination-warp">
+      <el-pagination
+        background
+        layout="total ,sizes, prev, pager, next, jumper"
+        :current-page="page.pageNum"
+        :page-size="page.pageSize"
+        :total="page.total"
+        :page-sizes="pageSizeList"
+        style="float:right;"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+      />
+    </div>
+
+    <!-- 新增修改弹出框 -->
+    <el-dialog
+      :modal-append-to-body="false"
+      width="700px"
+      top="5vh"
+      :close-on-click-modal="false"
+      :title="dialogTitle+'#{code.description}'"
+      :visible.sync="dialogFormVisible"
+      @closed="resetForm('ruleForm')"
+    >
+
+      <el-form ref="ruleForm" :model="form" :rules="rules" :label-width="formLabelWidth" size="small">
+
+        <el-row :gutter="5">
+            <el-form-item v-show="false" prop="id" label="id" />
+         <%
+              for(item in codeDetailList){
+         %>
+               <%
+                 if(item.formType==formEnum.INPUT){
+               %>
+                 <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                   <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                   </el-form-item>
+                 </el-col>
+               <% }else if(item.formType==formEnum.TEXTAREA){ %>
+                  <el-col :span="24">
+                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                      <el-input v-model="form.#{item.name}" type="textarea" />
+                    </el-form-item>
+                  </el-col>
+               <% }else if(item.formType==formEnum.SELECT){ %>
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
+                         <% if(item.dictKey!='') {%>
+                       <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                         <% }%>
+                     </el-select>
+                    </el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.DATE) { %>
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                   <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                     format="yyyy-MM-dd"
+                     value-format="yyyy-MM-dd" />
+                   <el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.RADIO){ %>
+                  <el-col :span="12" style="height: 51px">
+                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                         <el-radio-group v-model="form.#{item.name}" >
+                            <el-radio :label="1">1</el-radio>
+                            <el-radio :label="0">0</el-radio>
+                          </el-radio-group>
+                      <el-form-item>
+                  </el-col>
+               <% }  else if(item.formType==formEnum.CHECKBOX) { %>
+                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                      <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                        <el-checkbox-group v-model="form.#{item.name}">
+                           <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
+                        </el-checkbox-group>
+                      </el-form-item>
+                  </el-col>
+
+               <% } else if(item.formType==formEnum.INPUTNUMBER){ %>
+                  <el-col :span="12">
+                      <el-form-item label="#{item.chinaName}" prop="#{item.name}">
+                           <el-input-number v-model="form.#{item.name}"  :step="0.1" :min="1" :max="10" label="#{item.chinaName}"></el-input-number>
+                      </el-form-item>
+                  </el-col>
+
+               <% } %>
+
+         <% } %>
+
+        </el-row>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" :loading="loading" @click="handleConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
+
+      <!--查看-->
+        <el-dialog
+          :modal-append-to-body="false"
+          width="700px"
+          top="5vh"
+          :close-on-click-modal="false"
+          :title="'查看数据'"
+          :visible.sync="dialogFormVisibleLook"
+          @closed="resetForm('ruleFormLook')"
+        >
+
+              <el-form ref="ruleFormLook" :model="formLook" :label-width="formLabelWidth" disabled size="small">
+                <el-row :gutter="5">
+                      <a-descriptions bordered>
+                         <%
+                             for(item in codeDetailList){
+                          %>
+                             <a-descriptions-item label="#{item.chinaName}" :span="1.5">
+                                    {{ formLook.#{item.name} }}
+                            </a-descriptions-item>
+
+                         <% } %>
+                      </a-descriptions>
+
+        <%
+            if(isUpload===true){
+
+                   <el-col :span="24">
+                      <el-divider />
+                    </el-col>
+
+                    <el-col :span="24">
+                      <el-form-item label="图片：" prop="imgUrl">
+                        <el-upload
+                          multiple
+                          list-type="picture-card"
+                          class="avatar-uploader-look"
+                          :action="uploadUrl"
+                          :accept="acceptUploadImg"
+                          :headers="uploadHeaders"
+                          :on-error="handleUploadError"
+                          :before-upload="beforeUpload"
+                          :on-preview="handlePreviewFile"
+                          :file-list="imgList"
+                          :limit="5"
+                          :on-exceed="handleExceed"
+                        >
+                          <i class="el-icon-plus" />
+                        </el-upload>
+                      </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="24">
+                      <el-form-item label="附件：" prop="accessoryId">
+                        <el-upload
+                          class="upload-demo"
+                          multiple
+                          :action="uploadUrl"
+                          :headers="uploadHeaders"
+                          :accept="acceptUploadFile"
+                          :before-remove="beforeRemove"
+                          :before-upload="beforeUpload"
+                          :on-error="handleUploadError"
+                          :file-list="fileList"
+                          :on-preview="handlePreviewFile"
+                          :on-remove="handleRemoveFile"
+                          :limit="5"
+                          :on-exceed="handleExceed"
+                        />
+                      </el-form-item>
+                    </el-col>
+
+              }%>
+
+
+                </el-row>
+              </el-form>
+
+        </el-dialog>
+  </div>
+</template>
+
+<script>
+
+
+#{ isUpload===true? import uploadMixin from '@/mixins/uploadMixin'}
+import tableMixin from '@/mixins/tableMixin'
+import formMixin from '@/mixins/formMixin'
+import {get#{Name}ById, #{name}DelByIdsApi, #{name}SaveBaseApi, #{name}UpdateBaseApi, get#{Name}ByPageApi } from '@/api/#{name}'
+import commonUtil from '@/utils/common'
+import CommonEnum from '@/enum/CommonEnum'
+export default {
+  name: '#{Name}',
+  mixins: [tableMixin, formMixin, #{ isUpload===true? uploadMixin }],
+  data() {
+    return {
+      searchForm: {
+    <%
+     for(item in codeDetailList){
+    %>
+      <% if(item.search != null) {%>
+        #{item.name}:'',  // #{item.chinaName}
+      <% }%>
+    <% } %>
+        date: '',
+        startTime: '',
+        endTime: ''
+      },
+      checkFieldList: [], // 选中的字段
+      multipleSelection: [],
+      form: {
+        id:'',
+      <%
+      for(item in codeDetailList){
+      %>
+        <% if(item.formType == formEnum.CHECKBOX){ %>
+            #{item.name}:[], // #{item.chinaName}
+        <% } else {%>
+           #{item.name}:'', // #{item.chinaName}
+        <% } %>
+      <% } %>
+      },
+      rules: {
+  <%
+    for(item in codeDetailList){
+       if(item.required==1){
+
+  %>
+         #{item.name}: [
+            <%
+              if(item.formType==formEnum.SELECT || item.formType==formEnum.DATE){
+
+            %>
+                { required: true, message: '请选择#{item.chinaName}', trigger: 'change' },
+            <% }else{ %>
+            { required: true, message: '这是必填项', trigger: 'blur' },
+            <% } %>
+         ],
+    <% } %>
+  <% } %>
+      },
+      dialogFormVisible: false,
+      dialogFormVisibleLook: false,
+      formLabelWidth: '120px',
+      dialogType: CommonEnum.ADD.id,
+      dialogTitle: CommonEnum.ADD.value,
+      CommonEnum: CommonEnum,
+    }
+  },
+  watch: {
+    'searchForm.date'(val) {
+      const startAndTime = commonUtil.getStartAndTime(val)
+      this.searchForm.startTime = startAndTime[0]
+      this.searchForm.endTime = startAndTime[1]
+    }
+  },
+  created() {
+    this.getDataList()
+  },
+  methods: {
+    // 判断是否存在排版里面
+    showField(name) {
+      return this.checkFieldList.indexOf(name) > -1
+    },
+    // 全选
+    handleSelectionChange(tableItem) {
+      this.multipleSelection = tableItem.map(item => item.id)
+    },
+
+    // 重置表单
+    handleResetFrom() {
+      this.searchForm.startTime = ''
+      this.searchForm.endTime = ''
+      this.resetForm('searchForm')
+      this.handleReset()
+
+    },
+    // 分页
+    getDataList() {
+      this.dataListLoading = true
+      const params = { ...this.page, filters: this.searchForm }
+      get#{Name}ByPageApi(params).then(res => {
+        this.dataListLoading = false
+        if (res.code === this.$code) {
+          this.dataList = res.data.content
+          this.page.total = res.data.total
+        }
+      })
+    },
+    /**
+    * @description: 打开新增弹窗
+    * @author: #{userName}
+    * @param  {CommonEnum} type   CommonEnum.ADD.id/CommonEnum.UPDATE.id
+    * @return
+    */
+    openModal(type) {
+      this.dialogFormVisible = true
+      this.dialogType = type
+      this.dialogTitle = type === CommonEnum.ADD.id ? CommonEnum.ADD.value : CommonEnum.UPDATE.value
+    },
+     /**
+        * @description: 修改弹出框
+        * @author: #{userName}
+        * @param  {Object} tableItem
+        * @return
+        */
+    openEditModal(tableItem) {
+      get#{Name}ById(tableItem.id).then(res => {
+        if (res.code === this.$code) {
+          this.form = res.data
+        }
+      })
+      this.openModal(CommonEnum.UPDATE.id)
+    },
+    /**
+     * @description:查看信息
+     * @author: #{userName}
+     * @param {Object} record.id
+     * @return {Object} object
+     */
+    lookModal(tableItem) {
+      get#{Name}ById(tableItem.id).then(res => {
+        if (res.code === this.$code) {
+          this.form = res.data
+        }
+      })
+      this.dialogFormVisibleLook = true
+    },
+    /**
+     * @description: 新增方法
+     * @author:  #{userName}
+     * @param
+     * @return
+     */
+    save#{Name}Base() {
+      this.loading = true
+      #{name}SaveBaseApi(this.form).then(res => {
+        if (res.code === this.$code) {
+          this.getDataList()
+          this.closeModal()
+          this.$message.success('添加成功')
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * @description: 修改接口
+     * @author: #{userName}
+     * @param
+     * @return
+     */
+    update#{Name}Base() {
+      this.loading = true
+      #{name}UpdateBaseApi(this.form).then(res => {
+        if (res.code === this.$code) {
+          this.getDataList()
+          this.closeModal()
+          this.$message.success('更新成功')
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+     /**
+       * @description: 删除方法
+       * @author: #{userName}
+       * @param   {Object} record 表格行的信息
+       * @return
+       */
+    del#{Name}ByIds(id) {
+     let ids = this.multipleSelection
+      let ids = this.multipleSelection
+      if (ids.length === 0) {
+        ids = [id]
+      }
+      const records = ids.map(item => {
+        return { id: item }
+      })
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        #{name}DelByIdsApi(records).then(res => {
+          if (res.code === this.$code) {
+            this.getDataList()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          }
+        })
+      })
+    },
+   /**
+      * @description: 提交信息
+      * @author: #{userName}
+      * @param
+      * @return
+      */
+    handleConfirm() {
+      this.$refs['ruleForm'].validate((valid) => {
+        if (valid) {
+          if (this.dialogType === CommonEnum.ADD.id) {
+            this.save#{Name}Base()
+          } else {
+            this.update#{Name}Base()
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+
+</style>
