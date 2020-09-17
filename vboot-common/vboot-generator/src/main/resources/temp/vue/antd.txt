@@ -512,9 +512,9 @@ export default {
         })
       },
       /**
-         * @description:查看仓库信息
+         * @description:查看信息
          * @author: #{userName}
-         * @param {Object} record.id 仓库id
+         * @param {Object} record.id
          * @return {Object} object
          */
       lookModal(record) {

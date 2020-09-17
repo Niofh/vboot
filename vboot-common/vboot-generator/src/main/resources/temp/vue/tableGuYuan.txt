@@ -1,3 +1,9 @@
+<!--
+ * @description: #{description}页面
+ * @author: #{userName}
+ * @since: #{dateTime}
+ * @company: 固远（深圳）信息技术有限公司
+-->
 <template>
   <div class="app-container">
     <el-form ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" size="small">
@@ -75,6 +81,7 @@
       </el-popover>
 
     </div>
+
     <el-table
       ref="table"
       v-loading="dataListLoading"
@@ -169,6 +176,7 @@
       />
     </div>
 
+    <!-- 新增修改弹出框 -->
     <el-dialog
       :modal-append-to-body="false"
       width="700px"
@@ -358,7 +366,7 @@ export default {
      for(item in codeDetailList){
     %>
       <% if(item.search != null) {%>
-        #{item.name}:'',
+        #{item.name}:'',  // #{item.chinaName}
       <% }%>
     <% } %>
         date: '',
@@ -373,9 +381,9 @@ export default {
       for(item in codeDetailList){
       %>
         <% if(item.formType == formEnum.CHECKBOX){ %>
-            #{item.name}:[],
+            #{item.name}:[], // #{item.chinaName}
         <% } else {%>
-           #{item.name}:'',
+           #{item.name}:'', // #{item.chinaName}
         <% } %>
       <% } %>
       },
@@ -446,13 +454,23 @@ export default {
         }
       })
     },
-    // 打开弹出框
+    /**
+    * @description: 打开新增弹窗
+    * @author: #{userName}
+    * @param  {CommonEnum} type   CommonEnum.ADD.id/CommonEnum.UPDATE.id
+    * @return
+    */
     openModal(type) {
       this.dialogFormVisible = true
       this.dialogType = type
       this.dialogTitle = type === CommonEnum.ADD.id ? CommonEnum.ADD.value : CommonEnum.UPDATE.value
     },
-    // 修改弹出框
+     /**
+        * @description: 修改弹出框
+        * @author: #{userName}
+        * @param  {Object} tableItem
+        * @return
+        */
     openEditModal(tableItem) {
       get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
@@ -461,7 +479,12 @@ export default {
       })
       this.openModal(CommonEnum.UPDATE.id)
     },
-    // 查看数据
+    /**
+     * @description:查看信息
+     * @author: #{userName}
+     * @param {Object} record.id
+     * @return {Object} object
+     */
     lookModal(tableItem) {
       get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
@@ -470,7 +493,12 @@ export default {
       })
       this.dialogFormVisibleLook = true
     },
-    // 添加
+    /**
+     * @description: 新增方法
+     * @author:  #{userName}
+     * @param
+     * @return
+     */
     save#{Name}Base() {
       this.loading = true
       #{name}SaveBaseApi(this.form).then(res => {
@@ -483,7 +511,12 @@ export default {
         this.loading = false
       })
     },
-    // 更新
+    /**
+     * @description: 修改接口
+     * @author: #{userName}
+     * @param
+     * @return
+     */
     update#{Name}Base() {
       this.loading = true
       #{name}UpdateBaseApi(this.form).then(res => {
@@ -496,7 +529,12 @@ export default {
         this.loading = false
       })
     },
-    // 删除
+     /**
+       * @description: 删除方法
+       * @author: #{userName}
+       * @param   {Object} record 表格行的信息
+       * @return
+       */
     del#{Name}ByIds(id) {
      let ids = this.multipleSelection
       let ids = this.multipleSelection
@@ -522,7 +560,12 @@ export default {
         })
       })
     },
-    // 提交数据
+   /**
+      * @description: 提交信息
+      * @author: #{userName}
+      * @param
+      * @return
+      */
     handleConfirm() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
