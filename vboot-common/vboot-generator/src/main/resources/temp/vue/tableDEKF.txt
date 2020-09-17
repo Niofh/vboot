@@ -21,7 +21,7 @@
                      placeholder="选择#{item.chinaName}">
                </el-date-picker>
             <% } else { %>
-               <el-select v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
+               <el-select filterable v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
                      <% if(item.dictKey!='') {%>
                         <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                     <% }%>
@@ -57,40 +57,16 @@
       >删除
       </el-button>
       <el-button class="btn-default" size="small" icon="el-icon-refresh-left" @click="handleRefresh">刷新</el-button>
-      <el-popover
-        placement="right"
-        trigger="click"
-      >
-        <!--排版-->
-        <el-checkbox-group v-model="checkFieldList">
-        <%
-          for(item in codeDetailList){
-        %>
-          <p>
-             <el-checkbox label="#{item.name}" checked>#{item.chinaName}</el-checkbox>
-          </p>
-        <% } %>
-          <p>
-            <el-checkbox label="createTime" checked >创建时间</el-checkbox>
-          </p>
-          <p> <el-checkbox label="createBy" checked >创建人</el-checkbox></p>
-          <p> <el-checkbox label="updateBy" checked >更新人</el-checkbox></p>
-          <p> <el-checkbox label="updateTime" checked >更新时间</el-checkbox></p>
-        </el-checkbox-group>
-        <el-button slot="reference" class="btn-default" size="small" icon="el-icon-edit">排版</el-button>
-      </el-popover>
-
     </div>
-
     <el-table
       ref="table"
       v-loading="dataListLoading"
       :data="dataList"
       max-height="650"
       stripe
-      style="width: 100%"
+      border
+      style="width: 100%;margin-top: 20px"
       @selection-change="handleSelectionChange"
-      @sort-change="handleSortChange"
     >
       <el-table-column
         type="selection"
@@ -99,22 +75,8 @@
   <%
      for(item in codeDetailList){
   %>
-    <%
-      if(item.dictKey!=''){
-    %>
-    <el-table-column
-       v-if="showField('#{item.name}')"
-       prop="#{item.name}"
-       label="#{item.chinaName}"
-       width="150"
-    >
-      <template slot-scope="scope">
-        {{ scope.row.#{item.name} | dictFilter(#{item.dictKey}DictList) }}
-      </template>
-    </el-table-column>
-    <% }else { %>
+    <% if(item.tableSite==1){%>
       <el-table-column
-        v-if="showField('#{item.name}')"
         prop="#{item.name}"
         label="#{item.chinaName}"
         width="150"
@@ -122,31 +84,27 @@
     <% } %>
    <% } %>
       <el-table-column
-        v-if="showField('createTime')"
         prop="createTime"
         label="创建时间"
-        sortable="custom"
+        sortable
         width="180"
       />
       <el-table-column
-        v-if="showField('createBy')"
-          prop="createBy"
+          prop="createByName"
           label="创建人"
-          sortable="custom"
+          sortable
           width="150"
         />
         <el-table-column
-          v-if="showField('updateBy')"
-          prop="updateBy"
+          prop="lastUpdateByName"
           label="更新人"
-          sortable="custom"
+          sortable
           width="150"
         />
          <el-table-column
-         v-if="showField('updateTime')"
           prop="updateTime"
           label="更新时间"
-          sortable="custom"
+          sortable
           width="180"
         />
       <el-table-column
@@ -176,12 +134,14 @@
       />
     </div>
 
-    <!-- 新增修改弹出框 -->
+    <!--添加-->
     <el-dialog
       :modal-append-to-body="false"
       width="700px"
       top="5vh"
+      :before-close="handleClose"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
       :title="dialogTitle+'#{code.description}'"
       :visible.sync="dialogFormVisible"
       @closed="resetForm('ruleForm')"
@@ -197,21 +157,21 @@
                <%
                  if(item.formType==formEnum.INPUT){
                %>
-                 <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                 <el-col :span="12" class="my-el-col-item">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-input v-model="form.#{item.name}"  autocomplete="off" />
+                     <el-input v-model="form.#{item.name}"  autocomplete="off" placeholder="请填写#{item.chinaName}" />
                    </el-form-item>
                  </el-col>
                <% }else if(item.formType==formEnum.TEXTAREA){ %>
                   <el-col :span="24">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                      <el-input v-model="form.#{item.name}" type="textarea" />
+                      <el-input v-model="form.#{item.name}" type="textarea" placeholder="请填写#{item.chinaName}" />
                     </el-form-item>
                   </el-col>
                <% }else if(item.formType==formEnum.SELECT){ %>
-                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                  <el-col :span="12" class="my-el-col-item">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
+                     <el-select v-model="form.#{item.name}" filterable clearable placeholder="请选择#{item.chinaName}">
                          <% if(item.dictKey!='') {%>
                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
                          <% }%>
@@ -219,9 +179,9 @@
                     </el-form-item>
                   </el-col>
                <% }  else if(item.formType==formEnum.DATE) { %>
-                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                  <el-col :span="12" class="my-el-col-item">
                    <el-form-item label="#{item.chinaName}" prop="#{item.name}">
-                     <el-date-picker type="date" placeholder="选择日期" v-model="form.#{item.name}"
+                     <el-date-picker type="date" placeholder="请选择#{item.chinaName}" v-model="form.#{item.name}"
                      format="yyyy-MM-dd"
                      value-format="yyyy-MM-dd" />
                    <el-form-item>
@@ -236,7 +196,7 @@
                       <el-form-item>
                   </el-col>
                <% }  else if(item.formType==formEnum.CHECKBOX) { %>
-                  <el-col :span="12" style="height: 51px;margin-bottom: 0">
+                  <el-col :span="12" class="my-el-col-item">
                       <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                         <el-checkbox-group v-model="form.#{item.name}">
                            <el-checkbox label="#{item.chinaName}" name="#{item.name}"></el-checkbox>
@@ -251,17 +211,71 @@
                       </el-form-item>
                   </el-col>
 
-               <% } %>
-
-         <% } %>
+               <% } else if(item.formType==formEnum.UPLOAD){ %>
+                        <el-col :span="24">
+                         <el-form-item label="图片：" prop="imgList">
+                           <el-upload
+                             ref="imgListUpload"
+                             multiple
+                             list-type="picture-card"
+                             class="avatar-uploader"
+                             :action="uploadUrl"
+                             :accept="acceptUploadImg"
+                             :headers="uploadHeaders"
+                             :on-error="handleUploadError"
+                             :before-upload="beforeUpload"
+                             :on-preview="handlePreviewFile"
+                             :file-list="imgList"
+                             :limit="5"
+                             :on-exceed="handleExceed"
+                           >
+                             <i class="el-icon-plus" />
+                           </el-upload>
+                         </el-form-item>
+                       </el-col>
+                       <el-col :span="24">
+                         <el-form-item label="附件：" prop="#{item.name}">
+                           <el-upload
+                             ref="fileListUpload"
+                             class="upload-demo"
+                             multiple
+                             :action="uploadUrl"
+                             :headers="uploadHeaders"
+                             :accept="acceptUploadFile"
+                             :before-remove="beforeRemove"
+                             :before-upload="beforeUpload"
+                             :on-error="handleUploadError"
+                             :file-list="fileList"
+                             :on-preview="handlePreviewFile"
+                             :on-remove="handleRemoveFile"
+                             :limit="5"
+                             :on-exceed="handleExceed"
+                           >
+                             <el-button size="small" type="primary">点击上传附件</el-button>
+                           </el-upload>
+                         </el-form-item>
+                       </el-col>
+              <% } %>
+            <% } %>
 
         </el-row>
 
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" :loading="loading" @click="handleConfirm">确 定</el-button>
-      </div>
+     <div slot="footer" class="dialog-footer">
+             <el-popover
+               v-model="visibleAdd"
+               placement="top"
+               width="160"
+             >
+               <p>确定取消吗？</p>
+               <div style="text-align: right; margin: 0">
+                 <el-button size="mini" type="text" @click="visibleAdd = false">取消</el-button>
+                 <el-button type="primary" size="mini" @click="visibleAdd = false,dialogFormVisible = false">确定</el-button>
+               </div>
+               <el-button slot="reference">取 消</el-button>
+             </el-popover>
+             <el-button slot="reference" type="primary" :loading="loading" @click="handleConfirm">确 定</el-button>
+           </div>
     </el-dialog>
 
       <!--查看-->
@@ -275,88 +289,89 @@
           @closed="resetForm('ruleFormLook')"
         >
 
-              <el-form ref="ruleFormLook" :model="formLook" :label-width="formLabelWidth" disabled size="small">
-                <el-row :gutter="5">
-                      <a-descriptions bordered>
-                         <%
-                             for(item in codeDetailList){
-                          %>
-                             <a-descriptions-item label="#{item.chinaName}" :span="1.5">
-                                    {{ formLook.#{item.name} }}
-                            </a-descriptions-item>
+           <el-form ref="ruleFormLook" :model="formLook" :label-width="formLabelWidth" disabled size="small">
+                        <el-row :gutter="5">
+                              <a-descriptions bordered>
+                                 <%
+                                     for(item in codeDetailList){
+                                  %>
+                                     <a-descriptions-item label="#{item.chinaName}" :span="1.5">
+                                            {{ formLook.#{item.name} }}
+                                    </a-descriptions-item>
 
-                         <% } %>
-                      </a-descriptions>
+                                 <% } %>
+                              </a-descriptions>
 
-        <%
-            if(isUpload){
-        %>
-               <el-col :span="24">
-                  <el-divider />
-                </el-col>
+                <%
+                    if(isUpload){
+                %>
+                       <el-col :span="24">
+                          <el-divider />
+                        </el-col>
 
-                <el-col :span="24">
-                  <el-form-item label="图片：" prop="imgUrl">
-                    <el-upload
-                      multiple
-                      list-type="picture-card"
-                      class="avatar-uploader-look"
-                      :action="uploadUrl"
-                      :accept="acceptUploadImg"
-                      :headers="uploadHeaders"
-                      :on-error="handleUploadError"
-                      :before-upload="beforeUpload"
-                      :on-preview="handlePreviewFile"
-                      :file-list="imgList"
-                      :limit="5"
-                      :on-exceed="handleExceed"
-                    >
-                      <i class="el-icon-plus" />
-                    </el-upload>
-                  </el-form-item>
-                </el-col>
-
-
-                <el-col :span="24">
-                  <el-form-item label="附件：" prop="accessoryId">
-                    <el-upload
-                      class="upload-demo"
-                      multiple
-                      :action="uploadUrl"
-                      :headers="uploadHeaders"
-                      :accept="acceptUploadFile"
-                      :before-remove="beforeRemove"
-                      :before-upload="beforeUpload"
-                      :on-error="handleUploadError"
-                      :file-list="fileList"
-                      :on-preview="handlePreviewFile"
-                      :on-remove="handleRemoveFile"
-                      :limit="5"
-                      :on-exceed="handleExceed"
-                    />
-                  </el-form-item>
-                </el-col>
-
-             <% } %>
+                        <el-col :span="24">
+                          <el-form-item label="图片：" prop="imgUrl">
+                            <el-upload
+                              multiple
+                              list-type="picture-card"
+                              class="avatar-uploader-look"
+                              :action="uploadUrl"
+                              :accept="acceptUploadImg"
+                              :headers="uploadHeaders"
+                              :on-error="handleUploadError"
+                              :before-upload="beforeUpload"
+                              :on-preview="handlePreviewFile"
+                              :file-list="imgList"
+                              :limit="5"
+                              :on-exceed="handleExceed"
+                            >
+                              <i class="el-icon-plus" />
+                            </el-upload>
+                          </el-form-item>
+                        </el-col>
 
 
-                </el-row>
+                        <el-col :span="24">
+                          <el-form-item label="附件：" prop="accessoryId">
+                            <el-upload
+                              class="upload-demo"
+                              multiple
+                              :action="uploadUrl"
+                              :headers="uploadHeaders"
+                              :accept="acceptUploadFile"
+                              :before-remove="beforeRemove"
+                              :before-upload="beforeUpload"
+                              :on-error="handleUploadError"
+                              :file-list="fileList"
+                              :on-preview="handlePreviewFile"
+                              :on-remove="handleRemoveFile"
+                              :limit="5"
+                              :on-exceed="handleExceed"
+                            />
+                          </el-form-item>
+                        </el-col>
+
+                     <% } %>
+
+
+                        </el-row>
               </el-form>
-
         </el-dialog>
   </div>
 </template>
 
 <script>
-
-
-
-
 import tableMixin from '@/mixins/tableMixin'
 import formMixin from '@/mixins/formMixin'
-import {get#{Name}ById, #{name}DelByIdsApi, #{name}SaveBaseApi, #{name}UpdateBaseApi, get#{Name}ByPageApi } from '@/api/#{name}'
 import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
+
+
+  <% if(isUpload) {%>
+     import uploadMixin from '@/mixins/uploadMixin'
+     <% break; %>;
+  <% }%>
+
 export default {
   name: '#{Name}',
   mixins: [tableMixin, formMixin],
@@ -367,14 +382,13 @@ export default {
      for(item in codeDetailList){
     %>
       <% if(item.search != null) {%>
-        #{item.name}:'',  // #{item.chinaName}
+        #{item.name}:'',     // #{item.chinaName}
       <% }%>
     <% } %>
         date: '',
         startTime: '',
         endTime: ''
       },
-      checkFieldList: [], // 选中的字段
       multipleSelection: [],
       form: {
         id:'',
@@ -407,14 +421,13 @@ export default {
     <% } %>
   <% } %>
       },
-      formLook: {},
       dialogFormVisible: false,
       dialogFormVisibleLook: false,
       formLabelWidth: '120px',
       dialogType: CommonEnum.ADD.id,
       dialogTitle: CommonEnum.ADD.value,
       CommonEnum: CommonEnum,
-
+      visibleAdd:false,
     }
   },
   watch: {
@@ -428,10 +441,6 @@ export default {
     this.getDataList()
   },
   methods: {
-    // 判断是否存在排版里面
-    showField(name) {
-      return this.checkFieldList.indexOf(name) > -1
-    },
     // 全选
     handleSelectionChange(tableItem) {
       this.multipleSelection = tableItem.map(item => item.id)
@@ -449,15 +458,15 @@ export default {
     getDataList() {
       this.dataListLoading = true
       const params = { ...this.page, filters: this.searchForm }
-      get#{Name}ByPageApi(params).then(res => {
+      this.$api.#{name}.get#{Name}ByPageApi(params).then(res => {
         this.dataListLoading = false
         if (res.code === this.$code) {
           this.dataList = res.data.content
-          this.page.total = res.data.total
+          this.page.total = res.data.totalSize
         }
       })
     },
-    /**
+   /**
     * @description: 打开新增弹窗
     * @author: #{userName}
     * @param  {CommonEnum} type   CommonEnum.ADD.id/CommonEnum.UPDATE.id
@@ -468,41 +477,48 @@ export default {
       this.dialogType = type
       this.dialogTitle = type === CommonEnum.ADD.id ? CommonEnum.ADD.value : CommonEnum.UPDATE.value
     },
-     /**
+      /**
         * @description: 修改弹出框
         * @author: #{userName}
         * @param  {Object} tableItem
         * @return
         */
     openEditModal(tableItem) {
-      get#{Name}ById(tableItem.id).then(res => {
+      this.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
           this.form = res.data
+
+          <%
+           for(item in codeDetailList){
+          %>
+            <% if(item.formType==formEnum.UPLOAD) {%>
+               //上传文件字段转换数组
+               this.imgList = this.getElUploadFileData(res.data.imgUrl)
+               this.fileList = this.getElUploadFileData(res.data.#{item.name})
+               <% break; %>
+            <% }%>
+          <% } %>
+
+
         }
       })
       this.openModal(CommonEnum.UPDATE.id)
     },
-    /**
-     * @description:查看信息
-     * @author: #{userName}
-     * @param {Object} record.id
-     * @return {Object} object
-     */
+     /**
+        * @description:查看信息
+        * @author: #{userName}
+        * @param {Object} record.id
+        * @return {Object} object
+        */
     lookModal(tableItem) {
-      get#{Name}ById(tableItem.id).then(res => {
+      this.$api.#{name}.get#{Name}ById(tableItem.id).then(res => {
         if (res.code === this.$code) {
-          this.formLook = res.data
-
-          <% if(isUpload) {%>
-            this.imgList = this.getElUploadFileData(res.data.imgUrl)
-            this.fileList = this.getElUploadFileData(res.data.accessoryId)
-          <% } %>
-
+          this.form = res.data
         }
       })
       this.dialogFormVisibleLook = true
     },
-    /**
+     /**
      * @description: 新增方法
      * @author:  #{userName}
      * @param
@@ -510,7 +526,7 @@ export default {
      */
     save#{Name}Base() {
       this.loading = true
-      #{name}SaveBaseApi(this.form).then(res => {
+      this.$api.#{name}.#{name}SaveBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
           this.getDataList()
           this.closeModal()
@@ -520,7 +536,7 @@ export default {
         this.loading = false
       })
     },
-    /**
+     /**
      * @description: 修改接口
      * @author: #{userName}
      * @param
@@ -528,7 +544,7 @@ export default {
      */
     update#{Name}Base() {
       this.loading = true
-      #{name}UpdateBaseApi(this.form).then(res => {
+      this.$api.#{name}.#{name}UpdateBaseApi(this.form).then(res => {
         if (res.code === this.$code) {
           this.getDataList()
           this.closeModal()
@@ -538,26 +554,23 @@ export default {
         this.loading = false
       })
     },
-     /**
-       * @description: 删除方法
-       * @author: #{userName}
-       * @param   {Object} record 表格行的信息
-       * @return
-       */
+   /**
+     * @description: 删除方法
+     * @author: #{userName}
+     * @param   {Object} record 表格行的信息
+     * @return
+     */
     del#{Name}ByIds(id) {
-      let ids = this.multipleSelection
+     let ids = this.multipleSelection
       if (ids.length === 0) {
         ids = [id]
       }
-      const records = ids.map(item => {
-        return { id: item }
-      })
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        #{name}DelByIdsApi(records).then(res => {
+        this.$api.#{name}.#{name}DelByIdsApi(ids).then(res => {
           if (res.code === this.$code) {
             this.getDataList()
             this.$message({
@@ -568,7 +581,7 @@ export default {
         })
       })
     },
-   /**
+     /**
       * @description: 提交信息
       * @author: #{userName}
       * @param
@@ -577,11 +590,34 @@ export default {
     handleConfirm() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          if (this.dialogType === CommonEnum.ADD.id) {
-            this.save#{Name}Base()
-          } else {
-            this.update#{Name}Base()
-          }
+         this.$confirm('是否确认提交?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+          }).then(() => {
+
+
+           <%
+             for(item in codeDetailList){
+            %>
+              <% if(item.formType==formEnum.UPLOAD) {%>
+                    // 多个文件处理
+                 this.form.imgUrl = this.handleChangeFileData('imgListUpload')
+                 this.form.#{item.name} = this.handleChangeFileData('fileListUpload')
+                  <% break; %>
+              <% }%>
+            <% } %>
+            if (this.dialogType === CommonEnum.ADD.id) {
+                this.save#{Name}Base()
+             } else {
+               this.update#{Name}Base()
+             }
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消提交'
+            })
+          })
         } else {
           console.log('error submit!!')
           return false

@@ -537,7 +537,6 @@ export default {
        */
     del#{Name}ByIds(id) {
      let ids = this.multipleSelection
-      let ids = this.multipleSelection
       if (ids.length === 0) {
         ids = [id]
       }
