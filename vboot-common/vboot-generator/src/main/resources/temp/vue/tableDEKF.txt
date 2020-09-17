@@ -350,7 +350,6 @@
 <script>
 
 
-<% #{ isUpload? import uploadMixin from '@/mixins/uploadMixin'} %>
 
 
 import tableMixin from '@/mixins/tableMixin'
@@ -360,7 +359,7 @@ import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
 export default {
   name: '#{Name}',
-  mixins: [tableMixin, formMixin, <% #{ isUpload? uploadMixin } %>],
+  mixins: [tableMixin, formMixin],
   data() {
     return {
       searchForm: {
