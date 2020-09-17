@@ -180,7 +180,7 @@ public class CodeServiceImpl implements CodeService {
 
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         shared.put("userName", user.getUsername());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         shared.put("dateTime", simpleDateFormat.format(new Date()));
         gt.setSharedVars(shared);
 
