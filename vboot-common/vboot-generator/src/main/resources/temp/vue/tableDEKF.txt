@@ -22,10 +22,8 @@
                </el-date-picker>
             <% } else { %>
                <el-select filterable v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
-                     <% if(item.dictKey!='') {%>
-                          <% if(item.dictKey!='') {%>
+                     <% if(item.dictKey!=null) {%>
                            <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.code" :label="value.name" :value="value.code" />
-                        <% }%>
                     <% }%>
                </el-select>
            <% } %>
