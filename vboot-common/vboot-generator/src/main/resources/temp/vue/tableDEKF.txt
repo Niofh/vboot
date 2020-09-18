@@ -23,7 +23,7 @@
             <% } else { %>
                <el-select filterable v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
                      <% if(item.dictKey!=null) {%>
-                           <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.code" :label="value.name" :value="value.code" />
+                           <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.id" :label="value.value" :value="value.id" />
                     <% }%>
                </el-select>
            <% } %>
@@ -187,7 +187,7 @@
                      <el-select v-model="form.#{item.name}" filterable clearable placeholder="请选择#{item.chinaName}">
                          <% if(item.dictKey!=null) {%>
 
-                        <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.code" :label="value.name" :value="value.code" />
+                          <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.id" :label="value.value" :value="value.id" />
                          <% }%>
                      </el-select>
                     </el-form-item>
@@ -310,7 +310,14 @@
                                      for(item in codeDetailList){
                                   %>
                                      <a-descriptions-item label="#{item.chinaName}" :span="1.5">
-                                            {{ formLook.#{item.name} }}
+                                        {{ formLook.#{item.name} }}
+
+                                            <% if(item.dictKey!=null) {%>
+                                                {{ formLook.#{item.name} | optionKVFilter( #{stringTool.toUpperCase(item.dictKey)}_ENUMS ) }}
+
+                                        <% } else {%>
+                                              {{ formLook.#{item.name} }}
+                                        <% }%>
                                     </a-descriptions-item>
 
                                  <% } %>
@@ -414,10 +421,7 @@ export default {
         <% } else {%>
            #{item.name}:'', // #{item.chinaName}
         <% } %>
-          <% if(item.dictKey!=null){ %>
 
-         #{stringTool.toUpperCase(item.dictKey)}_ENUMS = this.$GlobalBusinessEnum.#{stringTool.toUpperCase(item.dictKey)}_ENUMS, // #{item.dictName}枚举
-           <% } %>
       <% } %>
       },
       rules: {
@@ -447,6 +451,13 @@ export default {
       dialogTitle: CommonEnum.ADD.value,
       CommonEnum: CommonEnum,
       visibleAdd:false,
+    <%
+      for(item in codeDetailList){
+    %>
+     <% if(item.dictKey!=null){ %>
+      #{stringTool.toUpperCase(item.dictKey)}_ENUMS = this.$GlobalBusinessEnum.#{stringTool.toUpperCase(item.dictKey)}_ENUMS, // #{item.dictName}枚举
+     <% } %>
+ <% } %>
     }
   },
   watch: {

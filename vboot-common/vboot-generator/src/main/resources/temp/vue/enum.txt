@@ -1,15 +1,13 @@
-
 <%
     for(item in codeDetailList){
 %>
   <% if(item.dictDetailList!=null){ %>
 // #{item.dictName}枚举
 const #{stringTool.toUpperCase(item.dictKey)}_ENUMS = {
-
     <%
         for(dictDetail in item.dictDetailList){
     %>
-         '#{dictDetail.enKey}': { id: #{dictDetail.code}, value: '#{dictDetail.name}' }
+         '#{dictDetail.enKey}': { id: #{dictDetail.code}, value: '#{dictDetail.name}' }，
      <% } %>
 
 
