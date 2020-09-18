@@ -76,6 +76,11 @@ public class CodeServiceImpl implements CodeService {
             codeQueryWrapper.like("table_name", code.getTableName());
         }
 
+        if (StrUtil.isNotBlank(code.getDescription())) {
+
+            codeQueryWrapper.like("description", code.getDescription());
+        }
+
         // 根据时间倒序
         codeQueryWrapper.orderByDesc(true, "create_time");
         Page<Code> codePage = codeDao.selectPage(page, codeQueryWrapper);
