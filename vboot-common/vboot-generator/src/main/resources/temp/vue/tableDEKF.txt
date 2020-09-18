@@ -185,7 +185,7 @@
                   <el-col :span="12" class="my-el-col-item">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-select v-model="form.#{item.name}" filterable clearable placeholder="请选择#{item.chinaName}">
-                         <% if(item.dictKey!='') {%>
+                         <% if(item.dictKey!=null) {%>
 
                         <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.code" :label="value.name" :value="value.code" />
                          <% }%>
