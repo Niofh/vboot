@@ -24,7 +24,8 @@ public enum ExceptionEnums {
     CODE_DETAIL_NO_EXIST(10005,"代码属性没有配置"),
     DICT_KEY_EXIST(10006,"字典key已经存在"),
     DICT_KEY_NO_EXIST(10006,"字典key不存在"),
-    DICT_CODE_EXIST(10007,"字典值已经存在"),
+    DICT_CODE_EXIST(10007,"字典详细值code已经存在"),
+    DICT_ENKEY_EXIST(10007,"字典详细值key已经存在"),
     DATA_NO_EXIST(20000, "数据不存在"),
     ;
     private Integer id;

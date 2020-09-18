@@ -1,5 +1,6 @@
 package com.carson.vboot.generator.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
@@ -9,7 +10,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carson.vboot.core.base.VbootBaseDao;
 import com.carson.vboot.core.bo.PageBo;
 import com.carson.vboot.core.common.enums.ExceptionEnums;
+import com.carson.vboot.core.entity.Dict;
+import com.carson.vboot.core.entity.DictDetail;
 import com.carson.vboot.core.exception.VbootException;
+import com.carson.vboot.core.service.DictService;
 import com.carson.vboot.generator.common.Constant;
 import com.carson.vboot.generator.common.enums.FormEnum;
 import com.carson.vboot.generator.common.enums.SqlEnum;
@@ -19,6 +23,7 @@ import com.carson.vboot.generator.dao.mapper.CodeDetailDao;
 import com.carson.vboot.generator.entity.Code;
 import com.carson.vboot.generator.entity.CodeDetail;
 import com.carson.vboot.generator.service.CodeService;
+import com.carson.vboot.generator.vo.CodeDetailVo;
 import lombok.extern.slf4j.Slf4j;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
@@ -33,10 +38,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -47,11 +49,16 @@ public class CodeServiceImpl implements CodeService {
     @Autowired
     private CodeDetailDao codeDetailDao;
 
+
+    @Autowired
+    private DictService dictService;
+
     @Value("${code.winPath}")
     private String winPath;
 
     @Value("${code.linuxPath}")
     private String linuxPath;
+
 
     @Override
     public VbootBaseDao<Code> getBaseDao() {
@@ -92,7 +99,6 @@ public class CodeServiceImpl implements CodeService {
 
             throw new VbootException(ExceptionEnums.CODE_DETAIL_NO_EXIST);
         }
-
 
 
         HashMap<String, Object> stringObjectHashMap = renderFiled(code, codeDetailList, true);
@@ -155,17 +161,47 @@ public class CodeServiceImpl implements CodeService {
         GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
         boolean isUpload = false;  // 是否有上传
 
+        ArrayList<CodeDetailVo> codeDetailVoList = new ArrayList<>();
+
+
         // 如果name是下划线的，转换为驼峰
         for (CodeDetail codeDetail : codeDetailList) {
-            String codeDetailName = codeDetail.getName();
+            CodeDetailVo codeDetailVo = new CodeDetailVo();
+
+            BeanUtil.copyProperties(codeDetail, codeDetailVo);
+
+            String codeDetailName = codeDetailVo.getName();
             if (StrUtil.indexOf(codeDetailName, '_') > -1) {
-                codeDetail.setName(stringTool.lineToHump(codeDetailName));
+                codeDetailVo.setName(stringTool.lineToHump(codeDetailName));
             }
-            if (codeDetail.getFormType().equals(FormEnum.UPLOAD.getId())) {
+            // 是否有上传
+            if (codeDetailVo.getFormType().equals(FormEnum.UPLOAD.getId())) {
                 isUpload = true;
             }
+
+
+            // 是否有字典id
+            if (StrUtil.isNotBlank(codeDetailVo.getDictId())) {
+
+                Dict dict = dictService.getId(codeDetailVo.getDictId());
+
+
+                List<DictDetail> dictDetailList = dictService.getDictDetailByDictKey(dict.getDictKey());
+
+                // 设置字典名称
+                codeDetailVo.setDictName(dict.getDictName());
+                codeDetailVo.setDictKey(dict.getDictKey());
+
+                // 字典详情
+                codeDetailVo.setDictDetailList(dictDetailList);
+
+            }
+
+            codeDetailVoList.add(codeDetailVo);
         }
 
+
+        log.info("codeDetailVoList {}", codeDetailVoList);
 
         // 设置共享变量
         Map<String, Object> shared = new HashMap<String, Object>();
@@ -173,10 +209,10 @@ public class CodeServiceImpl implements CodeService {
         shared.put("description", code.getDescription());
         shared.put("Name", Name);
         shared.put("code", code);
-        shared.put("codeDetailList", codeDetailList);
+        shared.put("codeDetailList", codeDetailVoList);
         shared.put("formEnum", FormEnum.getObject());
         shared.put("sqlEnum", SqlEnum.getObject());
-        shared.put("isUpload",isUpload);
+        shared.put("isUpload", isUpload);
 
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         shared.put("userName", user.getUsername());
@@ -188,8 +224,8 @@ public class CodeServiceImpl implements CodeService {
 
         // api接口生成
         String api = this.commonFile(gt, FROM + "/vue/api.txt", TARGET + "/vue/" + name + ".js", createFile);
-        String table = this.commonFile(gt, FROM + "/vue/table.txt", TARGET + "/vue/" + name + ".vue", createFile);
-        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", TARGET + "/vue/" + name + "Dict.js", createFile);
+//        String table = this.commonFile(gt, FROM + "/vue/table.txt", TARGET + "/vue/" + name + ".vue", createFile);
+//        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", TARGET + "/vue/" + name + "Dict.js", createFile);
 
 
         // 固远特殊版本
@@ -219,6 +255,8 @@ public class CodeServiceImpl implements CodeService {
 
         // controller
         String controller = this.commonFile(gt, FROM + "/java/controller/controller.txt", TARGET + "/java/controller/" + Name + "Controller.java", createFile);
+        String enumjs = this.commonFile(gt, FROM + "/vue/enum.txt", TARGET + "/vue/" + Name + "Enum.js", createFile);
+        String enumjava = this.commonFile(gt, FROM + "/vue/enumjava.txt", TARGET + "/vue/" + Name + "Enum.java", createFile);
 
 
         // 判断环境
@@ -231,8 +269,8 @@ public class CodeServiceImpl implements CodeService {
         }
         result.put("path", path); // 文件路径
         result.put("api", api);
-        result.put("vuexDict", vuexDict);
-        result.put("table", table);
+//        result.put("vuexDict", vuexDict);
+//        result.put("table", table);
         result.put("mysql", mysql);
         result.put("entity", entity);
         result.put("mapper", mapper);
@@ -245,6 +283,8 @@ public class CodeServiceImpl implements CodeService {
         result.put("apiJZZ", apiJZZ);
         result.put("tableAntd", tableAntd);
         result.put("tableDEKF", tableDEKF);
+        result.put("enumjs", enumjs);
+        result.put("enumjava", enumjava);
         return result;
     }
 

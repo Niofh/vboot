@@ -20,13 +20,18 @@ public class DictDetail extends VbootBaseEntity {
     @NotBlank(message = "所属字典Id不能为空")
     private String dictId;
 
-    @ApiModelProperty(value = "字典名称")
-    @NotBlank(message = "字典名称不能为空")
+    @ApiModelProperty(value = "字典详情名称")
+    @NotBlank(message = "字典详情名称不能为空")
     private String name;
 
-    @ApiModelProperty(value = "字典值")
-    @NotNull(message = "字典值不能为空")
+    @ApiModelProperty(value = "字典详情值 id 类像(1,2,3,4)")
+    @NotNull(message = "字典详情不能为空")
     private Integer code;
+
+
+    @ApiModelProperty(value = "字典详情英文key,ADD,UPDATE字段key")
+    @NotNull(message = "字典详情英文key不能为空")
+    private String enKey;
 
     @ApiModelProperty(value = "排序")
     private BigDecimal sort;

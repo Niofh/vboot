@@ -16,9 +16,7 @@
                </el-date-picker>
             <% } else { %>
                <el-select v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
-                     <% if(item.dictKey!='') {%>
-                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
-                    <% }%>
+
                </el-select>
            <% } %>
        </el-form-item>
@@ -92,27 +90,12 @@
   <%
      for(item in codeDetailList){
   %>
-    <%
-      if(item.dictKey!=''){
-    %>
-    <el-table-column
-       v-if="showField('#{item.name}')"
-       prop="#{item.name}"
-       label="#{item.chinaName}"
-       width="150"
-    >
-      <template slot-scope="scope">
-        {{ scope.row.#{item.name} | dictFilter(#{item.dictKey}DictList) }}
-      </template>
-    </el-table-column>
-    <% }else { %>
       <el-table-column
         v-if="showField('#{item.name}')"
         prop="#{item.name}"
         label="#{item.chinaName}"
         width="150"
       />
-    <% } %>
    <% } %>
       <el-table-column
         v-if="showField('createTime')"

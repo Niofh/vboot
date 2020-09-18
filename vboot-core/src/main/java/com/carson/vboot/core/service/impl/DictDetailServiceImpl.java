@@ -138,11 +138,25 @@ public class DictDetailServiceImpl implements DictDetailService {
     @Override
     public DictDetail update(DictDetail entity) {
         QueryWrapper<DictDetail> dictDetailQueryWrapper = new QueryWrapper<>();
-        dictDetailQueryWrapper.ne("id", entity.getDictId()).ne("dict_id", entity.getDictId()).eq("code", entity.getCode());
+
+
+        // 修改的时候需要字典详细值code 和字典详细enKey都不能重复
+
+        // 其他id不同，单同一个字典详情不能有相同code
+        dictDetailQueryWrapper.eq("code", entity.getCode()).eq("dict_id", entity.getDictId()).ne("id", entity.getId());
         DictDetail dictDetail = dictDetailDao.selectOne(dictDetailQueryWrapper);
-        if (dictDetail != null) {
+        if (dictDetail != null) {  // 判断是否存在
             throw new VbootException(ExceptionEnums.DICT_CODE_EXIST);
         }
+
+        // 其他id不同，单同一个字典详情不能有相同code
+        dictDetailQueryWrapper.clear();
+        dictDetailQueryWrapper.eq("en_key", entity.getEnKey()).eq("dict_id", entity.getDictId()).ne("id", entity.getId());
+        DictDetail dictDetailEnKey = dictDetailDao.selectOne(dictDetailQueryWrapper);
+        if (dictDetailEnKey != null) {  // 判断是否存在
+            throw new VbootException(ExceptionEnums.DICT_ENKEY_EXIST);
+        }
+
         int i = dictDetailDao.updateById(entity);
         if (i > 0) {
             return entity;
@@ -158,7 +172,7 @@ public class DictDetailServiceImpl implements DictDetailService {
      */
     @Caching(
             evict = {
-                @CacheEvict(cacheNames = {"vboot::dictDetail,vboot::dict"}, allEntries = true) // 删除缓存,allEntries忽略指定key
+                    @CacheEvict(cacheNames = {"vboot::dictDetail,vboot::dict"}, allEntries = true) // 删除缓存,allEntries忽略指定key
             }
     )
     @Override

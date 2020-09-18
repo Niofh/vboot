@@ -1,13 +1,15 @@
-package com.carson.vboot.generator.entity;
+package com.carson.vboot.generator.vo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.carson.vboot.core.base.VbootBaseEntity;
+import com.carson.vboot.core.entity.DictDetail;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author oufuhua
@@ -15,7 +17,7 @@ import java.math.BigDecimal;
 @Data
 @TableName("t_code_detail")
 @ApiModel(value = "数据库属性表")
-public class CodeDetail extends VbootBaseEntity {
+public class CodeDetailVo extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "代码主键")
@@ -55,9 +57,18 @@ public class CodeDetail extends VbootBaseEntity {
     @ApiModelProperty(value = "数字字典id")
     private String dictId;
 
+
+    @ApiModelProperty(value = "数字字典Key")
+    private String dictKey;
+
+    @ApiModelProperty(value = "数字字典名称")
+    private String dictName;
+
     @ApiModelProperty(value = "排序号")
     private BigDecimal num;
 
+    @ApiModelProperty(value = "字典详情")
+    private List<DictDetail> dictDetailList;
 
 
 }
