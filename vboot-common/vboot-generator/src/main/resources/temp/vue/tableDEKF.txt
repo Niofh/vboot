@@ -23,7 +23,9 @@
             <% } else { %>
                <el-select filterable v-model="searchForm.#{item.name}" clearable placeholder="#{item.chinaName}">
                      <% if(item.dictKey!='') {%>
-                        <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+                          <% if(item.dictKey!='') {%>
+                           <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.code" :label="value.name" :value="value.code" />
+                        <% }%>
                     <% }%>
                </el-select>
            <% } %>
@@ -76,13 +78,26 @@
      for(item in codeDetailList){
   %>
     <% if(item.tableSite==1){%>
-      <el-table-column
-        prop="#{item.name}"
-        label="#{item.chinaName}"
-        width="150"
-      />
+      <% if(item.dictKey!=null){ %>
+        <el-table-column
+          prop="#{item.name}"
+          label="#{item.chinaName}"
+          width="150"
+        >
+             <template slot-scope="scope">
+                  {{ scope.row.#{item.name}|optionKVFilter( #{stringTool.toUpperCase(item.dictKey)}_ENUMS )  }}
+            </template>
+        </el-table-column>
+
+     <% }else { %>
+           <el-table-column
+             prop="#{item.name}"
+             label="#{item.chinaName}"
+             width="150"
+           />
+     <% }%>
     <% } %>
-   <% } %>
+<% } %>
       <el-table-column
         prop="createTime"
         label="创建时间"
@@ -173,7 +188,8 @@
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-select v-model="form.#{item.name}" filterable clearable placeholder="请选择#{item.chinaName}">
                          <% if(item.dictKey!='') {%>
-                       <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
+
+                        <el-option v-for="(value,key) in #{stringTool.toUpperCase(item.dictKey)}_ENUMS" :key="value.code" :label="value.name" :value="value.code" />
                          <% }%>
                      </el-select>
                     </el-form-item>
@@ -400,6 +416,10 @@ export default {
         <% } else {%>
            #{item.name}:'', // #{item.chinaName}
         <% } %>
+          <% if(item.dictKey!=null){ %>
+
+         #{stringTool.toUpperCase(item.dictKey)}_ENUMS = this.$GlobalBusinessEnum.#{stringTool.toUpperCase(item.dictKey)}_ENUMS, // #{item.dictName}枚举
+           <% } %>
       <% } %>
       },
       rules: {
