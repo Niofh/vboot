@@ -310,10 +310,8 @@
                                      for(item in codeDetailList){
                                   %>
                                      <a-descriptions-item label="#{item.chinaName}" :span="1.5">
-                                        {{ formLook.#{item.name} }}
-
-                                            <% if(item.dictKey!=null) {%>
-                                                {{ formLook.#{item.name} | optionKVFilter( #{stringTool.toUpperCase(item.dictKey)}_ENUMS ) }}
+                                        <% if(item.dictKey!=null) {%>
+                                              {{ formLook.#{item.name} | optionKVFilter( #{stringTool.toUpperCase(item.dictKey)}_ENUMS ) }}
 
                                         <% } else {%>
                                               {{ formLook.#{item.name} }}
