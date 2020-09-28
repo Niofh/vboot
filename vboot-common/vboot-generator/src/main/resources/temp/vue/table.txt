@@ -49,28 +49,6 @@
       >删除
       </el-button>
       <el-button class="btn-default" size="small" icon="el-icon-refresh-left" @click="handleRefresh">刷新</el-button>
-      <el-popover
-        placement="right"
-        trigger="click"
-      >
-        <!--排版-->
-        <el-checkbox-group v-model="checkFieldList">
-        <%
-          for(item in codeDetailList){
-        %>
-          <p>
-             <el-checkbox label="#{item.name}" checked>#{item.chinaName}</el-checkbox>
-          </p>
-        <% } %>
-          <p>
-            <el-checkbox label="createTime" checked >创建时间</el-checkbox>
-          </p>
-          <p> <el-checkbox label="createBy" checked >创建人</el-checkbox></p>
-          <p> <el-checkbox label="updateBy" checked >更新人</el-checkbox></p>
-          <p> <el-checkbox label="updateTime" checked >更新时间</el-checkbox></p>
-        </el-checkbox-group>
-        <el-button slot="reference" class="btn-default" size="small" icon="el-icon-edit">排版</el-button>
-      </el-popover>
 
     </div>
     <el-table
@@ -91,35 +69,30 @@
      for(item in codeDetailList){
   %>
       <el-table-column
-        v-if="showField('#{item.name}')"
         prop="#{item.name}"
         label="#{item.chinaName}"
         width="150"
       />
    <% } %>
       <el-table-column
-        v-if="showField('createTime')"
         prop="createTime"
         label="创建时间"
         sortable="custom"
         width="180"
       />
       <el-table-column
-        v-if="showField('createBy')"
           prop="createBy"
           label="创建人"
           sortable="custom"
           width="150"
         />
         <el-table-column
-          v-if="showField('updateBy')"
           prop="updateBy"
           label="更新人"
           sortable="custom"
           width="150"
         />
          <el-table-column
-         v-if="showField('updateTime')"
           prop="updateTime"
           label="更新时间"
           sortable="custom"
@@ -187,9 +160,7 @@
                   <el-col :span="12" style="height: 51px;margin-bottom: 0">
                     <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                      <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
-                         <% if(item.dictKey!='') {%>
-                       <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
-                         <% }%>
+
                      </el-select>
                     </el-form-item>
                   </el-col>
@@ -275,9 +246,7 @@
                              <el-col :span="12" style="height: 51px;margin-bottom: 0">
                                <el-form-item label="#{item.chinaName}" prop="#{item.name}">
                                 <el-select v-model="form.#{item.name}" clearable placeholder="请选择#{item.chinaName}">
-                                    <% if(item.dictKey!='') {%>
-                                  <el-option v-for="#{item.dictKey} in #{item.dictKey}DictList" :key="#{item.dictKey}.id" :label="#{item.dictKey}.name" :value="#{item.dictKey}.code" />
-                                    <% }%>
+
                                 </el-select>
                                </el-form-item>
                              </el-col>
@@ -331,7 +300,6 @@ import formMixin from '@/mixins/formMixin'
 import {get#{Name}ById, #{name}DelByIdsApi, #{name}SaveBaseApi, #{name}UpdateBaseApi, get#{Name}ByPageApi } from '@/api/#{name}'
 import commonUtil from '@/utils/common'
 import CommonEnum from '@/enum/CommonEnum'
-import { mapState } from 'vuex'
 export default {
   name: '#{Name}',
   mixins: [tableMixin, formMixin],
@@ -390,16 +358,6 @@ export default {
       CommonEnum: CommonEnum,
     }
   },
-  computed: {
-
-    ...mapState({
-   <% for(item in codeDetailList){%>
-     <% if(item.dictKey!=''){%>
-      #{item.dictKey}DictList: state => state.dict.#{item.dictKey}DictList,
-     <%}%>
-    <%}%>
-    })
-  },
   watch: {
     'searchForm.date'(val) {
       const startAndTime = commonUtil.getStartAndTime(val)
@@ -408,21 +366,9 @@ export default {
     }
   },
   created() {
-    this.getDict()
     this.getDataList()
   },
   methods: {
-   getDict(){
-    <% for(item in codeDetailList){%>
-      <% if(item.dictKey!=''){%>
-        this.$store.dispatch('dict/get#{stringTool.capitalize(item.dictKey)}DictList')
-      <%}%>
-    <%}%>
-   },
-    // 判断是否存在排版里面
-    showField(name) {
-      return this.checkFieldList.indexOf(name) > -1
-    },
     // 全选
     handleSelectionChange(tableItem) {
       this.multipleSelection = tableItem.map(item => item.id)

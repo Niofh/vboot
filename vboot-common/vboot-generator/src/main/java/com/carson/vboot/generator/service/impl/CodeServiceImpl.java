@@ -229,7 +229,7 @@ public class CodeServiceImpl implements CodeService {
 
         // api接口生成
         String api = this.commonFile(gt, FROM + "/vue/api.txt", TARGET + "/vue/" + name + ".js", createFile);
-//        String table = this.commonFile(gt, FROM + "/vue/table.txt", TARGET + "/vue/" + name + ".vue", createFile);
+        String table = this.commonFile(gt, FROM + "/vue/table.txt", TARGET + "/vue/" + name + ".vue", createFile);
 //        String vuexDict = this.commonFile(gt, FROM + "/vue/dict.txt", TARGET + "/vue/" + name + "Dict.js", createFile);
 
 
@@ -275,7 +275,7 @@ public class CodeServiceImpl implements CodeService {
         result.put("path", path); // 文件路径
         result.put("api", api);
 //        result.put("vuexDict", vuexDict);
-//        result.put("table", table);
+        result.put("table", table);
         result.put("mysql", mysql);
         result.put("entity", entity);
         result.put("mapper", mapper);
