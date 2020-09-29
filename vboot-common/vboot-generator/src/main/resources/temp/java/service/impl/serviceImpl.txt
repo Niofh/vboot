@@ -98,7 +98,7 @@ public class #{Name}ServiceImpl implements #{Name}Service {
         }
 
         // 根据时间倒序
-        #{name}QueryWrapper.orderByDesc(true, "create_time");
+        #{name}QueryWrapper.orderByDesc(true, "id");
         Page< #{Name}> #{name}Page = #{name}Dao.selectPage(page, #{name}QueryWrapper);
 
         return #{name}Page;

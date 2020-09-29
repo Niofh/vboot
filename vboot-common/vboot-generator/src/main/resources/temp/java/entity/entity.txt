@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 @TableName("#{code.tableName}")
 @ApiModel(value = "#{code.description}")
+@EqualsAndHashCode(callSuper = true)
+@Accessors(chain = true)
 public class #{Name}  extends VbootBaseEntity {
     private static final long serialVersionUID = 1L;
 
